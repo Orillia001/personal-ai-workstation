@@ -1,0 +1,50 @@
+.codex-map{display:flex;flex:1;min-height:0;min-width:0;flex-direction:column;color:#d4d4d4;font-size:13px;overflow:hidden}
+.codex-map *{box-sizing:border-box}
+.codex-map .cm-toolbar{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line,#3c3c3c);flex-wrap:wrap}
+.codex-map .cm-search{display:flex;flex:1;min-width:140px;gap:8px;align-items:center}
+.codex-map .cm-search>span{flex:none;white-space:nowrap}
+.codex-map input,.codex-map select{height:44px;min-width:0;background:#252526;color:#ddd;border:1px solid #555;padding:0 10px;font:inherit;border-radius:3px}
+.codex-map input{width:100%}
+.codex-map button{min-height:44px;min-width:44px;padding:0 12px;border:1px solid #555;border-radius:3px;background:#2d2d30;color:#ddd;font:inherit;cursor:pointer}
+.codex-map button:hover{background:#37373d;color:#fff}
+.codex-map button:focus-visible,.codex-map input:focus-visible,.codex-map select:focus-visible,.codex-map summary:focus-visible{outline:2px solid #3794ff;outline-offset:2px}
+.codex-map .cm-tabs{display:flex;gap:4px;flex-wrap:wrap;padding:0 16px 10px;border-bottom:1px solid #3c3c3c}
+.codex-map .cm-tabs button{border:0;border-bottom:2px solid transparent;border-radius:0;background:transparent;color:#aaa}
+.codex-map .cm-tabs button[aria-pressed=true]{color:#fff;border-bottom-color:#3794ff}
+.codex-map .cm-notice{font-size:12px;line-height:1.6;color:#a5a5a5;padding:10px 16px;margin:0}
+.codex-map .cm-status{font-size:12px;color:#aaa;max-width:100%;overflow-wrap:anywhere}
+.codex-map .cm-results{flex:1;min-height:0;overflow:auto;padding:0 16px 24px}
+.codex-map .cm-row{border-bottom:1px solid #3c3c3c;padding:12px 0;overflow-wrap:anywhere}
+.codex-map .cm-row-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.codex-map .cm-row strong{color:#e5e5e5;font-weight:500}
+.codex-map .cm-row p{margin:7px 0;color:#aaa;line-height:1.6;white-space:pre-wrap}
+.codex-map .cm-row small{color:#999;line-height:1.5}
+.codex-map .cm-badge{font-size:11px;background:#303a43;color:#a8c3d7;padding:3px 7px;border-radius:3px}
+.codex-map .cm-badge.muted{background:#333;color:#aaa}
+.codex-map .cm-badge.warning{background:#443923;color:#e2c28d}
+.codex-map details{margin-top:5px}
+.codex-map summary{cursor:pointer;min-height:44px;display:flex;align-items:center;color:#9cdcfe;width:max-content;max-width:100%}
+.codex-map dl{margin:0;padding:12px;background:#252526;line-height:1.7}
+.codex-map dt{color:#aaa;font-size:12px}
+.codex-map dd{margin:0 0 8px;white-space:pre-wrap;overflow-wrap:anywhere}
+.codex-map .cm-empty{padding:28px 0;color:#999;line-height:1.8}
+.codex-map .cm-error{color:#e2c28d;line-height:1.7}
+.codex-map .cm-section-title{font-size:13px;font-weight:500;margin:14px 0 0;color:#bcbcbc}
+body[data-theme="vscode"] .workflow-view{overflow:hidden}
+.cm-manager{min-width:0;overflow-wrap:anywhere}
+.codex-map .crm-actions{display:flex;flex-wrap:wrap;gap:8px;padding:8px 0}
+.codex-map .crm-message{color:#c7dca7;line-height:1.7;white-space:pre-wrap;padding:8px 0}
+.codex-map .crm-message:empty{display:none}
+.codex-map .crm-editor h2,.codex-map .cm-manager h2{font-size:15px;font-weight:500;margin:12px 0}
+.codex-map .crm-path{font-size:12px;color:#aaa;white-space:pre-wrap;overflow-wrap:anywhere}
+.codex-map .crm-fields{display:flex;gap:12px;flex-wrap:wrap;margin:10px 0}
+.codex-map .crm-fields label{display:flex;flex:1;min-width:160px;gap:6px;flex-direction:column}
+.codex-map .crm-fields input,.codex-map .crm-fields select{width:100%}
+.codex-map .crm-content-label{display:flex;flex-direction:column;gap:8px}
+.codex-map textarea{resize:vertical;min-height:300px;width:100%;background:#1e1e1e;color:#ddd;border:1px solid #555;padding:12px;font:13px/1.7 Consolas,monospace;tab-size:2;box-sizing:border-box}
+.codex-map textarea:focus-visible{outline:2px solid #3794ff;outline-offset:2px}
+.codex-map .crm-hint{font-size:12px;line-height:1.7;color:#aaa}
+.codex-map .crm-diff pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#252526;padding:12px;border:1px solid #444;font:12px/1.7 Consolas,monospace}
+.codex-map button:disabled{opacity:.5;cursor:default}
+.codex-map .crm-preview-path{overflow-wrap:anywhere}
+@media(max-width:760px){body[data-theme="vscode"] .workflow-view{height:calc(100dvh - 71px);min-height:420px}.codex-map .cm-toolbar{padding:12px}.codex-map .cm-tabs{padding-left:12px;padding-right:12px}.codex-map .cm-results{padding:0 12px 24px}.codex-map .cm-tabs button{padding:0 8px}.codex-map .cm-search{flex-basis:100%}}

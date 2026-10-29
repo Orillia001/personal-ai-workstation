@@ -1,0 +1,54 @@
+{
+  "run_id": "EDU-MINDMAP-OBSIDIAN-OPEN-20261019-01",
+  "checks": [
+    {
+      "name": "详情标题下提供44px的Obsidian按钮",
+      "pass": true
+    },
+    {
+      "name": "打开期间按钮禁用并防重复请求",
+      "pass": true
+    },
+    {
+      "name": "触控点击发送当前知识点并显示打开反馈",
+      "pass": true
+    },
+    {
+      "name": "点击Obsidian按钮不重置视角或关闭内容",
+      "pass": true
+    },
+    {
+      "name": "打开失败提供中文反馈并允许重试",
+      "pass": true
+    },
+    {
+      "name": "键盘Enter可重试打开",
+      "pass": true
+    },
+    {
+      "name": "切换知识点后按钮对应新笔记",
+      "pass": true
+    },
+    {
+      "name": "窄屏按钮完整显示且没有页面横向溢出",
+      "pass": true
+    },
+    {
+      "name": "通过页面按钮实际请求本机Obsidian打开静强度笔记",
+      "pass": true
+    },
+    {
+      "name": "打开前后笔记内容哈希不变",
+      "pass": true
+    },
+    {
+      "name": "无页面脚本错误",
+      "pass": true
+    }
+  ],
+  "passed": true,
+  "page_errors": [],
+  "real_note_open_requested": true,
+  "note_sha256_before": "10f88524ae7607d9d4f2e47dae3ebd58ecb25846219296df6d18dd9db09fef26",
+  "note_sha256_after": "10f88524ae7607d9d4f2e47dae3ebd58ecb25846219296df6d18dd9db09fef26"
+}

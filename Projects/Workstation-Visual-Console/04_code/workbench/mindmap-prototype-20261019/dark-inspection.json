@@ -1,0 +1,39 @@
+{
+  "pageErrors": [],
+  "observations": [
+    {
+      "firstLevel": 17,
+      "secondLevel": 9,
+      "searches": 1,
+      "location": "机械设计",
+      "background": "rgb(23, 26, 32)"
+    },
+    {
+      "collapsedModules": 17,
+      "collapsedKnowledge": 0
+    },
+    {
+      "expanded": 9,
+      "path": "机械设计/强度与疲劳基础"
+    },
+    {
+      "knowledgePath": "机械设计/强度与疲劳基础/静强度",
+      "detail": "静强度"
+    },
+    {
+      "temporaryStatus": "learned"
+    },
+    {
+      "searched": "强度",
+      "path": "机械设计/设计总论与工程表达/强度"
+    },
+    {
+      "mobileOverflow": 0,
+      "mobileModules": 17
+    },
+    {
+      "afterReloadPath": "机械设计"
+    }
+  ],
+  "inspected": true
+}

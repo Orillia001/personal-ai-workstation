@@ -1,0 +1,634 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>工作台 · Personal AI Workstation</title>
+  <style>
+:root{font-family:Inter,"Segoe UI","Microsoft YaHei",sans-serif;color:#18231f;background:#f4f6f2;font-synthesis:none;text-rendering:optimizeLegibility;--ink:#18231f;--muted:#748079;--line:#e5e9e3;--green:#285d49;--mint:#e5f1e9;--paper:#fff;--amber:#9a6822;--amber-bg:#fbf1df;--shadow:0 10px 28px #20372a0a}
+*{box-sizing:border-box}
+body{margin:0;min-width:320px}
+button,input{font:inherit}
+button{cursor:pointer}
+a{color:inherit;text-decoration:none}
+.shell{display:grid;grid-template-columns:238px minmax(0,1fr);min-height:100vh}
+.sidebar{background:#fff;border-right:1px solid var(--line);padding:26px 18px;display:flex;flex-direction:column;gap:34px}
+.brand{display:flex;align-items:center;gap:11px;padding:0 8px}
+.brand-mark{width:34px;height:34px;border-radius:11px;background:var(--green);display:grid;place-items:center;color:#fff;font-weight:750}
+.brand strong{display:block;font-size:14px;letter-spacing:.01em}
+.brand small{display:block;color:var(--muted);font-size:11px;margin-top:2px}
+.nav-label{padding:0 10px;color:#9aa39d;text-transform:uppercase;font-size:10px;letter-spacing:.12em;margin-bottom:8px}
+.nav{display:grid;gap:4px}
+.nav button{border:0;background:transparent;color:#67736c;padding:11px 12px;border-radius:10px;text-align:left;font-size:13px;display:flex;gap:11px;align-items:center}
+.nav button:hover,.nav button.active{background:#edf4ef;color:var(--green)}
+.nav .ico{width:18px;text-align:center;font-size:15px}
+.side-note{margin-top:auto;background:#f5f7f4;border:1px solid var(--line);padding:14px;border-radius:12px;color:var(--muted);font-size:11px;line-height:1.6}
+.side-note b{display:block;color:var(--ink);font-size:12px;margin-bottom:4px}
+.main{padding:30px clamp(20px,4vw,56px) 42px;max-width:1500px;width:100%;margin:auto}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:30px}
+.crumb{font-size:12px;color:var(--muted)}
+.top-actions{display:flex;align-items:center;gap:10px}
+.snapshot{font-size:11px;color:var(--muted);padding-right:8px}
+.button{border:1px solid var(--line);background:#fff;padding:9px 13px;border-radius:9px;font-size:12px;color:var(--ink);display:inline-flex;align-items:center;gap:8px}
+.button:hover{border-color:#b8c9be}
+.button.primary{background:var(--green);border-color:var(--green);color:#fff}
+.page{display:none}
+.page.active{display:block}
+.eyebrow{color:var(--green);font-size:11px;letter-spacing:.11em;text-transform:uppercase;font-weight:700}
+.hero{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:24px}
+.hero h1{font-size:clamp(27px,3vw,38px);letter-spacing:-.04em;margin:7px 0 6px;font-weight:650}
+.hero p{color:var(--muted);font-size:13px;margin:0}
+.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin-bottom:22px}
+.metric,.panel,.project-card,.quick-card{background:var(--paper);border:1px solid var(--line);border-radius:13px;box-shadow:var(--shadow)}
+.metric{padding:17px 18px}
+.metric-head{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:11px}
+.metric-icon{width:28px;height:28px;background:#f2f5f1;border-radius:8px;display:grid;place-items:center;color:var(--green)}
+.metric strong{display:block;font-size:27px;letter-spacing:-.04em;margin-top:12px;font-weight:650}
+.metric small{font-size:10px;color:var(--muted)}
+.layout{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(250px,.85fr);gap:16px}
+.panel{padding:20px}
+.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
+.panel h2{font-size:14px;margin:0;font-weight:650}
+.panel-head span{font-size:11px;color:var(--muted)}
+.project-list{display:grid;gap:8px}
+.project-row{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:12px;align-items:center;border:1px solid #edf0ec;border-radius:10px;padding:11px 12px}
+.project-dot{width:32px;height:32px;border-radius:10px;background:var(--mint);color:var(--green);display:grid;place-items:center;font-weight:700;font-size:12px}
+.project-row b{font-size:12px;font-weight:620}
+.project-row small{display:block;color:var(--muted);font-size:10px;margin-top:4px}
+.badge{font-size:10px;padding:5px 8px;border-radius:20px;background:#f0f3ef;color:#66736a;white-space:nowrap}
+.badge.warn{background:var(--amber-bg);color:var(--amber)}
+.aside-stack{display:grid;gap:14px;align-content:start}
+.notice{background:#fbf7ec;border:1px solid #f0e7d2;border-radius:11px;padding:14px}
+.notice strong{font-size:12px;display:block;margin-bottom:5px}
+.notice p{font-size:11px;line-height:1.55;color:#786a50;margin:0}
+.quick-list{display:grid;gap:7px}
+.quick-link{display:flex;justify-content:space-between;align-items:center;border:1px solid #edf0ec;border-radius:9px;padding:10px 11px;font-size:11px}
+.quick-link:hover{border-color:#b8c9be;background:#fafcf9}
+.quick-link span:last-child{color:var(--muted)}
+.safe-note{font-size:10px;color:var(--muted);line-height:1.6;margin:4px 0 0}
+.toolbar{display:flex;justify-content:space-between;gap:12px;margin:18px 0 14px;align-items:center}
+.search{width:min(340px,100%);border:1px solid var(--line);background:#fff;border-radius:9px;padding:10px 12px;font-size:12px;outline:none}
+.search:focus{border-color:#86a692}
+.filters{display:flex;gap:6px}
+.filters button{border:1px solid var(--line);border-radius:20px;background:#fff;color:var(--muted);font-size:10px;padding:7px 10px}
+.filters button.active{background:var(--green);border-color:var(--green);color:#fff}
+.project-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.project-card{padding:17px}
+.card-top{display:flex;justify-content:space-between;align-items:start;gap:10px}
+.card-top h3{font-size:14px;margin:0 0 5px}
+.card-top p{font-size:11px;color:var(--muted);margin:0}
+.card-desc{font-size:11px;color:#59665e;line-height:1.6;margin:15px 0;min-height:34px}
+.card-foot{border-top:1px solid var(--line);padding-top:11px;display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:10px}
+.empty{display:none;padding:28px;text-align:center;color:var(--muted);font-size:12px}
+.commands{display:grid;gap:10px}
+.command{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px;border:1px solid var(--line);border-radius:10px;background:#fff}
+.command div{min-width:0}
+.command b{font-size:12px;display:block}
+.command code{display:block;color:var(--muted);font:11px/1.5 Consolas,monospace;margin-top:6px;overflow-wrap:anywhere}
+.footer{margin-top:26px;border-top:1px solid var(--line);padding-top:13px;color:#8a948d;font-size:10px;display:flex;justify-content:space-between;gap:12px}
+@media(max-width:900px){.shell{grid-template-columns:190px minmax(0,1fr)}
+.metrics{grid-template-columns:repeat(2,1fr)}
+.layout{grid-template-columns:1fr}
+.project-grid{grid-template-columns:1fr}
+}
+@media(max-width:620px){.shell{display:block}
+.sidebar{position:sticky;top:0;z-index:2;padding:11px 14px;border-right:0;border-bottom:1px solid var(--line);display:flex;gap:10px}
+.brand{padding:0}
+.brand-mark{width:30px;height:30px}
+.nav-label,.side-note{display:none}
+.nav{display:flex;overflow:auto}
+.nav button{padding:8px 9px;white-space:nowrap;font-size:11px}
+.nav .ico{display:none}
+.main{padding:20px 15px 30px}
+.topbar{margin-bottom:21px}
+.snapshot{display:none}
+.hero{align-items:start;flex-direction:column}
+.metrics{gap:8px}
+.metric{padding:13px}
+.metric strong{font-size:23px}
+.toolbar{align-items:stretch;flex-direction:column}
+.filters{overflow:auto}
+.footer{display:block}
+.footer span{display:block;margin-top:4px}
+}
+
+  </style>
+  <style>
+button.quick-link{width:100%;text-align:left;background:#fff;border:1px solid #edf0ec;cursor:pointer}
+.button:disabled{opacity:.5;cursor:not-allowed}
+.field,select,textarea{width:100%;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink);padding:10px 11px;font:inherit;font-size:12px}
+.field-label{display:block;font-size:11px;color:var(--muted);margin:12px 0 6px}
+.form-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.form-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px}
+.textarea{min-height:110px;resize:vertical;line-height:1.55}
+.output{white-space:pre-wrap;overflow-wrap:anywhere;max-height:430px;overflow:auto;background:#17221c;color:#e2eee6;border-radius:10px;padding:14px;font:11px/1.6 Consolas,monospace;margin:12px 0 0}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:9px;margin-top:12px}
+.activity-scroll{max-height:340px}
+.table-wrap table{border-collapse:collapse;width:100%;font-size:10px;min-width:620px}
+.table-wrap th,.table-wrap td{text-align:left;padding:9px;border-bottom:1px solid var(--line);vertical-align:top;overflow-wrap:anywhere}
+.table-wrap th{background:#f7f9f6;color:var(--muted);font-weight:600}
+.card-actions{display:flex;gap:6px;flex-wrap:wrap}
+.card-top h3,.card-top p,.project-row small{overflow-wrap:anywhere}
+.status-line{min-height:20px;color:var(--green);font-size:11px;margin-top:10px}
+body.compact .main{padding-top:18px}
+body.compact .panel,body.compact .project-card{padding:14px}
+body.compact .hero{margin-bottom:14px}
+body.compact .metrics{margin-bottom:14px}
+body.touch-first .button,body.touch-first .nav button,body.touch-first .field,body.touch-first select{min-height:44px;font-size:max(14px,1em)}
+@media(max-width:900px){.form-row{grid-template-columns:1fr}
+}
+
+  </style>
+  <style>
+@media (any-pointer: coarse){button,.button,.quick-link,input,select,textarea{
+        min-width: 44px;
+        min-height: 44px;
+      }
+button,.button,.quick-link,.nav button,.filters button{
+        touch-action: manipulation;
+      }
+.button{
+        min-height: 48px;
+        padding: 12px 16px;
+        font-size: 14px;
+      }
+.nav button,.filters button{
+        min-height: 48px;
+        padding: 10px 14px;
+        font-size: 14px;
+      }
+.nav button{ min-width: 48px; }
+.quick-link{
+        min-height: 52px;
+        padding: 12px 14px;
+        font-size: 14px;
+      }
+.field,select,textarea,.search{
+        min-height: 48px;
+        padding: 12px 14px;
+        font-size: 16px;
+      }
+.textarea{ min-height: 150px; }
+.field-label{ font-size: 13px; }
+.form-actions,.card-actions{ gap: 10px; }
+.project-row{ min-height: 64px; }
+.project-row b,.card-top h3{ font-size: 15px; }
+.project-row small,.card-top p,.card-desc,.safe-note,.notice p{ font-size: 13px; }
+.brand small,.metric small,.badge,.card-foot,.panel-head span,.footer,.empty{ font-size: 12px; }
+.crumb{ font-size: 14px; }
+.eyebrow{ font-size: 12px; }
+.metric-head{ font-size: 13px; }
+.notice strong{ font-size: 14px; }
+.command code{ font-size: 13px; }
+.panel h2{ font-size: 16px; }
+.status-line{ font-size: 13px; }
+.table-wrap{
+        overflow-x: auto;
+        overscroll-behavior-x: contain;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+      }
+.table-wrap table{ min-width: 720px; font-size: 12px; }
+.table-wrap th,.table-wrap td{ padding: 14px 12px; }
+button:focus-visible,.button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{
+        outline: 3px solid #6f9b7d;
+        outline-offset: 2px;
+      }
+
+    }
+@media (any-pointer: coarse) and (max-width: 1024px){.shell{ display: block; }
+.sidebar{
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        display: grid;
+        grid-template-columns: minmax(170px, 210px) minmax(0, 1fr);
+        align-items: center;
+        gap: 12px;
+        padding: 10px 14px;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+.brand{ min-width: 0; padding: 0; }
+.brand-mark{ width: 36px; height: 36px; }
+.nav-label,.side-note{ display: none; }
+.sidebar > div:nth-child(2){ min-width: 0; }
+.nav{
+        display: flex;
+        gap: 6px;
+        overflow-x: auto;
+        overscroll-behavior-x: contain;
+        scroll-snap-type: x proximity;
+        scrollbar-width: thin;
+        -webkit-overflow-scrolling: touch;
+      }
+.nav button{ flex: 0 0 auto; scroll-snap-align: start; white-space: nowrap; }
+.nav .ico{ display: inline-block; }
+.main{ padding: 22px clamp(16px, 3vw, 36px) 40px; }
+.topbar{ flex-wrap: wrap; }
+.top-actions{ flex-wrap: wrap; }
+
+    }
+@media (any-pointer: coarse) and (max-width: 620px){.sidebar{
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        padding: 10px 14px;
+      }
+.nav{ gap: 4px; }
+.nav .ico{ display: none; }
+.main{ padding: 18px 14px 32px; }
+.topbar{ gap: 10px; margin-bottom: 18px; }
+.top-actions{ justify-content: flex-start; }
+.snapshot{ display: none; }
+.toolbar{ gap: 10px; }
+.filters{ gap: 8px; }
+.command{ align-items: flex-start; }
+
+    }
+@media (any-pointer: coarse) and (max-height: 600px){.sidebar{ position: static; }
+
+    }
+
+  </style>
+  <style>
+body.theme-mono{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;--ink:#1d1d1f;--muted:#6e6e73;--line:#dedee0;--green:#29292c;--mint:#f0f0f2;--paper:#fff;--shadow:0 8px 22px #0000000a;background:#fff;color:var(--ink)}
+body.theme-mono .sidebar{background:#e9e9eb}
+body.theme-mono .main{background:#fff}
+body.theme-mono .field,body.theme-mono select,body.theme-mono textarea,body.theme-mono .search,body.theme-mono .button{border-color:#a8a8ab;border-radius:4px}
+body.theme-mono .brand-mark{background:#1d1d1f;border-radius:10px}
+body.theme-mono .nav button:hover,body.theme-mono .nav button.active{background:#ededf0;color:var(--ink)}
+body.theme-mono .metric,body.theme-mono .panel,body.theme-mono .project-card,body.theme-mono .quick-card{border-radius:6px}
+body.theme-mono .metric-icon,body.theme-mono .project-dot{background:#f1f1f3;color:#343438}
+body.theme-mono .side-note,body.theme-mono .table-wrap th{background:#f6f6f8;color:var(--muted)}
+body.theme-mono .notice{background:#f4f4f6;border-color:var(--line)}
+body.theme-mono .notice p{color:var(--muted)}
+body.theme-mono .quick-link:hover{background:#f7f7f9}
+body.theme-mono .filters button.active{background:#29292c;border-color:#29292c;color:#fff}
+body.theme-mono-dark{color-scheme:dark;--ink:#f5f5f7;--muted:#a1a1a6;--line:#39393c;--green:#f5f5f7;--mint:#303033;--paper:#1c1c1e;--amber:#e5c58d;--amber-bg:#36332e;--shadow:0 10px 30px #00000030;background:#0b0b0d;color:var(--ink)}
+body.theme-mono-dark .sidebar,body.theme-mono-dark .panel,body.theme-mono-dark .metric,body.theme-mono-dark .project-card,body.theme-mono-dark .quick-card{background:#1c1c1e}
+body.theme-mono-dark .main{background:#0b0b0d}
+body.theme-mono-dark .brand-mark{background:#f5f5f7;color:#111114}
+body.theme-mono-dark .nav button{color:#b9b9bd}
+body.theme-mono-dark .nav button:hover,body.theme-mono-dark .nav button.active{background:#303033;color:#fff}
+body.theme-mono-dark .button,body.theme-mono-dark .field,body.theme-mono-dark select,body.theme-mono-dark textarea,body.theme-mono-dark .search,body.theme-mono-dark .filters button,body.theme-mono-dark .quick-link,body.theme-mono-dark .command{background:#262628;border-color:var(--line);color:var(--ink)}
+body.theme-mono-dark .button.primary,body.theme-mono-dark .filters button.active{background:#f5f5f7;border-color:#f5f5f7;color:#111114}
+body.theme-mono-dark .side-note,body.theme-mono-dark .table-wrap th,body.theme-mono-dark .metric-icon,body.theme-mono-dark .project-dot{background:#29292b;color:#b9b9bd}
+body.theme-mono-dark .notice{background:#272729;border-color:var(--line)}
+body.theme-mono-dark .notice p,body.theme-mono-dark .card-desc{color:#b0b0b4}
+body.theme-mono-dark .project-row,body.theme-mono-dark .quick-link{border-color:var(--line)}
+body.theme-mono-dark .quick-link:hover{background:#303033}
+body.theme-mono-dark .badge{background:#303033;color:#c9c9cd}
+body.theme-mono-dark .output{background:#111113;color:#e7e7e9;border:1px solid var(--line)}
+
+  </style>
+  <style>
+.activity-bar,.sidebar-explorer,.editor-tabs,.workbench-statusbar{display:none}
+body.theme-vscode{color-scheme:dark;--ink:#d4d4d4;--muted:#a6a6a6;--line:#3c3c3c;--green:#3794ff;--mint:#333337;--paper:#252526;--amber:#d7ba7d;--amber-bg:#3d3529;--shadow:none;background:#1e1e1e;color:var(--ink);font-family:"Segoe UI","Microsoft YaHei",sans-serif}
+body.theme-vscode .shell{grid-template-columns:48px 230px minmax(0,1fr)}
+body.theme-vscode .activity-bar{display:flex;position:sticky;top:0;height:100vh;flex-direction:column;align-items:center;gap:6px;padding:10px 0 25px;background:#333;border-right:1px solid #252526}
+body.theme-vscode .activity-bar button{width:46px;height:46px;border:0;border-left:2px solid transparent;background:transparent;color:#aaa;font-size:21px;cursor:pointer}
+body.theme-vscode .activity-bar button:hover,body.theme-vscode .activity-bar button.active{color:#fff;border-left-color:#fff}
+body.theme-vscode .activity-bar .activity-bottom{margin-top:auto}
+body.theme-vscode .sidebar{position:sticky;top:0;height:100vh;overflow-y:auto;background:#252526;border-color:var(--line);padding:18px 10px 30px;gap:20px}
+body.theme-vscode .brand{padding:0 8px}
+body.theme-vscode .brand-mark{background:#007acc;color:#fff;border-radius:3px}
+body.theme-vscode .brand strong{color:#eee;font-size:12px}
+body.theme-vscode .nav-label{color:#bbb;letter-spacing:.08em}
+body.theme-vscode .nav{gap:2px}
+body.theme-vscode .nav button{border-radius:2px;color:#ccc;padding:8px 10px;font-size:12px}
+body.theme-vscode .nav button:hover,body.theme-vscode .nav button.active{background:#37373d;color:#fff}
+body.theme-vscode .nav .ico{color:#a5a5a5}
+body.theme-vscode .sidebar-explorer{display:block;border-top:1px solid var(--line);padding-top:14px}
+body.theme-vscode .sidebar-projects{display:grid;gap:1px;max-height:40vh;overflow:auto}
+body.theme-vscode .sidebar-projects button{width:100%;border:0;background:transparent;color:#ccc;text-align:left;padding:6px 7px 6px 18px;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
+body.theme-vscode .sidebar-projects button:hover{background:#2a2d2e;color:#fff}
+body.theme-vscode .side-note{background:#2d2d30;border-color:#454545;border-radius:2px;color:#bbb}
+body.theme-vscode .side-note b{color:#eee}
+body.theme-vscode .main{max-width:none;margin:0;width:100%;padding:0 26px 56px;background:#1e1e1e}
+body.theme-vscode .topbar{min-height:38px;margin:0 -26px;padding:0 17px;background:#181818;border-bottom:1px solid var(--line)}
+body.theme-vscode .top-actions{gap:5px}
+body.theme-vscode .snapshot{font-size:10px}
+body.theme-vscode .editor-tabs{display:flex;height:36px;margin:0 -26px 24px;background:#252526;border-bottom:1px solid #181818;align-items:stretch}
+body.theme-vscode .editor-tab{display:flex;align-items:center;gap:7px;min-width:130px;padding:0 16px;background:#1e1e1e;border-top:1px solid #3794ff;border-right:1px solid #333;color:#eee;font-size:11px}
+body.theme-vscode .editor-tab:before{content:"▦";color:#3794ff}
+body.theme-vscode .button,body.theme-vscode .field,body.theme-vscode select,body.theme-vscode textarea,body.theme-vscode .search,body.theme-vscode .filters button,body.theme-vscode .quick-link,body.theme-vscode .command{background:#3c3c3c;border:1px solid #555;border-radius:2px;color:#eee}
+body.theme-vscode .button:hover,body.theme-vscode .quick-link:hover{background:#4a4a4a;border-color:#666}
+body.theme-vscode .button.primary,body.theme-vscode .filters button.active{background:#0e639c;border-color:#0e639c;color:#fff}
+body.theme-vscode input::placeholder,body.theme-vscode textarea::placeholder{color:#a6a6a6}
+body.theme-vscode .metric,body.theme-vscode .panel,body.theme-vscode .project-card,body.theme-vscode .quick-card{background:#252526;border-color:#3c3c3c;border-radius:3px;box-shadow:none}
+body.theme-vscode .project-row,body.theme-vscode .quick-link{border-color:#454545;border-radius:2px}
+body.theme-vscode .metric-icon,body.theme-vscode .project-dot,body.theme-vscode .badge{background:#37373d;color:#ccc;border-radius:2px}
+body.theme-vscode .badge.warn{background:#4a3b2c;color:#e0c28d}
+body.theme-vscode .notice{background:#2d2d30;border-color:#454545;border-radius:2px}
+body.theme-vscode .notice p,body.theme-vscode .card-desc{color:#bbb}
+body.theme-vscode .table-wrap th{background:#2d2d30;border-color:#454545;color:#ccc}
+body.theme-vscode .table-wrap{border-color:#454545;border-radius:2px}
+body.theme-vscode .output{background:#181818;color:#d4d4d4;border:1px solid #454545;border-radius:2px}
+body.theme-vscode .eyebrow{color:#9cdcfe}
+body.theme-vscode .hero h1{font-weight:500;letter-spacing:-.02em}
+body.theme-vscode .footer{border-color:#454545;color:#aaa}
+body.theme-vscode .workbench-statusbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:20;height:24px;align-items:center;gap:22px;padding:0 11px;background:#007acc;color:#fff;font-size:10px}
+body.theme-vscode .workbench-statusbar span:last-child{margin-left:auto}
+body.theme-vscode button:focus-visible,body.theme-vscode input:focus-visible,body.theme-vscode select:focus-visible,body.theme-vscode textarea:focus-visible{outline:2px solid #007fd4;outline-offset:2px}
+@media(max-width:1120px){body.theme-vscode .shell{grid-template-columns:48px 200px minmax(0,1fr)}
+body.theme-vscode .main{padding:0 16px 50px}
+body.theme-vscode .topbar,body.theme-vscode .editor-tabs{margin-left:-16px;margin-right:-16px}
+}
+@media(max-width:950px){body.theme-vscode .shell{grid-template-columns:48px 190px minmax(0,1fr)}
+}
+@media(max-width:700px),(any-pointer:coarse) and (max-width:1024px){body.theme-vscode .shell{display:block}
+body.theme-vscode .activity-bar{position:sticky;top:0;z-index:30;width:100%;height:48px;flex-direction:row;justify-content:space-around;padding:0 5px}
+body.theme-vscode .activity-bar button{width:44px;height:44px;border-left:0;border-bottom:2px solid transparent}
+body.theme-vscode .activity-bar button.active{border-bottom-color:#fff}
+body.theme-vscode .activity-bar .activity-bottom{margin-top:0}
+body.theme-vscode .sidebar{position:static;height:auto;max-height:240px;display:block;border-right:0;border-bottom:1px solid var(--line);padding:12px}
+body.theme-vscode .brand,body.theme-vscode .side-note{display:none}
+body.theme-vscode .sidebar-explorer{margin-top:12px}
+body.theme-vscode .sidebar-projects{max-height:110px}
+body.theme-vscode .main{padding:0 16px 48px}
+body.theme-vscode .topbar,body.theme-vscode .editor-tabs{margin-left:-16px;margin-right:-16px}
+}
+
+  </style>
+</head>
+<body>
+<div class="shell">
+  <nav class="activity-bar" aria-label="工作区活动栏">
+    <button class="active" data-page="overview" title="总览" aria-label="总览">⌂</button>
+    <button data-page="projects" title="项目" aria-label="项目">▦</button>
+    
+    <button data-page="operations" title="项目操作" aria-label="项目操作">▤</button>
+    <button data-page="codex" title="Codex / API" aria-label="Codex / API">⌘</button>
+    <button class="activity-bottom" data-page="settings" title="设置" aria-label="设置">⚙</button>
+  </nav>
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-mark">W</div><div><strong>Personal Workstation</strong><small>个人工作站</small></div></div>
+    <div><div class="nav-label">工作区</div><nav class="nav" aria-label="主导航">
+      <button class="active" data-page="overview"><span class="ico">⌂</span>总览</button>
+      <button data-page="projects"><span class="ico">▦</span>项目</button>
+      <button data-page="apps"><span class="ico">◈</span>软件入口</button>
+      <button data-page="intake"><span class="ico">⇩</span>文件接入</button>
+      
+      <button data-page="operations"><span class="ico">▤</span>项目操作</button>
+      <button data-page="codex"><span class="ico">⌘</span>Codex / API</button>
+      <button data-page="settings"><span class="ico">⚙</span>设置</button>
+      <button data-page="start"><span class="ico">↗</span>快速开始</button>
+    </nav></div>
+    <section class="sidebar-explorer" aria-label="项目资源管理器"><div class="nav-label">资源管理器 · 项目</div><div id="sidebar-projects" class="sidebar-projects"><span class="safe-note">正在读取项目…</span></div></section>
+    <div class="side-note"><b>本地优先</b>项目文件是事实来源。工作站工具默认在本机处理，整理文件时保留原件。</div>
+  </aside>
+  <main class="main">
+    <div class="topbar"><div class="crumb">工作区　/　<span id="crumb-name">总览</span></div><div class="top-actions"><span class="snapshot" id="snapshot-time">连接本机工作站…</span><button class="button" id="diagnose-button">服务自检</button><button class="button" id="refresh-button">刷新数据</button></div></div>
+    <div class="editor-tabs" aria-label="当前页面标签"><span id="active-editor-tab" class="editor-tab">总览</span></div>
+
+    <section class="page active" id="page-overview">
+      <div class="hero"><div><div class="eyebrow">Workspace overview</div><h1>你好，欢迎回来。</h1><p>项目、资料和工作站入口都在这里。</p></div><button class="button" data-go="start">查看常用命令　→</button></div>
+      <div class="metrics">
+        <div class="metric"><div class="metric-head">项目总数 <span class="metric-icon">▦</span></div><strong id="metric-projects">—</strong><small>来自工作站状态库</small></div>
+        <div class="metric"><div class="metric-head">可用软件 <span class="metric-icon">⌘</span></div><strong id="metric-apps">—</strong><small>登记并在本机发现</small></div>
+        <div class="metric"><div class="metric-head">待办任务 <span class="metric-icon">□</span></div><strong id="metric-tasks">—</strong><small>尚未完成的任务</small></div>
+        <div class="metric"><div class="metric-head">待审批动作 <span class="metric-icon">✓</span></div><strong id="metric-actions">—</strong><small>需人工批准后执行</small></div>
+      </div>
+      <div class="layout">
+        <section class="panel"><div class="panel-head"><h2>项目</h2><button class="button" data-go="projects">查看全部　→</button></div><div class="project-list" id="recent-projects"><div class="safe-note">正在读取…</div></div></section>
+        <div class="aside-stack">
+          <section class="notice"><strong>需要留意</strong><p>部分项目仓库存在 Git 所有权提示；查看状态时可用单次安全目录参数，不要随意改全局 Git 配置。</p></section>
+          <section class="panel"><div class="panel-head"><h2>常用入口</h2><span>本机操作</span></div><div class="quick-list">
+            <button class="quick-link" data-go="intake"><span>扫描并接入文件</span><span>→</span></button>
+            <button class="quick-link" data-go="codex"><span>Codex CLI 与审批 API</span><span>→</span></button>
+            <button class="quick-link" data-go="apps"><span>本机软件入口</span><span>→</span></button>
+            <button class="quick-link" data-go="start"><span>PowerShell 快速命令</span><span>→</span></button>
+          </div><p class="safe-note">数据来自本机 API；写入操作由单独确认和工作站审批规则保护。</p></section>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="page-projects">
+      <div class="hero"><div><div class="eyebrow">Your projects</div><h1>项目空间</h1><p>按项目查看工作重点。项目文件与状态记录是最终事实来源。</p></div></div>
+      <p class="status-line" id="project-action-status" role="status" aria-live="polite"></p>
+      <section class="panel" style="margin-bottom:14px">
+        <div class="panel-head"><h2>按需读取项目说明</h2><span>只读 10-README.MD 与 12-status.md</span></div>
+        <div class="form-row"><select id="content-project" aria-label="选择要读取的项目"></select><div class="form-actions" style="margin-top:0"><button class="button primary" id="read-project-content">读取项目说明/状态</button><span class="status-line" id="project-content-status" role="status" aria-live="polite"></span></div></div>
+        <pre class="output" id="project-content" aria-live="polite">选择项目后，点击“读取项目说明/状态”。首页不会递归扫描或预读项目文件。</pre>
+      </section>
+      <div class="toolbar"><input class="search" id="project-search" type="search" placeholder="搜索项目名称或路径…" aria-label="搜索项目"><div class="filters" aria-label="筛选项目"><button class="active" data-filter="all">全部</button><button data-filter="managed">有状态记录</button><button data-filter="unmanaged">未登记</button></div></div>
+      <div class="project-grid" id="project-grid"><div class="safe-note">正在读取项目…</div></div><div class="empty" id="empty-state">没有匹配的项目。</div>
+    </section>
+
+    <section class="page" id="page-apps">
+      <div class="hero"><div><div class="eyebrow">Local applications</div><h1>软件入口</h1><p>点击即可启动工作站登记的本机软件；新增入口通过配置扩展。</p></div></div>
+      <div class="project-grid" id="apps-grid"><article class="project-card"><div class="card-desc">正在读取本机软件清单…</div></article></div>
+      <p class="safe-note" id="launch-status" role="status" aria-live="polite"></p>
+      <p class="safe-note">仅启动 Config/launcher.json 中登记、且由 Config/tools.json 发现的 Windows .exe；不会接受任意路径、启动参数或 shell 命令。不可用的软件仍显示为灰色。</p>
+    </section>
+
+    <section class="page" id="page-intake">
+      <div class="hero"><div><div class="eyebrow">File intake</div><h1>文件接入</h1><p>选择目标项目，扫描其 00_inbox，查看哈希计划后确认复制。</p></div></div>
+      <section class="panel">
+        <label class="field-label" for="scan-project">目标项目</label><select id="scan-project"></select>
+        <p class="safe-note">将待接入文件放进所选项目的 00_inbox。扫描只读取并生成计划；复制时保留原文件，不覆盖目标。</p>
+        <div class="form-actions"><button class="button primary" id="scan-button">扫描并生成计划</button><span class="status-line" id="scan-status" role="status" aria-live="polite"></span></div>
+        <div id="scan-preview"></div>
+        <div class="form-actions"><button class="button primary" id="apply-button" disabled>确认复制计划</button><span class="safe-note" id="plan-note"></span></div>
+        <label class="field-label" for="intake-run-id">复制运行 ID</label><input class="field" id="intake-run-id" placeholder="执行复制后自动填入，或粘贴已有运行 ID">
+        <div class="form-actions"><button class="button" id="undo-button">撤销该运行创建的副本</button><span class="status-line" id="undo-status" role="status" aria-live="polite"></span></div>
+      </section>
+    </section>
+
+    
+
+    <section class="page" id="page-operations">
+      <div class="hero"><div><div class="eyebrow">Project operations</div><h1>项目操作</h1><p>在工作台里管理项目、任务、知识库和备份。</p></div></div>
+      <section class="panel">
+        <h2>创建项目</h2>
+        <div class="form-row"><div><label class="field-label" for="new-project-name">项目名称</label><input class="field" id="new-project-name" placeholder="英文、数字、点、下划线或短横线"></div><div><label class="field-label" for="new-project-description">项目说明</label><input class="field" id="new-project-description" placeholder="简要描述项目目标"></div></div>
+        <div class="form-actions"><button class="button" id="create-project-button">创建标准项目</button><span class="status-line" id="create-project-status" role="status" aria-live="polite"></span></div>
+      </section>
+      <section class="panel" style="margin-top:14px">
+        <div class="panel-head"><h2>任务与运行</h2><button class="button" id="refresh-activity">刷新记录</button></div>
+        <div class="form-row"><div><label class="field-label" for="task-project">项目</label><select id="task-project"></select></div><div><label class="field-label" for="task-title">新任务</label><input class="field" id="task-title" placeholder="要完成的具体结果"></div></div>
+        <div class="form-actions"><button class="button primary" id="add-task-button">添加任务</button><span class="status-line" id="task-status" role="status" aria-live="polite"></span></div>
+        <div class="table-wrap activity-scroll"><table><thead><tr><th>时间</th><th>项目</th><th>任务或运行</th><th>状态</th></tr></thead><tbody id="activity-body"><tr><td colspan="4">按需读取记录。</td></tr></tbody></table></div>
+      </section>
+      <section class="panel" style="margin-top:14px">
+        <h2>项目知识库</h2>
+        <label class="field-label" for="knowledge-project">项目</label><select id="knowledge-project"></select>
+        <label class="field-label" for="knowledge-query">检索词</label><input class="field" id="knowledge-query" placeholder="搜索项目文档内容">
+        <div class="form-actions"><button class="button primary" id="knowledge-search-button">搜索</button><button class="button" id="knowledge-index-button">更新索引</button><span class="status-line" id="knowledge-status" role="status" aria-live="polite"></span></div>
+        <div class="table-wrap"><table><thead><tr><th>文件</th><th>相关片段</th></tr></thead><tbody id="knowledge-body"><tr><td colspan="2">搜索后显示结果。</td></tr></tbody></table></div>
+      </section>
+      <section class="panel" style="margin-top:14px">
+        <div class="panel-head"><h2>备份与恢复</h2><button class="button" id="refresh-backups">刷新备份</button></div>
+        <div class="form-row"><div><label class="field-label" for="backup-project">项目</label><select id="backup-project"></select></div><div class="form-actions" style="align-items:end"><button class="button primary" id="backup-create-button">创建备份</button></div></div>
+        <p class="status-line" id="backup-status" role="status" aria-live="polite"></p>
+        <div class="table-wrap"><table><thead><tr><th>备份 ID</th><th>项目</th><th>文件数</th><th>状态</th><th>操作</th></tr></thead><tbody id="backups-body"><tr><td colspan="5">按需读取备份。</td></tr></tbody></table></div>
+        <label class="field-label" for="restore-action-id">已批准的恢复动作 ID</label><input class="field" id="restore-action-id" placeholder="ACT-…；可从审批列表复制">
+        <div class="form-actions"><button class="button" id="restore-run-button">执行已批准恢复</button><span class="safe-note">恢复前会自动备份当前项目，并写回原文件；必须先在 Codex / API 页批准该动作。</span></div>
+      </section>
+      <section class="panel" style="margin-top:14px">
+        <h2>检索 GitHub 现成方案</h2>
+        <label class="field-label" for="reuse-query">功能关键词</label><input class="field" id="reuse-query" placeholder="例如 python pdf table extraction">
+        <div class="form-actions"><button class="button" id="reuse-button">检索并记录评审</button><span class="status-line" id="reuse-status" role="status" aria-live="polite"></span></div>
+        <div class="table-wrap"><table><thead><tr><th>仓库</th><th>评分</th><th>许可证</th><th>风险</th></tr></thead><tbody id="reuse-body"><tr><td colspan="4">检索后显示候选。</td></tr></tbody></table></div>
+      </section>
+      <section class="panel" style="margin-top:14px">
+        <h2>LaTeX 文档</h2>
+        <label class="field-label" for="latex-document">已发现的文档</label><select id="latex-document"></select>
+        <div class="form-actions"><button class="button primary" id="latex-build-button">构建 PDF</button><button class="button" id="latex-clean-button">清理构建辅助文件</button><span class="status-line" id="latex-status" role="status" aria-live="polite"></span></div>
+        <pre class="output" id="latex-output" aria-live="polite">选择文档后构建；结果保存在文档的 dist 目录。</pre>
+      </section>
+    </section>
+
+    <section class="page" id="page-settings">
+      <div class="hero"><div><div class="eyebrow">Settings</div><h1>设置</h1><p>管理工作台显示和工作站偏好。</p></div></div>
+      <section class="panel">
+        <h2>工作台</h2>
+        <div class="form-row"><div><label class="field-label" for="default-project">默认项目</label><select id="default-project"></select></div><div><label class="field-label" for="display-density">显示密度</label><select id="display-density"><option value="comfortable">舒适</option><option value="compact">紧凑</option></select></div></div>
+        <p class="safe-note">默认项目和显示密度只保存在当前浏览器中。界面统一使用 VS Code 风格。</p>
+        <div class="form-actions"><a class="button" href="/workbench/layout-prototype">试用分割工作台 Demo</a><span class="safe-note">B 布局：左侧项目树，右侧工作流栏。</span></div>
+      </section>
+      <section class="panel" style="margin-top:14px">
+        <div class="panel-head"><h2>工作站偏好</h2><span>保存在本机状态库</span></div>
+        <div class="form-row" id="settings-fields"></div>
+        <div class="form-actions"><button class="button primary" id="save-settings">保存偏好</button><span class="status-line" id="settings-status" role="status" aria-live="polite"></span></div>
+      </section>
+      <section class="panel" style="margin-top:14px">
+        <h2>固定安全规则</h2><p class="safe-note" id="fixed-settings">正在读取…</p>
+        <p class="safe-note">文件接入保留原件；不记录提示词正文。安装、外发、发布和系统配置变更仍需人工确认。</p>
+      </section>
+    </section>
+
+    <section class="page" id="page-codex">
+      <div class="hero"><div><div class="eyebrow">Codex and local APIs</div><h1>Codex CLI 与 API</h1><p>使用固定工作站 API；不提供任意 PowerShell 命令输入框。</p></div></div>
+      <section class="panel">
+        <h2>项目会话与只读分析</h2>
+        <div class="form-row"><div><label class="field-label" for="codex-project">项目</label><select id="codex-project"></select></div><div class="form-actions" style="align-items:end"><button class="button primary" id="cli-button">打开 PowerShell Codex CLI</button></div></div>
+        <label class="field-label" for="codex-request">分析或执行需求</label><textarea class="field textarea" id="codex-request" placeholder="描述要分析或执行的项目工作"></textarea>
+        <div class="form-actions"><button class="button" id="ai-plan-button">Codex 只读分析</button><button class="button" id="action-request-button">创建执行申请</button></div>
+        <p class="safe-note">只读分析会消耗已登录 ChatGPT 套餐中的 Codex 用量，并在调用前再次确认。执行申请先进入待审批状态；批准与执行是独立步骤。</p>
+      </section>
+      <section class="panel" style="margin-top:14px">
+        <div class="panel-head"><h2>连接与项目读取自检</h2><span>只读检查</span></div>
+        <p class="safe-note">检查轻量健康接口和项目概览接口；进一步测量慢接口可在 PowerShell 运行 .\ws.ps1 workbench-diagnose。</p>
+        <button class="button" id="diagnose-again">立即自检</button>
+        <pre class="output" id="diagnostic-output" aria-live="polite">尚未运行自检。</pre>
+      </section>
+      <section class="panel" style="margin-top:14px">
+        <div class="panel-head"><h2>执行审批</h2><span id="action-count">读取中…</span></div>
+        <label class="field-label" for="action-id">动作 ID（ACT-…）</label><input class="field" id="action-id" placeholder="从待审批列表选择或粘贴动作 ID">
+        <div class="form-actions"><button class="button" id="approve-button">批准</button><button class="button" id="deny-button">拒绝</button><button class="button primary" id="run-button">执行已批准动作</button><button class="button" id="refresh-actions">刷新列表</button></div>
+        <div class="table-wrap"><table><thead><tr><th>ID</th><th>项目 / 类型</th><th>风险</th><th>状态</th><th>创建时间</th><th>选择</th></tr></thead><tbody id="actions-body"><tr><td colspan="6">正在读取动作…</td></tr></tbody></table></div>
+        <p class="safe-note">执行已批准动作会调用 Codex CLI 修改所选项目，执行前工作站自动备份；每次批准、拒绝或执行都会再弹出确认框。</p>
+      </section>
+      <section class="panel" style="margin-top:14px">
+        <div class="panel-head"><h2>本地状态、模型、适配器与课程 API</h2><span>只读 GET</span></div>
+        <div class="form-actions"><button class="button" data-api="/api/status">GET /api/status</button><button class="button" data-api="/api/v4/status">GET /api/v4/status</button><button class="button" data-api="/api/education/status">课程状态</button></div>
+        <pre class="output" id="api-output" aria-live="polite">选择一个状态接口查看 JSON 响应。</pre>
+      </section>
+      <p class="status-line" id="codex-status" role="status" aria-live="polite"></p>
+    </section>
+
+    <section class="page" id="page-start">
+      <div class="hero"><div><div class="eyebrow">Quick start</div><h1>快速开始</h1><p>这些命令只展示给你复制；本页面不会在后台执行 PowerShell。</p></div></div>
+      <div class="panel commands">
+        <div class="command"><div><b>查看工作站状态</b><code>.\ws.ps1 state</code></div><button class="button copy" data-copy=".\ws.ps1 state">复制</button></div>
+        <div class="command"><div><b>自检网页服务和项目读取</b><code>.\ws.ps1 workbench-diagnose</code></div><button class="button copy" data-copy=".\ws.ps1 workbench-diagnose">复制</button></div>
+        <div class="command"><div><b>列出项目</b><code>.\ws.ps1 projects</code></div><button class="button copy" data-copy=".\ws.ps1 projects">复制</button></div>
+        <div class="command"><div><b>检查本地工具</b><code>.\ws.ps1 tools</code></div><button class="button copy" data-copy=".\ws.ps1 tools">复制</button></div>
+        <div class="command"><div><b>启动动态控制台</b><code>.\ws.ps1 control</code></div><button class="button copy" data-copy=".\ws.ps1 control">复制</button></div>
+        <div class="command"><div><b>判断任务路线</b><code>.\ws.ps1 route '描述你的任务'</code></div><button class="button copy" data-copy=".\ws.ps1 route '描述你的任务'">复制</button></div>
+        <div class="command"><div><b>打开 PowerShell Codex CLI</b><code>.\Tools\open-codex-session.ps1 -ProjectName "Workstation-Visual-Console"</code></div><button class="button copy" data-copy=".\Tools\open-codex-session.ps1 -ProjectName &quot;Workstation-Visual-Console&quot;">复制</button></div>
+      </div>
+      <p class="safe-note">在 PowerShell 中先切换到 <code>C:\Users\Orillia\workstation</code>。文件扫描只生成计划；复制材料、执行审批动作或对外发布仍需按工作站规则确认。</p>
+    </section>
+    <div class="footer"><span>Personal AI Workstation · 本地优先</span><span>响应式本机工作台 · 状态由工作站 API 实时读取</span></div>
+  </main>
+  
+</div>
+<div class="workbench-statusbar" aria-label="工作台状态"><span>⌁　本地工作区</span><span id="statusbar-page">总览</span><span>UTF-8　·　127.0.0.1</span></div>
+<script>
+  const CONTROL_TOKEN="__TOKEN__";
+  const names={overview:"总览",projects:"项目",apps:"软件入口",intake:"文件接入",operations:"项目操作",codex:"Codex / API",settings:"设置",start:"快速开始"};
+  function showPage(name){document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id===`page-${name}`));document.querySelectorAll("[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===name));const label=names[name]||"总览";document.querySelector("#crumb-name").textContent=label;document.querySelector("#active-editor-tab").textContent=label;document.querySelector("#statusbar-page").textContent=label;}
+  function navigate(name){showPage(name);if(name==="apps")loadApps();if(name==="operations")loadOperations();if(name==="settings")loadSettings()}
+  document.querySelectorAll("[data-page]").forEach(b=>b.addEventListener("click",()=>navigate(b.dataset.page)));
+  document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>navigate(b.dataset.go)));
+  document.querySelectorAll(".copy").forEach(b=>b.addEventListener("click",async()=>{try{await navigator.clipboard.writeText(b.dataset.copy);b.textContent="已复制";setTimeout(()=>b.textContent="复制",1300)}catch{window.prompt("复制这条命令：",b.dataset.copy)}}));
+  const appGrid=document.querySelector("#apps-grid"),launchStatus=document.querySelector("#launch-status");
+  const projectGrid=document.querySelector("#project-grid"),recentProjects=document.querySelector("#recent-projects"),projectSearch=document.querySelector("#project-search");
+  const scanProject=document.querySelector("#scan-project"),codexProject=document.querySelector("#codex-project"),contentProject=document.querySelector("#content-project"),apiOutput=document.querySelector("#api-output");
+  let projects=[],apps=[],actions=[],latexDocuments=[],currentPlanId="",scanSequence=0,projectFilter="all",appsLoaded=false,appsLoading=false,settingsLoaded=false,operationsLoaded=false,operationsLoading=false;
+  const make=(tag,className,text)=>{const node=document.createElement(tag);if(className)node.className=className;if(text!==undefined)node.textContent=text;return node};
+  const button=(label,callback,primary=false)=>{const node=make("button",primary?"button primary":"button",label);node.type="button";node.addEventListener("click",callback);return node};
+  async function api(path,payload,timeoutMs=0){const options={cache:"no-store"},controller=timeoutMs?new AbortController():null;if(controller)options.signal=controller.signal;if(payload!==undefined){options.method="POST";options.headers={"Content-Type":"application/json","X-Workstation-Token":CONTROL_TOKEN};options.body=JSON.stringify(payload)}const timer=controller?setTimeout(()=>controller.abort(),timeoutMs):null;try{const response=await fetch(path,options);let result;try{result=await response.json()}catch{throw new Error("工作站 API 返回了无法读取的响应")}if(!response.ok)throw new Error(result.error||`请求失败（${response.status}）`);return result}catch(error){if(controller?.signal.aborted)throw new Error(`${path} 超过 ${timeoutMs} ms 未响应`);throw error}finally{if(timer)clearTimeout(timer)}}
+  function report(node,message,error=false){node.textContent=message||"";node.style.color=error?"#9a3e32":""}
+  function setOptions(select,items,selected){const old=select.value;select.replaceChildren();for(const item of items){const option=make("option","",item.name);option.value=item.name;select.append(option)}if(items.some(x=>x.name===old))select.value=old;else if(items.some(x=>x.name===selected))select.value=selected}
+  function renderProjectCard(project){const card=make("article","project-card");card.dataset.status=project.status||"unmanaged";const top=make("div","card-top"),title=make("div"),heading=make("h3","",project.name),path=make("p","",project.path||"");title.append(heading,path);const badge=make("span",`badge${project.status==="managed"?"":" warn"}`,project.status==="managed"?"已登记状态":"未登记状态");top.append(title,badge);const desc=make("div","card-desc",project.updated_at?`最近更新：${project.updated_at}`:"工作站项目目录");const foot=make("div","card-foot"),actionsBox=make("div","card-actions");actionsBox.append(button("打开目录",()=>openProject(project.name,"folder")));const statusButton=button("打开状态",()=>openProject(project.name,"status"));statusButton.disabled=project.status!=="managed";const cliButton=button("启动 Codex CLI",()=>startCli(project.name),true);cliButton.disabled=project.status!=="managed";actionsBox.append(statusButton,cliButton);foot.append(make("span","","本机项目"),actionsBox);card.append(top,desc,foot);return card}
+  function renderProjects(){projectGrid.replaceChildren();const query=(projectSearch.value||"").trim().toLowerCase();let visible=0;for(const project of projects){const matches=(projectFilter==="all"||project.status===projectFilter)&&`${project.name} ${project.path}`.toLowerCase().includes(query);if(!matches)continue;projectGrid.append(renderProjectCard(project));visible++}document.querySelector("#empty-state").style.display=visible?"none":"block";document.querySelectorAll("[data-filter]").forEach(b=>b.textContent=b.dataset.filter==="all"?`全部 ${projects.length}`:b.dataset.filter==="managed"?`有状态记录 ${projects.filter(p=>p.status==="managed").length}`:`未登记 ${projects.filter(p=>p.status!=="managed").length}`);const recent=projects.slice(0,5);recentProjects.replaceChildren();for(const project of recent){const row=make("div","project-row"),dot=make("span","project-dot",(project.name||"?").slice(0,1)),body=make("div"),name=make("b","",project.name),path=make("small","",project.path||"");body.append(name,path);row.append(dot,body,make("span",`badge${project.status==="managed"?"":" warn"}`,project.status==="managed"?"已登记":"待完善"));recentProjects.append(row)}if(!recent.length)recentProjects.append(make("div","safe-note","当前没有项目"));const preferred=localStorage.getItem("workbench.defaultProject");setOptions(scanProject,projects,preferred);setOptions(codexProject,projects,preferred)}
+  projectSearch.addEventListener("input",renderProjects);document.querySelectorAll("[data-filter]").forEach(b=>b.addEventListener("click",()=>{projectFilter=b.dataset.filter;document.querySelectorAll("[data-filter]").forEach(x=>x.classList.toggle("active",x===b));renderProjects()}));
+  function renderApps(list){appGrid.replaceChildren();for(const app of list){const card=document.createElement("article");card.className="project-card";const top=document.createElement("div");top.className="card-top";const title=document.createElement("div");const heading=document.createElement("h3");heading.textContent=app.name;const category=document.createElement("p");category.textContent=app.category;title.append(heading,category);const badge=document.createElement("span");badge.className=`badge${app.available?"":" warn"}`;badge.textContent=app.available?"可用":"未发现";top.append(title,badge);const desc=document.createElement("div");desc.className="card-desc";desc.textContent=app.description;const foot=document.createElement("div");foot.className="card-foot";const state=document.createElement("span");state.textContent=app.available?"本机已登记":"安装后可用";const launchButton=document.createElement("button");launchButton.className=app.available?"button primary":"button";launchButton.textContent="打开";launchButton.disabled=!app.available;if(app.available)launchButton.addEventListener("click",()=>launchApp(app,launchButton));foot.append(state,launchButton);card.append(top,desc,foot);appGrid.append(card)}document.querySelector("#metric-apps").textContent=String(list.filter(a=>a.available).length)}
+  async function loadApps(force=false){if(appsLoading||appsLoaded&&!force)return;appsLoading=true;report(launchStatus,"正在读取登记软件…");try{apps=await api("/api/launcher/apps",undefined,12000);appsLoaded=true;renderApps(apps);report(launchStatus,`已读取 ${apps.length} 个软件入口。`)}catch(error){appGrid.replaceChildren(make("article","project-card",error.message));report(launchStatus,error.message,true)}finally{appsLoading=false}}
+  async function launchApp(app,launchButton){launchButton.disabled=true;report(launchStatus,`正在打开 ${app.name}…`);try{const result=await api("/api/launcher/launch",{id:app.id});report(launchStatus,`已请求打开 ${result.name}。`)}catch(error){report(launchStatus,error.message,true)}finally{launchButton.disabled=false}}
+  async function openProject(project,item){try{const result=await api("/api/projects/open",{project,item});const message=`已打开项目 ${result.project}。`;report(document.querySelector("#project-action-status"),message);report(document.querySelector("#codex-status"),message)}catch(error){report(document.querySelector("#project-action-status"),error.message,true);report(document.querySelector("#codex-status"),error.message,true)}}
+  async function startCli(project){if(!window.confirm(`将在新 PowerShell 窗口中为“${project}”启动 Codex CLI 会话。继续？`))return;try{await api("/api/codex/session",{project});const message=`已为 ${project} 打开 PowerShell Codex CLI。`;report(document.querySelector("#project-action-status"),message);report(document.querySelector("#codex-status"),message)}catch(error){report(document.querySelector("#project-action-status"),error.message,true);report(document.querySelector("#codex-status"),error.message,true)}}
+  function renderActions(){const body=document.querySelector("#actions-body");body.replaceChildren();const pending=actions.filter(a=>a.status==="pending").length;document.querySelector("#action-count").textContent=`${actions.length} 条记录 · ${pending} 条待审批`;document.querySelector("#metric-actions").textContent=String(pending);if(!actions.length){const row=make("tr"),cell=make("td","","暂无动作申请");cell.colSpan=6;row.append(cell);body.append(row);return}for(const action of actions){const row=make("tr");for(const value of [action.id,`${action.project||"—"} / ${action.kind}`,action.risk,action.status,action.created_at])row.append(make("td","",String(value||"—")));const cell=make("td"),select=button("选中",()=>{document.querySelector("#action-id").value=action.id});cell.append(select);row.append(cell);body.append(row)}}
+  function renderSidebarProjects(){const list=document.querySelector("#sidebar-projects");list.replaceChildren();for(const project of projects){const item=make("button","",`▸  ${project.name}`);item.type="button";item.title=project.name;item.addEventListener("click",()=>{projectSearch.value=project.name;renderProjects();navigate("projects")});list.append(item)}if(!projects.length)list.append(make("span","safe-note","当前没有项目"))}
+  function renderOverview(data){projects=data.projects||[];actions=data.actions||[];renderProjects();renderSidebarProjects();const preferred=localStorage.getItem("workbench.defaultProject");for(const select of [contentProject,document.querySelector("#default-project"),document.querySelector("#task-project"),document.querySelector("#knowledge-project"),document.querySelector("#backup-project")])setOptions(select,projects,preferred);renderActions();document.querySelector("#metric-projects").textContent=String(projects.length);document.querySelector("#metric-tasks").textContent=String(data.task_count||0)}
+  async function refreshWorkbench(){const statusNode=document.querySelector("#snapshot-time");statusNode.textContent="正在读取项目…";try{const overview=await api("/api/workbench/overview",undefined,3500);renderOverview(overview);statusNode.textContent=`项目读取正常 · ${projects.length} 个项目 · ${new Date().toLocaleTimeString()}`;if(document.querySelector("#page-apps").classList.contains("active"))loadApps(true)}catch(error){statusNode.textContent=`项目读取失败：${error.message} · 可点“服务自检”`}}
+  async function runSelfCheck(){const output=document.querySelector("#diagnostic-output"),statusNode=document.querySelector("#snapshot-time"),lines=["本机工作台连接自检"],started=performance.now();for(const [route,label] of [["/api/health","服务健康接口"],["/api/workbench/overview","项目概览接口"]]){const tick=performance.now();try{const result=await api(route,undefined,route==="/api/health"?1500:3000);const elapsed=Math.round(performance.now()-tick);if(route==="/api/health"&&!result.ok)throw new Error("服务未报告健康状态");if(route==="/api/workbench/overview"){renderOverview(result);lines.push(`✓ ${label}：${result.projects.length} 个项目，${elapsed} ms`)}else lines.push(`✓ ${label}：${elapsed} ms`)}catch(error){lines.push(`✗ ${label}：${error.message}`);lines.push("请运行 .\\ws.ps1 workbench-diagnose 检查服务、端口和接口。");break}}const total=Math.round(performance.now()-started);lines.push(`检查耗时：${total} ms`);output.textContent=lines.join("\n");statusNode.textContent=lines.some(line=>line.startsWith("✗"))?"自检发现连接问题":"自检通过"}
+  document.querySelector("#diagnose-button").addEventListener("click",()=>{showPage("codex");runSelfCheck()});document.querySelector("#diagnose-again").addEventListener("click",runSelfCheck);
+  document.querySelector("#read-project-content").addEventListener("click",async()=>{const project=contentProject.value,output=document.querySelector("#project-content"),statusNode=document.querySelector("#project-content-status");if(!project){report(statusNode,"当前没有可读取的项目。",true);return}report(statusNode,"正在读取项目说明和状态…");try{const result=await api("/api/projects/content",{project},5000);if(!result.documents.length){output.textContent="该项目没有 10-README.MD 或 12-status.md。";report(statusNode,"未找到项目说明或状态文档。");return}output.textContent=result.documents.map(doc=>`===== ${doc.name} =====\n${doc.content}${doc.truncated?"\n[内容达到 128 KiB 预览上限]":""}`).join("\n\n");report(statusNode,`已读取 ${result.documents.length} 个项目文档。`)}catch(error){report(statusNode,error.message,true);output.textContent=error.message}});
+  async function scanFolder(){const statusNode=document.querySelector("#scan-status"),preview=document.querySelector("#scan-preview"),applyButton=document.querySelector("#apply-button"),project=scanProject.value,sequence=++scanSequence;currentPlanId="";applyButton.disabled=true;preview.replaceChildren();if(!project){report(statusNode,"请先选择目标项目。",true);return}report(statusNode,`正在扫描 ${project}/00_inbox 并生成哈希计划…`);try{const plan=await api("/api/workbench/intake/scan",{project});if(sequence!==scanSequence||scanProject.value!==project)return;currentPlanId=plan.id;document.querySelector("#plan-note").textContent=`计划 ID：${plan.id} · ${(plan.entries||[]).length} 个文件 · 原件未改动`;const wrap=make("div","table-wrap"),table=make("table"),head=make("thead"),headRow=make("tr");for(const title of ["来源文件","目标分类","目标路径","大小","校验备注"])headRow.append(make("th","",title));head.append(headRow);const body=make("tbody");for(const entry of (plan.entries||[]).slice(0,100)){const row=make("tr");for(const value of [entry.source,entry.category,entry.destination,formatSize(entry.size),entry.needs_review?"需要人工复核":"已生成 SHA-256"])row.append(make("td","",String(value||"—")));body.append(row)}table.append(head,body);wrap.append(table);preview.append(wrap);if((plan.entries||[]).length>100)preview.append(make("p","safe-note",`仅预览前 100 项；计划内总计 ${plan.entries.length} 项。`));applyButton.disabled=!(plan.entries||[]).length;report(statusNode,`计划已生成：${plan.id}。检查列表后再确认复制。`)}catch(error){if(sequence===scanSequence)report(statusNode,error.message,true)}}
+  function formatSize(value){const size=Number(value)||0;return size<1024?`${size} B`:size<1048576?`${(size/1024).toFixed(1)} KB`:`${(size/1048576).toFixed(1)} MB`}
+  async function applyPlan(){if(!currentPlanId)return;if(!window.confirm(`确认执行计划 ${currentPlanId}？仅复制到项目分类目录，保留原件，不覆盖已有目标；冲突项将跳过。`))return;const statusNode=document.querySelector("#scan-status");report(statusNode,"正在按计划复制并校验…");try{const result=await api("/api/apply",{plan:currentPlanId});report(statusNode,`已完成：运行 ID ${result.run_id}；${result.summary}`);document.querySelector("#intake-run-id").value=result.run_id;currentPlanId="";document.querySelector("#apply-button").disabled=true;document.querySelector("#plan-note").textContent="复制计划已执行。可在总览或 API 状态中查看运行记录。";await refreshWorkbench()}catch(error){report(statusNode,error.message,true)}}
+  function clearIntakePlan(){scanSequence++;currentPlanId="";document.querySelector("#apply-button").disabled=true;document.querySelector("#scan-preview").replaceChildren();document.querySelector("#plan-note").textContent="项目已切换，请重新扫描。"}
+  document.querySelector("#scan-button").addEventListener("click",scanFolder);document.querySelector("#apply-button").addEventListener("click",applyPlan);scanProject.addEventListener("change",clearIntakePlan);
+  document.querySelector("#undo-button").addEventListener("click",async()=>{const run=document.querySelector("#intake-run-id").value.trim(),status=document.querySelector("#undo-status");if(!/^[0-9a-f]{32}$/.test(run)){report(status,"请输入有效的复制运行 ID。",true);return}if(!window.confirm(`撤销运行 ${run} 创建、且哈希仍未变化的副本？此操作会删除这些副本，来源文件保留。`))return;report(status,"正在核对并撤销副本…");try{const result=await api("/api/undo",{run});report(status,`已移除 ${result.removed} 个副本；保护 ${result.protected} 个已变化文件。`);await refreshWorkbench()}catch(error){report(status,error.message,true)}});
+  document.querySelector("#cli-button").addEventListener("click",()=>startCli(codexProject.value));
+  document.querySelector("#ai-plan-button").addEventListener("click",async()=>{const project=codexProject.value,text=document.querySelector("#codex-request").value.trim(),statusNode=document.querySelector("#codex-status");if(!project||text.length<3){report(statusNode,"选择项目并填写至少 3 个字符的分析需求。",true);return}if(!window.confirm("将调用 Codex CLI 对所选项目执行只读分析，并消耗已登录 ChatGPT 套餐中的 Codex 用量；不会修改项目文件。继续？"))return;report(statusNode,"Codex 正在进行只读分析…");try{const result=await api("/api/ai-plan",{project,text});apiOutput.textContent=`只读方案：${result.id}\n保存位置：${result.path}\n\n${result.response}`;report(statusNode,`只读方案已生成：${result.id}`)}catch(error){report(statusNode,error.message,true)}});
+  document.querySelector("#action-request-button").addEventListener("click",async()=>{const project=codexProject.value,text=document.querySelector("#codex-request").value.trim(),statusNode=document.querySelector("#codex-status");if(!project||text.length<3){report(statusNode,"选择项目并填写至少 3 个字符的执行需求。",true);return}if(!window.confirm("现在只创建待审批动作，不会修改文件。之后仍需单独批准并执行。创建申请？"))return;report(statusNode,"正在创建审批申请…");try{const result=await api("/api/v4/execute-request",{project,text});document.querySelector("#action-id").value=result.id;apiOutput.textContent=JSON.stringify(result,null,2);report(statusNode,`已创建待审批动作 ${result.id}`);await refreshWorkbench()}catch(error){report(statusNode,error.message,true)}});
+  async function decideAction(decision){const id=document.querySelector("#action-id").value.trim(),statusNode=document.querySelector("#codex-status"),verb=decision==="approved"?"批准":"拒绝";if(!id){report(statusNode,"请先从列表选择或填写 ACT- 动作 ID。",true);return}if(!window.confirm(`确定${verb}动作 ${id}？该决定会写入本地审批记录。`))return;try{const result=await api(decision==="approved"?"/api/v4/execute-approve":"/api/v4/execute-deny",{id});apiOutput.textContent=JSON.stringify(result,null,2);report(statusNode,`动作 ${id}：${result.status}`);await refreshWorkbench()}catch(error){report(statusNode,error.message,true)}}
+  document.querySelector("#approve-button").addEventListener("click",()=>decideAction("approved"));document.querySelector("#deny-button").addEventListener("click",()=>decideAction("denied"));
+  document.querySelector("#run-button").addEventListener("click",async()=>{const id=document.querySelector("#action-id").value.trim(),statusNode=document.querySelector("#codex-status");if(!id.startsWith("ACT-")){report(statusNode,"请输入有效的 ACT- 动作 ID。",true);return}if(!window.confirm(`执行 ${id} 将调用 Codex CLI 修改指定项目目录，执行前工作站会自动备份。请确认该动作已审阅并批准。现在执行？`))return;report(statusNode,"Codex 正在执行已批准动作…");try{const result=await api("/api/v4/execute-run",{id});apiOutput.textContent=JSON.stringify(result,null,2);report(statusNode,`动作执行完成：${id}`);await refreshWorkbench()}catch(error){report(statusNode,error.message,true)}});
+  document.querySelectorAll("[data-api]").forEach(b=>b.addEventListener("click",async()=>{apiOutput.textContent=`正在读取 ${b.dataset.api}…`;try{apiOutput.textContent=JSON.stringify(await api(b.dataset.api),null,2)}catch(error){apiOutput.textContent=error.message}}));
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  function renderActivity(data){const body=document.querySelector("#activity-body");body.replaceChildren();const items=[...(data.tasks||[]).map(item=>({time:item.updated_at,project:item.project,title:item.title,status:item.status})),...(data.runs||[]).map(item=>({time:item.created_at,project:item.project,title:`${item.kind} · ${item.summary||"运行"}`,status:item.status}))].sort((a,b)=>String(b.time).localeCompare(String(a.time))).slice(0,50);if(!items.length){const cell=make("td","","暂无任务或运行记录"),row=make("tr");cell.colSpan=4;row.append(cell);body.append(row);return}for(const item of items){const row=make("tr");for(const value of [String(item.time||"").slice(0,19),item.project||"—",item.title,item.status])row.append(make("td","",String(value||"—")));body.append(row)}}
+  function renderBackups(items){const body=document.querySelector("#backups-body");body.replaceChildren();if(!items.length){const row=make("tr"),cell=make("td","","暂无备份");cell.colSpan=5;row.append(cell);body.append(row);return}for(const item of items){const row=make("tr");for(const value of [item.id,item.scope,item.files,item.status])row.append(make("td","",String(value||"—")));const cell=make("td"),actionsBox=make("div","card-actions");actionsBox.append(button("验证",()=>verifyBackup(item.id)),button("申请恢复",()=>requestRestore(item.id)));cell.append(actionsBox);row.append(cell);body.append(row)}}
+  function renderLatexDocuments(items){latexDocuments=items;const select=document.querySelector("#latex-document"),old=select.value;select.replaceChildren();for(let i=0;i<items.length;i++){const option=make("option","",`${items[i].project} / ${items[i].document}`);option.value=String(i);select.append(option)}if(old!==""&&items[Number(old)])select.value=old;else select.selectedIndex=items.length?0:-1;document.querySelector("#latex-build-button").disabled=!items.length;document.querySelector("#latex-clean-button").disabled=!items.length;report(document.querySelector("#latex-status"),items.length?`已发现 ${items.length} 个 LaTeX 文档。`:"当前没有可构建的 LaTeX 文档。")}
+  async function loadOperations(force=false){if(operationsLoading||operationsLoaded&&!force)return;operationsLoading=true;const taskStatus=document.querySelector("#task-status"),backupStatus=document.querySelector("#backup-status");report(taskStatus,"正在读取任务与运行…");report(backupStatus,"正在读取备份…");try{const [activity,backups,latex]=await Promise.all([api("/api/workbench/activity",undefined,4000),api("/api/workbench/backups",undefined,4000),api("/api/workbench/latex-documents",undefined,4000)]);renderActivity(activity);renderBackups(backups);renderLatexDocuments(latex);operationsLoaded=true;report(taskStatus,`已读取 ${(activity.tasks||[]).length} 条任务和 ${(activity.runs||[]).length} 条运行。`);report(backupStatus,`已读取 ${backups.length} 条备份。`)}catch(error){report(taskStatus,error.message,true);report(backupStatus,error.message,true)}finally{operationsLoading=false}}
+  document.querySelector("#refresh-activity").addEventListener("click",()=>loadOperations(true));document.querySelector("#refresh-backups").addEventListener("click",()=>loadOperations(true));
+  document.querySelector("#create-project-button").addEventListener("click",async()=>{const name=document.querySelector("#new-project-name").value.trim(),description=document.querySelector("#new-project-description").value.trim(),status=document.querySelector("#create-project-status");if(!/^[A-Za-z0-9][A-Za-z0-9._-]{1,63}$/.test(name)){report(status,"项目名需为 2–64 位英文字母、数字、点、下划线或短横线。",true);return}if(!window.confirm(`将在工作站 Projects 中创建“${name}”标准项目。继续？`))return;report(status,"正在创建项目…");try{const result=await api("/api/v4/project-create",{name,description});report(status,`已创建项目 ${result.name}。`);await refreshWorkbench()}catch(error){report(status,error.message,true)}});
+  document.querySelector("#add-task-button").addEventListener("click",async()=>{const project=document.querySelector("#task-project").value,title=document.querySelector("#task-title").value.trim(),status=document.querySelector("#task-status");if(!project||!title){report(status,"请选择项目并填写任务。",true);return}try{const result=await api("/api/tasks",{project,title});document.querySelector("#task-title").value="";await loadOperations(true);await refreshWorkbench();report(status,`任务已添加：${result.task_id}`)}catch(error){report(status,error.message,true)}});
+  document.querySelector("#knowledge-search-button").addEventListener("click",async()=>{const project=document.querySelector("#knowledge-project").value,query=document.querySelector("#knowledge-query").value.trim(),status=document.querySelector("#knowledge-status"),body=document.querySelector("#knowledge-body");if(!project||!query){report(status,"请选择项目并填写检索词。",true);return}report(status,"正在检索…");try{const results=await api("/api/v4/knowledge-search",{project,query});body.replaceChildren();for(const item of results){const row=make("tr");row.append(make("td","",item.path),make("td","",item.snippet));body.append(row)}if(!results.length){const row=make("tr"),cell=make("td","","没有匹配结果；可先更新索引。 ");cell.colSpan=2;row.append(cell);body.append(row)}report(status,`找到 ${results.length} 条结果。`)}catch(error){report(status,error.message,true)}});
+  document.querySelector("#knowledge-index-button").addEventListener("click",async()=>{const project=document.querySelector("#knowledge-project").value,status=document.querySelector("#knowledge-status");if(!project){report(status,"请先选择项目。",true);return}report(status,"正在更新本地知识索引…");try{const result=await api("/api/v4/knowledge-index",{project});report(status,`索引完成：新增 ${result.indexed}、未变化 ${result.unchanged}、失败 ${result.failed}，总计 ${result.total}。`)}catch(error){report(status,error.message,true)}});
+  document.querySelector("#backup-create-button").addEventListener("click",async()=>{const project=document.querySelector("#backup-project").value,status=document.querySelector("#backup-status");if(!project)return;if(!window.confirm(`为“${project}”创建本地 ZIP 备份并验证哈希？`))return;report(status,"正在创建备份…");try{const result=await api("/api/v4/backup-create",{project});await loadOperations(true);report(status,`备份已验证：${result.id}，${result.files} 个文件。`)}catch(error){report(status,error.message,true)}});
+  async function verifyBackup(id){const status=document.querySelector("#backup-status");report(status,`正在验证 ${id}…`);try{const result=await api("/api/workbench/backup-verify",{id});report(status,result.valid?`备份 ${id} 校验通过。`:`备份 ${id} 校验失败：${result.reason}`,!result.valid)}catch(error){report(status,error.message,true)}}
+  async function requestRestore(id){const status=document.querySelector("#backup-status");if(!window.confirm(`将为备份 ${id} 创建待审批的恢复申请；此时不会写回项目。继续？`))return;try{const result=await api("/api/v4/restore-request",{backup_id:id});document.querySelector("#restore-action-id").value=result.id;document.querySelector("#action-id").value=result.id;report(status,`恢复申请已创建：${result.id}。请在 Codex / API 页审查并批准。`);await refreshWorkbench()}catch(error){report(status,error.message,true)}}
+  document.querySelector("#restore-run-button").addEventListener("click",async()=>{const id=document.querySelector("#restore-action-id").value.trim(),status=document.querySelector("#backup-status");if(!/^ACT-/.test(id)){report(status,"请填写有效的恢复动作 ID。",true);return}if(!window.confirm(`执行已批准的恢复动作 ${id} 将写回备份文件；工作站会先备份当前项目。现在执行？`))return;report(status,"正在恢复项目…");try{const result=await api("/api/v4/restore-run",{id});report(status,`恢复完成：${result.restored} 个文件；恢复前备份 ${result.safety_backup}。`);await loadOperations(true);await refreshWorkbench()}catch(error){report(status,error.message,true)}});
+  document.querySelector("#reuse-button").addEventListener("click",async()=>{const query=document.querySelector("#reuse-query").value.trim(),status=document.querySelector("#reuse-status"),body=document.querySelector("#reuse-body");if(query.length<3){report(status,"请填写至少 3 个字符的功能关键词。",true);return}report(status,"正在检索 GitHub 并保存评审…");try{const result=await api("/api/reuse-search",{query});body.replaceChildren();for(const item of result.candidates||[]){const row=make("tr"),name=make("td"),link=make("a","",item.name);if(String(item.url).startsWith("https://github.com/")){link.href=item.url;link.target="_blank";link.rel="noopener noreferrer"}name.append(link);row.append(name);for(const value of [item.score,item.license||"待核对",(item.risk_flags||[]).join("、")||"—"])row.append(make("td","",String(value)));body.append(row)}if(!result.candidates?.length){const row=make("tr"),cell=make("td","","没有候选。 ");cell.colSpan=4;row.append(cell);body.append(row)}report(status,`评审 ${result.id}：${(result.candidates||[]).length} 个候选；未下载或运行。`)}catch(error){report(status,error.message,true)}});
+  async function latexAction(clean){const item=latexDocuments[Number(document.querySelector("#latex-document").value)],status=document.querySelector("#latex-status"),output=document.querySelector("#latex-output");if(!item){report(status,"没有可用的 LaTeX 文档。",true);return}if(!window.confirm(`${clean?"清理辅助文件":"使用本机 latexmk 构建"} ${item.project}/${item.document}？`))return;report(status,clean?"正在清理辅助文件…":"正在构建 PDF…");try{const result=await api(clean?"/api/v4/latex-clean":"/api/v4/latex-build",{project:item.project,document:item.document});report(status,clean?`已清理：${result.document}`:`构建完成：${result.pdf}`);output.textContent=result.output||JSON.stringify(result,null,2)}catch(error){report(status,error.message,true)}}
+  document.querySelector("#latex-build-button").addEventListener("click",()=>latexAction(false));document.querySelector("#latex-clean-button").addEventListener("click",()=>latexAction(true));
+  
+  async function loadSettings(force=false){if(settingsLoaded&&!force)return;const container=document.querySelector("#settings-fields"),status=document.querySelector("#settings-status");report(status,"正在读取设置…");try{const data=await api("/api/workbench/settings",undefined,3000);container.replaceChildren();for(const field of data.fields){const wrap=make("div"),label=make("label","field-label",field.label),select=make("select");select.id=`setting-${field.key}`;select.dataset.setting=field.key;label.htmlFor=select.id;for(const item of field.options){const option=make("option","",item.label);option.value=item.value;select.append(option)}select.value=field.value;wrap.append(label,select);container.append(wrap)}document.body.classList.toggle("touch-first",data.fields.find(field=>field.key==="input_style")?.value==="touch-first");document.querySelector("#fixed-settings").textContent=`语言：${data.fixed.language} · 默认 Agent：1 个 · 文件策略：保留原件 · 偏好学习：明确或重复后记录 · 提示词正文日志：关闭`;settingsLoaded=true;report(status,"设置已读取。")}catch(error){report(status,error.message,true)}}
+  document.querySelector("#save-settings").addEventListener("click",async()=>{const values=Object.fromEntries([...document.querySelectorAll("[data-setting]")].map(select=>[select.dataset.setting,select.value])),status=document.querySelector("#settings-status");if(Object.keys(values).length!==3){report(status,"请先读取设置。",true);return}if(!window.confirm("将所选偏好保存到本机工作站状态库。继续？"))return;report(status,"正在保存…");try{await api("/api/workbench/settings",{values});document.body.classList.toggle("touch-first",values.input_style==="touch-first");report(status,"偏好已保存。") }catch(error){report(status,error.message,true)}});
+  document.querySelector("#default-project").addEventListener("change",event=>{localStorage.setItem("workbench.defaultProject",event.target.value);if(scanProject.value!==event.target.value)clearIntakePlan();for(const select of [scanProject,codexProject,contentProject,document.querySelector("#task-project"),document.querySelector("#knowledge-project"),document.querySelector("#backup-project")])if([...select.options].some(option=>option.value===event.target.value))select.value=event.target.value});
+  const densitySelect=document.querySelector("#display-density");densitySelect.value=localStorage.getItem("workbench.density")==="compact"?"compact":"comfortable";document.body.classList.toggle("compact",densitySelect.value==="compact");densitySelect.addEventListener("change",()=>{localStorage.setItem("workbench.density",densitySelect.value);document.body.classList.toggle("compact",densitySelect.value==="compact")});
+  document.body.classList.add("theme-vscode");
+  document.querySelector("#refresh-actions").addEventListener("click",refreshWorkbench);document.querySelector("#refresh-button").addEventListener("click",refreshWorkbench);refreshWorkbench();loadSettings();
+</script>
+</body>
+</html>

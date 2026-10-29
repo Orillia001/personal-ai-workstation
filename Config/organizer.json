@@ -1,0 +1,32 @@
+{
+  "ignore_suffixes": [".crdownload", ".part", ".partial", ".tmp"],
+  "ignore_names": ["desktop.ini", "thumbs.db"],
+  "global_categories": {
+    "documents": "Library/Documents",
+    "manuscript": "Library/Documents",
+    "evidence": "Library/Documents",
+    "literature": "Library/Literature",
+    "data": "Library/Data",
+    "code": "Library/Code",
+    "figures": "Library/Figures",
+    "slides": "Library/Slides",
+    "archives": "Library/Archives",
+    "installers": "Library/Installers",
+    "media": "Library/Media",
+    "other": "Library/Other"
+  },
+  "project_categories": {
+    "documents": "01_sources",
+    "manuscript": "06_manuscript",
+    "evidence": "08_evidence",
+    "literature": "02_literature",
+    "data": "03_data",
+    "code": "04_code",
+    "figures": "05_figures",
+    "slides": "07_slides",
+    "archives": "01_sources",
+    "installers": "00_inbox",
+    "media": "05_figures",
+    "other": "00_inbox"
+  }
+}

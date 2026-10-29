@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "apps": [
+    {
+      "id": "browser",
+      "name": "浏览器",
+      "tool": "Browser",
+      "category": "检索与浏览",
+      "description": "打开工作站登记的本机浏览器"
+    },
+    {
+      "id": "word",
+      "name": "Word",
+      "tool": "Word",
+      "category": "文档与办公",
+      "description": "创建和编辑文档"
+    },
+    {
+      "id": "excel",
+      "name": "Excel",
+      "tool": "Excel",
+      "category": "文档与办公",
+      "description": "处理表格与数据"
+    },
+    {
+      "id": "powerpoint",
+      "name": "PowerPoint",
+      "tool": "PowerPoint",
+      "category": "文档与办公",
+      "description": "创建和编辑演示文稿"
+    },
+    {
+      "id": "zotero",
+      "name": "Zotero",
+      "tool": "Zotero",
+      "category": "研究与文献",
+      "description": "管理文献与参考资料"
+    },
+    {
+      "id": "vscode",
+      "name": "VS Code",
+      "tool": "VS Code GUI",
+      "category": "开发与自动化",
+      "description": "打开代码工作区"
+    },
+    {
+      "id": "matlab",
+      "name": "MATLAB",
+      "tool": "MATLAB",
+      "category": "数据与计算",
+      "description": "科学计算与数据分析"
+    },
+    {
+      "id": "ollama",
+      "name": "Ollama",
+      "tool": "Ollama",
+      "category": "本地模型",
+      "description": "运行本地模型服务"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "workstation-matt",
+  "version": "0.1.0",
+  "description": "在本机执行Matt工程流程，记录阶段与验收证据，查看可视化看板。",
+  "author": {"name": "Personal AI Workstation"},
+  "extensions": {
+    "com.openai": {
+      "requires_local_executor": true,
+      "interface": {
+        "displayName": "工作站 · Matt 工作流",
+        "shortDescription": "工程流程、阶段进度与验收证据看板",
+        "longDescription": "复用本机Matt技能，由Codex执行并记录阶段，在本地深色看板查看进度。",
+        "developerName": "Personal AI Workstation",
+        "category": "Productivity",
+        "capabilities": ["Read", "Write"],
+        "defaultPrompt": ["用Matt工作流完成这项开发，并打开进度看板", "查看当前Matt任务的阶段和验收结果"]
+      }
+    }
+  }
+}

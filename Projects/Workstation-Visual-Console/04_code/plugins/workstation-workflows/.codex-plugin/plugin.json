@@ -1,0 +1,18 @@
+{
+  "name": "workstation-workflows",
+  "version": "0.2.0",
+  "description": "Personal AI Workstation project workflow entry points",
+  "author": {
+    "name": "Personal AI Workstation"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "工作站工作流",
+    "shortDescription": "从 Codex 发起并干预本机项目工作流。",
+    "longDescription": "将项目资料接入、进度查看、Matt 工程阶段和执行审批接到本地网页工作台。",
+    "developerName": "Personal AI Workstation",
+    "category": "Productivity",
+    "capabilities": ["Read", "Write"],
+    "defaultPrompt": ["查看我的项目状态并建议下一步", "扫描项目 00_inbox 并给出文件接入计划", "为项目任务选择工作流"]
+  }
+}

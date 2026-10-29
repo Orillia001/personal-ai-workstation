@@ -1,0 +1,9 @@
+{
+  "prototype": true,
+  "production_shell_sha256": "4edab86815e08a0b871242b185ba636742457ac5390176702aef8e7b8c5baf28",
+  "course_count": 5,
+  "default_course": "machine-design",
+  "selected_variant": "A-dark-full-map",
+  "learning_mutations": false,
+  "snapshot_at": "2026-10-19T23:07:51.420368+08:00"
+}

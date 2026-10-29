@@ -1,0 +1,17 @@
+{
+  "source": "github-public-api",
+  "max_results": 8,
+  "minimum_score": 10,
+  "exclude_archived": true,
+  "exclude_forks": true,
+  "stale_days": 730,
+  "preferred_licenses": ["MIT", "Apache-2.0", "BSD-2-Clause", "BSD-3-Clause", "ISC", "MPL-2.0"],
+  "actions": {
+    "search": "automatic",
+    "inspect": "automatic",
+    "clone": "confirm",
+    "install": "confirm",
+    "execute": "confirm",
+    "publish": "confirm"
+  }
+}

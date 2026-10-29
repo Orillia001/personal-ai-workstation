@@ -1,0 +1,4 @@
+interface:
+  display_name: "Matt 工作流"
+  short_description: "在本机执行 Matt 工程流程，记录阶段进度并查看可视化验收看板"
+  default_prompt: "使用 $matt-workflow 完成本次开发任务，并在看板记录进度。"

@@ -1,0 +1,4 @@
+interface:
+  display_name: "项目计划书"
+  short_description: "从现有材料生成并审查申报、商业和交付型中文项目计划书"
+  default_prompt: "Use $project-plan-writer to turn my project materials into a review-ready Chinese project plan."

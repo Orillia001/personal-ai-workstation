@@ -1,0 +1,1330 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>工作台 · Personal AI Workstation</title>
+  <style>
+:root{font-family:Inter,"Segoe UI","Microsoft YaHei",sans-serif;color:#242824;background:#f8f8f6;font-synthesis:none;--line:#e7e8e4;--muted:#737973;--accent:#255f49;--tint:#edf5ef;--paper:#fff;--shadow:0 12px 30px #17281b0a}
+*{box-sizing:border-box}
+body{margin:0;min-width:320px}
+button,input{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible{outline:2px solid #438b67;outline-offset:2px}
+.app{min-height:100vh}
+.brand{display:flex;align-items:center;gap:10px;padding:4px 7px 20px;font-size:13px;font-weight:720}
+.mark{display:grid;place-items:center;width:30px;height:30px;border-radius:9px;color:white;background:#252d28;font-weight:700}
+.muted{color:var(--muted)}
+.eyebrow{color:var(--muted);text-transform:uppercase;letter-spacing:.1em;font-size:10px;font-weight:700}
+.section-title{font-size:11px;color:#858b84;font-weight:700;margin:24px 10px 8px;display:flex;align-items:center;justify-content:space-between}
+.section-title button{background:transparent;border:0;color:#858b84;font-size:17px;padding:0 4px}
+.nav-button,.tree-name,.tree-toggle,.child-button{border:0;background:transparent;text-align:left;color:#424a43}
+.nav-button{display:flex;align-items:center;gap:10px;width:100%;padding:9px 11px;border-radius:8px;font-size:12px}
+.nav-button:hover,.tree-name:hover,.child-button:hover{background:#f2f4f0}
+.nav-button.active{background:#e9f2eb;color:var(--accent);font-weight:650}
+.nav-ico{width:18px;text-align:center;font-size:15px;color:#68736a}
+.project-search{width:100%;border:1px solid var(--line);border-radius:8px;background:#fafbf9;padding:9px 11px;font-size:11px;outline:0}
+.project-search:focus{border-color:#9bbba4;background:#fff}
+.tree{display:grid;gap:3px;margin-top:10px}
+.project-row{display:grid;grid-template-columns:25px minmax(0,1fr);align-items:center;border-radius:8px}
+.project-row.selected,.child-button.selected{background:#e9f2eb;color:var(--accent)}
+.tree-toggle{padding:7px 5px;text-align:center;color:#8a928a;font-size:10px}
+.tree-name{padding:8px 4px 8px 0;border-radius:7px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px;font-weight:600}
+.children{margin:2px 0 7px 25px;border-left:1px solid #e5e9e3;padding-left:8px;display:grid;gap:1px}
+.child-button{display:flex;align-items:center;gap:7px;width:100%;padding:7px 8px;border-radius:7px;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.child-dot{width:5px;height:5px;border-radius:50%;background:#9aac9d;flex:none}
+.child-button.selected .child-dot{background:var(--accent)}
+.empty{color:var(--muted);font-size:11px;padding:11px}
+.side-bottom{margin-top:auto;padding:16px 8px 3px;border-top:1px solid var(--line);color:var(--muted);font-size:10px;line-height:1.6}
+.sidebar,.project-pane{background:#fff;border-right:1px solid var(--line);display:flex;flex-direction:column;padding:23px 14px 16px;min-width:0;overflow-y:auto}
+.sidebar-body,.pane-body{min-height:0}
+.topbar{height:66px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 30px;border-bottom:1px solid var(--line);background:#fff}
+.breadcrumb{font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.top-actions{display:flex;align-items:center;gap:8px}
+.pill{font-size:10px;color:#5a6e60;background:#f0f5ef;padding:6px 9px;border-radius:20px;white-space:nowrap}
+.button{border:1px solid #dfe4dd;background:#fff;border-radius:8px;padding:8px 11px;font-size:11px;color:#384139;white-space:nowrap}
+.button:hover{border-color:#a8b9a9}
+.button.primary{color:#fff;background:var(--accent);border-color:var(--accent)}
+.button.ghost{background:#f6f7f4}
+.content{max-width:1170px;margin:0 auto;padding:34px 34px 120px;width:100%}
+.title-row{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:27px}
+.title-row h1{font-size:clamp(23px,3vw,33px);letter-spacing:-.04em;font-weight:660;margin:8px 0 8px}
+.title-row p{font-size:12px;color:var(--muted);margin:0;line-height:1.7}
+.status{display:inline-flex;align-items:center;gap:6px;color:#29694f;font-size:10px}
+.status:before{content:"";width:6px;height:6px;border-radius:50%;background:#3baf72}
+.cards{display:grid;grid-template-columns:1.55fr 1fr;gap:14px}
+.card{border:1px solid var(--line);background:var(--paper);border-radius:12px;box-shadow:var(--shadow);padding:19px;min-width:0}
+.card h2{font-size:13px;margin:0 0 16px;font-weight:690}
+.card-head{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.card-head small{font-size:10px;color:var(--muted)}
+.stage-list{display:grid;gap:10px}
+.stage{display:grid;grid-template-columns:25px minmax(0,1fr) auto;align-items:center;gap:9px;font-size:11px;padding:11px 0;border-bottom:1px solid #f0f1ee}
+.stage:last-child{border:0}
+.stage .num{display:grid;place-items:center;border:1px solid #dbe4da;width:23px;height:23px;border-radius:7px;color:var(--accent);font-size:10px}
+.stage small{color:var(--muted);font-size:10px}
+.stage b{font-weight:630}
+.stage.current .num{background:var(--accent);color:#fff;border-color:var(--accent)}
+.activity{display:grid;gap:0}
+.activity-row{display:grid;grid-template-columns:75px minmax(0,1fr);gap:9px;padding:11px 0;border-bottom:1px solid #f0f1ee;font-size:11px}
+.activity-row:last-child{border:0}
+.activity-row time{color:#969d94;font-size:10px}
+.activity-row span{color:#4d574f;line-height:1.5}
+.composer{margin-top:18px;border:1px solid #dae5da;border-radius:12px;background:#fff;box-shadow:var(--shadow);padding:14px}
+.composer label{font-size:11px;font-weight:650}
+.composer textarea{display:block;width:100%;min-height:54px;resize:vertical;border:0;outline:0;background:transparent;margin-top:10px;font:inherit;font-size:12px;line-height:1.5;color:#4a544b}
+.composer-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px solid #f0f1ee;padding-top:10px}
+.composer-foot span{font-size:10px;color:var(--muted)}
+.callout{margin-top:14px;color:var(--muted);font-size:10px;line-height:1.6}
+.inspector{background:#fdfdfb;border-left:1px solid var(--line);padding:25px 18px;min-width:0}
+.inspector h2{font-size:12px;margin:0 0 20px}
+.fact{padding:13px 0;border-top:1px solid var(--line)}
+.fact small{display:block;font-size:10px;color:var(--muted);margin-bottom:6px}
+.fact strong{font-size:11px;font-weight:600;overflow-wrap:anywhere}
+.inspector .button{width:100%;justify-content:center;margin-top:18px}
+.mini-list{font-size:10px;color:#59665c;line-height:2;margin-top:12px}
+.prototype-switcher{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:50;display:flex;align-items:center;gap:8px;background:#202822;color:white;border:1px solid #4d5c50;border-radius:18px;padding:7px 9px;box-shadow:0 12px 35px #1d2a2080;font-size:11px;white-space:nowrap}
+.prototype-switcher button{color:white;border:0;background:#3a483d;border-radius:11px;width:30px;height:28px}
+.prototype-switcher button:hover{background:#546b58}
+.prototype-switcher span{padding:0 7px}
+.prototype-switcher small{color:#b4c2b5;font-size:10px}
+.demo-tag{display:inline-flex;align-items:center;gap:5px;font-size:10px;color:#8a6831;background:#f8f0df;border-radius:6px;padding:5px 7px}
+.layout-a{display:grid;grid-template-columns:254px minmax(0,1fr)}
+.layout-a .sidebar{height:100vh;position:sticky;top:0}
+.layout-a main{min-width:0}
+.layout-a .sidebar .project-search{margin-top:4px}
+.layout-b{display:grid;grid-template-columns:62px 270px minmax(0,1fr)}
+.icon-rail{background:#f2f4f0;border-right:1px solid var(--line);height:100vh;position:sticky;top:0;display:flex;flex-direction:column;align-items:center;gap:9px;padding:17px 8px}
+.icon-rail .mark{margin-bottom:20px}
+.rail-button{border:0;background:transparent;color:#707a70;width:40px;height:40px;border-radius:10px;font-size:18px}
+.rail-button.active,.rail-button:hover{background:#dce8df;color:var(--accent)}
+.rail-bottom{margin-top:auto}
+.layout-b .project-pane{height:100vh;position:sticky;top:0}
+.layout-b .content{max-width:1060px}
+.layout-b .cards{grid-template-columns:minmax(0,1fr) 250px}
+.layout-c{display:grid;grid-template-columns:274px minmax(0,1fr) 248px}
+.layout-c .sidebar{height:100vh;position:sticky;top:0}
+.layout-c .inspector{height:100vh;position:sticky;top:0}
+.layout-c .content{padding:30px 28px 120px}
+.layout-c .cards{grid-template-columns:1fr}
+.layout-c .card:nth-child(2){display:none}
+.layout-c .section-title{margin-top:17px}
+.layout-c .sidebar .project-search{margin-top:12px}
+@media(max-width:1050px){.layout-c{grid-template-columns:250px minmax(0,1fr)}
+.layout-c .inspector{display:none}
+.layout-b{grid-template-columns:56px 240px minmax(0,1fr)}
+.layout-b .cards{grid-template-columns:1fr}
+}
+@media(max-width:760px){.layout-a,.layout-b,.layout-c{display:block}
+.layout-a .sidebar,.layout-b .project-pane,.layout-c .sidebar{height:auto;position:static;max-height:280px;overflow:auto;border-right:0;border-bottom:1px solid var(--line)}
+.layout-b .icon-rail{display:none}
+.layout-a .sidebar .brand,.layout-c .sidebar .brand{padding-bottom:7px}
+.layout-a .sidebar .nav-button,.layout-a .sidebar .side-bottom,.layout-b .project-pane .side-bottom,.layout-c .sidebar .side-bottom{display:none}
+.sidebar,.project-pane{padding:12px 15px}
+.section-title{margin:10px 8px 5px}
+.tree{grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}
+.children{display:grid}
+.topbar{height:52px;padding:0 17px}
+.content,.layout-b .content,.layout-c .content{padding:24px 16px 110px}
+.cards{grid-template-columns:1fr}
+.title-row{display:block}
+.title-row .button{margin-top:13px}
+.top-actions .pill{display:none}
+}
+
+  </style>
+  <style>
+.layout-a .sidebar,.layout-c .sidebar,.layout-b .project-pane{overflow:hidden}
+.sidebar-body,.pane-body{flex:1;min-height:0;overflow-y:auto;scrollbar-width:thin}
+.side-bottom{flex:none}
+.layout-a{grid-template-columns:286px minmax(0,1fr)}
+.layout-b{grid-template-columns:62px 300px minmax(0,1fr)}
+.layout-c{grid-template-columns:306px minmax(0,1fr) 248px}
+.category-block{margin:7px 0}
+.category-toggle{display:flex;align-items:center;gap:8px;width:100%;border:0;background:#f5f7f4;color:#34463a;border-radius:8px;padding:9px 10px;text-align:left;font-size:11px;font-weight:700}
+.category-toggle:hover{background:#eaf2eb}
+.category-toggle .chevron{margin-left:auto;color:#829084;font-size:10px}
+.category-toggle .count{color:#849187;font-size:10px;font-weight:500}
+.category-projects{margin:4px 0 3px 10px;padding-left:8px;border-left:1px solid #e6ebe5}
+.category-projects .project-row{grid-template-columns:22px minmax(0,1fr)}
+.category-projects .children{margin-left:21px}
+.tree{display:block}
+.layout-b main{min-width:0}
+.layout-c .sidebar .section-title{margin-top:17px}
+@media(max-width:1050px){.layout-c{grid-template-columns:282px minmax(0,1fr)}
+.layout-b{grid-template-columns:56px 278px minmax(0,1fr)}
+}
+@media(max-width:760px){.layout-a,.layout-b,.layout-c{display:block}
+.layout-a .sidebar,.layout-b .project-pane,.layout-c .sidebar{max-height:360px}
+.tree{display:block}
+.category-projects .children{display:grid}
+}
+
+  </style>
+  <style>
+.window-studio{margin:0 0 20px;border:1px solid #dce6dc;background:#fff;border-radius:13px;box-shadow:var(--shadow);overflow:hidden}
+.studio-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:17px 18px;border-bottom:1px solid var(--line)}
+.studio-head h2{font-size:14px;margin:0 0 5px}
+.studio-head p{font-size:11px;color:var(--muted);margin:0;line-height:1.5}
+.studio-toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:12px 18px;background:#fafbf9}
+.studio-toolbar input,.studio-toolbar select{border:1px solid var(--line);background:#fff;border-radius:8px;padding:9px 10px;font-size:11px;min-height:35px}
+.studio-toolbar input{flex:1 1 170px;min-width:110px}
+.studio-toolbar select{flex:0 0 118px}
+.studio-toolbar .button{min-height:35px}
+.studio-note{font-size:10px;color:var(--muted);margin-left:auto}
+.window-canvas{position:relative;min-height:460px;background-color:#f7faf6;background-image:radial-gradient(#dfe7de 1px,transparent 1px);background-size:18px 18px;overflow:hidden}
+.window-empty{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);font-size:12px;text-align:center;padding:30px}
+.tool-window{position:absolute;max-width:calc(100% - 32px);min-width:250px;min-height:175px;resize:both;overflow:auto;border:1px solid #cad8ca;background:#fff;border-radius:11px;box-shadow:0 12px 28px #20372a1c}
+.tool-window.maximized{left:8px!important;top:8px!important;width:calc(100% - 16px)!important;max-width:none;height:calc(100% - 16px)!important;resize:none}
+.tool-header{display:flex;align-items:center;gap:8px;padding:9px 10px;border-bottom:1px solid #e8eee6;background:#f5f8f4;cursor:grab;touch-action:none;user-select:none}
+.tool-header:active{cursor:grabbing}
+.tool-icon{display:grid;place-items:center;width:23px;height:23px;border-radius:7px;background:#e3efe4;color:#356549;font-size:12px;flex:none}
+.tool-header strong{font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1}
+.tool-header .tool-kind{font-size:9px;color:#829084;white-space:nowrap}
+.tool-header button{border:0;background:transparent;color:#7b877c;border-radius:5px;padding:2px 5px;font-size:13px;cursor:pointer}
+.tool-header button:hover{background:#e6eee4;color:#294b32}
+.tool-body{padding:11px;font-size:11px;color:#465147}
+.tool-body textarea,.tool-body input{font:inherit;font-size:11px;border:1px solid var(--line);border-radius:7px;background:#fff;color:#344136;padding:8px;min-width:0}
+.tool-body textarea{display:block;width:100%;min-height:115px;resize:vertical;line-height:1.5}
+.tool-entry{display:flex;gap:6px;margin-bottom:9px}
+.tool-entry input{flex:1;width:100%}
+.tool-entry .button{padding:7px 9px}
+.tool-list{display:grid;gap:5px}
+.tool-list-row{display:flex;align-items:center;gap:6px;padding:5px 3px;border-bottom:1px solid #f0f2ee;min-width:0}
+.tool-list-row label{display:flex;align-items:center;gap:6px;min-width:0;flex:1;line-height:1.4}
+.tool-list-row label span{overflow-wrap:anywhere}
+.tool-list-row input[type=checkbox]{flex:none}
+.tool-list-row.done span{text-decoration:line-through;color:#99a39a}
+.tool-list-row button{border:0;background:transparent;color:#9a5c56;cursor:pointer;padding:2px 5px;border-radius:5px}
+.tool-list-row a{color:#275e48;overflow-wrap:anywhere;flex:1}
+.tool-list-row a:hover{text-decoration:underline}
+.tool-help{font-size:10px;color:#869087;line-height:1.5;margin:6px 0 0}
+.tool-error{font-size:10px;color:#a3483f;min-height:15px;margin-top:5px}
+.blank-prompt{min-height:185px}
+.builder{border:1px solid #dce6da;border-radius:9px;background:#f8faf7;padding:10px;margin-bottom:10px;display:grid;gap:8px}
+.builder strong{font-size:11px}
+.builder p{margin:0;font-size:10px;color:#7d8a7e;line-height:1.5}
+.builder-options{display:flex;gap:6px;flex-wrap:wrap}
+.builder-options button{border:1px solid #d7e3d6;border-radius:7px;background:#fff;padding:7px 9px;font-size:10px;color:#425e48;cursor:pointer}
+.builder-options button:hover{background:#eaf2e9}
+.builder textarea{width:100%;min-height:65px!important}
+.builder .button{justify-content:center}
+.custom-fields{display:grid;gap:8px}
+.custom-field{display:grid;gap:4px;padding:7px 0;border-bottom:1px solid #eef1ec}
+.custom-field label{font-size:10px;font-weight:650}
+.custom-field input[type=checkbox]{justify-self:start}
+.custom-field input,.custom-field textarea{width:100%}
+.custom-field-head{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.custom-field-head button{border:0;background:transparent;color:#a4564d;cursor:pointer}
+.custom-action{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.custom-action select{flex:1;min-width:135px;border:1px solid var(--line);border-radius:7px;background:#fff;color:#344136;padding:7px;font-size:10px}
+.custom-result{min-height:23px;margin-top:8px;border-radius:6px;background:#eff5ee;padding:6px;color:#35523b;font-size:10px;overflow-wrap:anywhere}
+.window-taskbar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:8px 12px;border-top:1px solid var(--line);background:#f6f8f5}
+.window-taskbar button{border:1px solid #dce4da;background:#fff;border-radius:7px;padding:7px 10px;font-size:10px;color:#4c5a4e;cursor:pointer;max-width:190px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.window-taskbar button.active{border-color:#91aa96;background:#eaf2e9;color:#2d5536}
+.window-taskbar button.minimized{opacity:.65}
+.window-taskbar small{color:#929b92;font-size:10px;margin-left:auto}
+@media(max-width:760px){.window-canvas{display:grid;gap:11px;padding:12px;min-height:0!important}
+.tool-window,.tool-window.maximized{position:relative!important;left:auto!important;top:auto!important;width:auto!important;height:auto!important;max-width:none;resize:none}
+.window-empty{position:static;min-height:150px}
+.studio-note{width:100%;margin-left:0}
+}
+
+  </style>
+  <style>
+.prototype-switcher select{width:auto;max-width:105px;border:1px solid #536155;border-radius:8px;padding:5px;background:#303b32;color:#fff;font-size:10px}
+body[data-theme^="mono"]{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;--accent:#29292c;--tint:#ededf0;--line:#dedee0;--paper:#fff;--shadow:0 8px 22px #0000000a;background:#fff;color:#1d1d1f}
+body[data-theme^="mono"] .sidebar,body[data-theme^="mono"] .project-pane{background:#e9e9eb}
+body[data-theme^="mono"] .topbar{background:#fff}
+body[data-theme="mono-light"] .button,body[data-theme="mono-light"] input,body[data-theme="mono-light"] select,body[data-theme="mono-light"] textarea{border-color:#a8a8ab;border-radius:4px}
+body[data-theme="mono-light"] .tool-header,body[data-theme="mono-light"] .studio-toolbar{background:#f2f2f3}
+body[data-theme="mono-light"] .window-canvas{background-color:#fff;background-image:none}
+body[data-theme="mono-light"] .content h1{font-size:clamp(27px,3vw,40px);font-weight:600}
+body[data-theme^="mono"] .mark{background:#1d1d1f}
+body[data-theme^="mono"] .category-toggle,body[data-theme^="mono"] .nav-button.active,body[data-theme^="mono"] .project-row.selected,body[data-theme^="mono"] .child-button.selected{background:#ededf0;color:#242426}
+body[data-theme^="mono"] .window-canvas{background-color:#f3f3f5;background-image:radial-gradient(#dadadd 1px,transparent 1px)}
+body[data-theme="mono-light"] .window-canvas{background-color:#fff;background-image:none}
+body[data-theme="mono-light"] .nav-button,body[data-theme="mono-light"] .category-toggle{font-size:13px}
+body[data-theme="mono-light"] .tree-name,body[data-theme="mono-light"] .child-button,body[data-theme="mono-light"] .button{font-size:12px}
+body[data-theme="mono-light"] .tool-header strong,body[data-theme="mono-light"] .studio-head h2{font-size:14px}
+body[data-theme^="mono"] .window-studio,body[data-theme^="mono"] .card,body[data-theme^="mono"] .composer,body[data-theme^="mono"] .tool-window{border-radius:16px}
+body[data-theme^="mono"] .tool-icon,body[data-theme^="mono"] .stage.current .num,body[data-theme^="mono"] .button.primary{background:#29292c;color:#fff;border-color:#29292c}
+body[data-theme^="mono"] .tool-header,body[data-theme^="mono"] .studio-toolbar{background:#f7f7f9}
+body[data-theme="mono-dark"]{color-scheme:dark;--line:#39393c;--muted:#a1a1a6;--paper:#1c1c1e;--accent:#f5f5f7;--shadow:0 12px 32px #00000050;background:#0b0b0d;color:#f5f5f7}
+body[data-theme="mono-dark"] .sidebar,body[data-theme="mono-dark"] .project-pane,body[data-theme="mono-dark"] .topbar,body[data-theme="mono-dark"] .card,body[data-theme="mono-dark"] .composer,body[data-theme="mono-dark"] .window-studio,body[data-theme="mono-dark"] .tool-window,body[data-theme="mono-dark"] .inspector{background:#1c1c1e;border-color:var(--line)}
+body[data-theme="mono-dark"] .mark,body[data-theme="mono-dark"] .button.primary,body[data-theme="mono-dark"] .stage.current .num{background:#f5f5f7;color:#111114;border-color:#f5f5f7}
+body[data-theme="mono-dark"] .icon-rail,body[data-theme="mono-dark"] .window-canvas{background-color:#121214;border-color:var(--line)}
+body[data-theme="mono-dark"] .window-canvas{background-image:none}
+body[data-theme="mono-dark"] .category-toggle,body[data-theme="mono-dark"] .nav-button.active,body[data-theme="mono-dark"] .project-row.selected,body[data-theme="mono-dark"] .child-button.selected,body[data-theme="mono-dark"] .tool-header,body[data-theme="mono-dark"] .studio-toolbar{background:#2b2b2e;color:#f0f0f2;border-color:var(--line)}
+body[data-theme="mono-dark"] .nav-button,body[data-theme="mono-dark"] .tree-name,body[data-theme="mono-dark"] .child-button,body[data-theme="mono-dark"] .category-toggle,body[data-theme="mono-dark"] .tool-header button{color:#d0d0d4}
+body[data-theme="mono-dark"] .nav-button:hover,body[data-theme="mono-dark"] .tree-name:hover,body[data-theme="mono-dark"] .child-button:hover,body[data-theme="mono-dark"] .category-toggle:hover{background:#323235}
+body[data-theme="mono-dark"] .button,body[data-theme="mono-dark"] input,body[data-theme="mono-dark"] select,body[data-theme="mono-dark"] textarea{background:#29292c;border-color:var(--line);color:#f0f0f2}
+body[data-theme="mono-dark"] .button.primary{background:#f5f5f7;color:#111114}
+body[data-theme="mono-dark"] .tool-body,body[data-theme="mono-dark"] .activity-row span{color:#dedee1}
+body[data-theme="mono-dark"] .blank-prompt,body[data-theme="mono-dark"] .builder,body[data-theme="mono-dark"] .custom-result{background:#29292c;border-color:var(--line);color:#d5d5d9}
+body[data-theme="mono-dark"] .blank-prompt strong,body[data-theme="mono-dark"] .builder-options button{color:#e4e4e7}
+body[data-theme="mono-dark"] .builder-options button,body[data-theme="mono-dark"] .custom-action select{background:#333336;border-color:var(--line);color:#e4e4e7}
+body[data-theme="mono-dark"] .window-taskbar{background:#242426;border-color:var(--line)}
+body[data-theme="mono-dark"] .window-taskbar button{background:#333336;border-color:var(--line);color:#e5e5e7}
+body[data-theme="mono-dark"] .window-taskbar button.active{background:#4a4a4e;border-color:#85858a}
+body[data-theme="mono-dark"] .stage .num,body[data-theme="mono-dark"] .tool-icon{background:#363639;border-color:var(--line);color:#e4e4e6}
+body[data-theme="mono-dark"] .demo-tag{background:#333338;color:#e2e2e5}
+body[data-theme^="mono"] .prototype-switcher{background:#28282b;border-color:#454549}
+body[data-theme^="mono"] .prototype-switcher button,body[data-theme^="mono"] .prototype-switcher select{background:#3b3b3e;border-color:#55555a}
+@media(max-width:760px){.sidebar-body,.pane-body{max-height:245px}
+}
+
+  </style>
+  <style>
+body[data-theme="vscode"]{color-scheme:dark;--line:#3c3c3c;--muted:#a0a0a0;--accent:#3794ff;--tint:#37373d;--paper:#1e1e1e;--shadow:none;background:#1e1e1e;color:#d4d4d4;font-family:"Segoe UI","Microsoft YaHei",sans-serif}
+body[data-theme="vscode"] .icon-rail{background:#333333;border-color:#252526}
+body[data-theme="vscode"] .rail-button{color:#a7a7a7;border-radius:0;border-left:2px solid transparent}
+body[data-theme="vscode"] .rail-button.active,body[data-theme="vscode"] .rail-button:hover{background:#333333;color:#fff;border-left-color:#fff}
+body[data-theme="vscode"] .sidebar,body[data-theme="vscode"] .project-pane,body[data-theme="vscode"] .inspector{background:#252526;border-color:var(--line)}
+body[data-theme="vscode"] .sidebar,body[data-theme="vscode"] .project-pane{padding-left:10px;padding-right:10px}
+body[data-theme="vscode"] .brand{padding:3px 7px 18px;color:#e6e6e6}
+body[data-theme="vscode"] .mark{background:#007acc;border-radius:3px}
+body[data-theme="vscode"] .section-title{color:#bbb;font-size:10px;text-transform:uppercase;letter-spacing:.09em}
+body[data-theme="vscode"] .nav-button,body[data-theme="vscode"] .tree-name,body[data-theme="vscode"] .child-button,body[data-theme="vscode"] .category-toggle{color:#ccc;border-radius:2px}
+body[data-theme="vscode"] .nav-button:hover,body[data-theme="vscode"] .tree-name:hover,body[data-theme="vscode"] .child-button:hover,body[data-theme="vscode"] .category-toggle:hover{background:#2a2d2e}
+body[data-theme="vscode"] .nav-button.active,body[data-theme="vscode"] .project-row.selected,body[data-theme="vscode"] .child-button.selected{background:#37373d;color:#fff}
+body[data-theme="vscode"] .category-toggle{background:#2d2d30;font-size:11px;text-transform:uppercase;letter-spacing:.03em}
+body[data-theme="vscode"] .category-projects,body[data-theme="vscode"] .children{border-color:#474747}
+body[data-theme="vscode"] .side-bottom{border-color:var(--line)}
+body[data-theme="vscode"] .project-search,body[data-theme="vscode"] input,body[data-theme="vscode"] select,body[data-theme="vscode"] textarea{background:#3c3c3c;border:1px solid #555;color:#eee;border-radius:2px}
+body[data-theme="vscode"] input::placeholder,body[data-theme="vscode"] textarea::placeholder{color:#a6a6a6}
+body[data-theme="vscode"] button:focus-visible,body[data-theme="vscode"] input:focus-visible,body[data-theme="vscode"] select:focus-visible,body[data-theme="vscode"] textarea:focus-visible{outline-color:#007fd4}
+body[data-theme="vscode"] main,body[data-theme="vscode"] .content{background:#1e1e1e}
+body[data-theme="vscode"] .topbar{height:38px;background:#181818;border-color:var(--line);padding:0 18px}
+body[data-theme="vscode"] .breadcrumb{color:#aaa}
+body[data-theme="vscode"] .editor-tabs{display:flex;height:36px;background:#252526;border-bottom:1px solid #1a1a1a;align-items:stretch}
+body[data-theme="vscode"] .editor-tab{display:flex;align-items:center;gap:8px;max-width:240px;min-width:120px;padding:0 15px;background:#1e1e1e;border-right:1px solid #303030;border-top:1px solid #3794ff;font-size:11px;color:#eee;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+body[data-theme="vscode"] .editor-tab:before{content:"▦";color:#3794ff}
+body[data-theme="vscode"] .content{max-width:none;padding:25px 30px 100px}
+body[data-theme="vscode"] .title-row h1{font-weight:500;letter-spacing:-.02em}
+body[data-theme="vscode"] .title-row p,body[data-theme="vscode"] .card-head small,body[data-theme="vscode"] .stage small,body[data-theme="vscode"] .activity-row time{color:#aaa}
+body[data-theme="vscode"] .card,body[data-theme="vscode"] .window-studio,body[data-theme="vscode"] .composer{background:#252526;border:1px solid #3c3c3c;border-radius:3px;box-shadow:none}
+body[data-theme="vscode"] .card h2,body[data-theme="vscode"] .studio-head h2,body[data-theme="vscode"] .stage b,body[data-theme="vscode"] .activity-row span{color:#ddd}
+body[data-theme="vscode"] .stage,body[data-theme="vscode"] .activity-row,body[data-theme="vscode"] .studio-head,body[data-theme="vscode"] .composer-foot{border-color:#3c3c3c}
+body[data-theme="vscode"] .stage .num{border-color:#575757;border-radius:2px;color:#9cdcfe}
+body[data-theme="vscode"] .stage.current .num,body[data-theme="vscode"] .button.primary{background:#0e639c;border-color:#0e639c;color:#fff}
+body[data-theme="vscode"] .button,body[data-theme="vscode"] .builder-options button{background:#3a3d41;color:#eee;border:1px solid #4d4d4d;border-radius:2px}
+body[data-theme="vscode"] .button:hover,body[data-theme="vscode"] .builder-options button:hover{background:#4b4e52}
+body[data-theme="vscode"] .button.primary:hover{background:#1177bb}
+body[data-theme="vscode"] .pill,body[data-theme="vscode"] .demo-tag{background:#343434;color:#ccc;border-radius:2px}
+body[data-theme="vscode"] .studio-toolbar,body[data-theme="vscode"] .window-taskbar,body[data-theme="vscode"] .tool-header{background:#2d2d30;border-color:#3c3c3c}
+body[data-theme="vscode"] .window-canvas{background:#1e1e1e;background-image:none}
+body[data-theme="vscode"] .tool-window{background:#252526;border:1px solid #555;border-radius:3px;box-shadow:0 8px 24px #0007}
+body[data-theme="vscode"] .tool-header strong,body[data-theme="vscode"] .tool-body{color:#ddd}
+body[data-theme="vscode"] .tool-header button{color:#bbb;border-radius:2px}
+body[data-theme="vscode"] .tool-header button:hover{background:#454545;color:#fff}
+body[data-theme="vscode"] .tool-icon{background:#424242;color:#9cdcfe;border-radius:2px}
+body[data-theme="vscode"] .builder,body[data-theme="vscode"] .custom-result{background:#2d2d30;border-color:#444;color:#ddd;border-radius:2px}
+body[data-theme="vscode"] .builder p,body[data-theme="vscode"] .tool-help{color:#aaa}
+body[data-theme="vscode"] .window-taskbar button{background:#333;color:#ccc;border-color:#4a4a4a;border-radius:2px}
+body[data-theme="vscode"] .window-taskbar button.active{background:#37373d;color:#fff;border-bottom:2px solid #3794ff}
+body[data-theme="vscode"] .prototype-switcher{bottom:30px;border-radius:3px;background:#2d2d30;border-color:#555;box-shadow:0 6px 20px #0008}
+body[data-theme="vscode"] .prototype-switcher button,body[data-theme="vscode"] .prototype-switcher select{border-radius:2px;background:#3c3c3c;border-color:#555}
+.editor-tabs,.demo-statusbar{display:none}
+body[data-theme="vscode"] .demo-statusbar{display:flex;position:fixed;left:0;right:0;bottom:0;height:23px;z-index:40;align-items:center;justify-content:space-between;gap:12px;padding:0 12px;background:#007acc;color:#fff;font-size:10px}
+body[data-theme="vscode"] .save-indicator{margin-left:auto;display:flex;align-items:center;gap:7px;white-space:nowrap}
+body[data-theme="vscode"] .save-indicator button{border:0;background:#ffffff26;color:#fff;padding:1px 6px;font-size:10px}
+body[data-theme="vscode"] .save-indicator button[hidden]{display:none}
+@media(max-width:760px){body[data-theme="vscode"] .editor-tabs{height:32px}
+body[data-theme="vscode"] .content{padding:20px 16px 110px}
+body[data-theme="vscode"] .demo-statusbar{font-size:9px}
+}
+
+  </style>
+  <style>
+body[data-theme="vscode"] .layout-b main{height:calc(100vh - 23px);min-width:0;overflow:hidden;background:#1e1e1e}
+body[data-theme="vscode"] .window-studio{height:100%;margin:0;border:0;border-radius:0;display:flex;flex-direction:column;position:relative;background:#1e1e1e}
+body[data-theme="vscode"] .desk-chrome{height:39px;min-height:39px;display:flex;align-items:stretch;background:#252526;border-bottom:1px solid #3c3c3c}
+body[data-theme="vscode"] .desk-context{max-width:170px;min-width:100px;display:flex;align-items:center;gap:7px;padding:0 12px;border-right:1px solid #3c3c3c;color:#aaa;font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+body[data-theme="vscode"] .desk-tabs{display:flex;align-items:stretch;gap:1px;min-width:0;flex:1;overflow-x:auto;scrollbar-width:thin}
+body[data-theme="vscode"] .desk-tab{display:flex;align-items:center;gap:7px;min-width:98px;max-width:185px;flex:0 1 155px;padding:0 11px;border:0;border-right:1px solid #383838;border-top:2px solid transparent;background:#2d2d30;color:#b8b8b8;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body[data-theme="vscode"] .desk-tab.active{background:#1e1e1e;color:#fff;border-top-color:#3794ff}
+body[data-theme="vscode"] .desk-tab.minimized{opacity:.6}
+body[data-theme="vscode"] .desk-add,body[data-theme="vscode"] .desk-gear{width:39px;flex:none;border:0;border-left:1px solid #3c3c3c;background:#252526;color:#ccc;font-size:18px}
+body[data-theme="vscode"] .desk-add:hover,body[data-theme="vscode"] .desk-gear:hover,body[data-theme="vscode"] .desk-add.active,body[data-theme="vscode"] .desk-gear.active{background:#3c3c3c;color:#fff}
+body[data-theme="vscode"] .desk-gear{font-size:15px}
+body[data-theme="vscode"] .window-canvas{flex:1;min-height:0!important;display:block;padding:0;background:#1e1e1e;overflow:auto}
+body[data-theme="vscode"] .window-empty{min-height:180px}
+body[data-theme="vscode"] .tool-window{display:flex;flex-direction:column;resize:none;overflow:hidden;min-width:250px;min-height:180px}
+body[data-theme="vscode"] .tool-header{flex:none;min-height:34px;padding:5px 8px}
+body[data-theme="vscode"] .tool-body{flex:1;min-height:0;overflow:auto;padding:12px}
+body[data-theme="vscode"] .window-resize-handle{position:absolute;right:0;bottom:0;width:18px;height:18px;cursor:nwse-resize;touch-action:none;background:linear-gradient(135deg,transparent 55%,#828282 56%,#828282 61%,transparent 62%,transparent 72%,#828282 73%,#828282 78%,transparent 79%)}
+body[data-theme="vscode"] .tool-window.maximized .window-resize-handle{display:none}
+body[data-theme="vscode"] .window-inner-add{display:block;margin:8px auto 3px;width:30px;height:30px;border:1px dashed #666;background:transparent;color:#aaa;font-size:18px;cursor:pointer}
+body[data-theme="vscode"] .window-inner-add:hover{border-color:#3794ff;color:#fff}
+body[data-theme="vscode"] .desk-message{align-self:center;max-width:210px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#9cdcfe;font-size:10px;padding:0 8px}
+body[data-theme="vscode"] .window-taskbar{display:none}
+body[data-theme="vscode"] .desk-popover{position:absolute;top:39px;z-index:45;background:#252526;border:1px solid #555;box-shadow:0 14px 35px #0009;color:#ddd}
+body[data-theme="vscode"] .template-gallery{left:110px;right:12px;max-height:min(510px,calc(100vh - 80px));overflow:auto;padding:15px}
+body[data-theme="vscode"] .popover-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px;font-size:12px}
+body[data-theme="vscode"] .popover-head button{border:0;background:transparent;color:#bbb;font-size:17px}
+body[data-theme="vscode"] .template-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+body[data-theme="vscode"] .template-card{display:block;text-align:left;min-width:0;padding:10px;border:1px solid #4a4a4a;background:#2d2d30;color:#ddd;cursor:pointer}
+body[data-theme="vscode"] .template-card:hover,body[data-theme="vscode"] .template-card:focus-visible{border-color:#3794ff;background:#333840}
+body[data-theme="vscode"] .template-card strong{display:block;font-size:11px;margin:8px 0 3px}
+body[data-theme="vscode"] .template-card small{display:block;color:#aaa;font-size:10px;line-height:1.4}
+body[data-theme="vscode"] .template-preview{height:72px;display:block;position:relative;border:1px solid #555;background:#1e1e1e}
+body[data-theme="vscode"] .template-preview i{display:block;position:absolute;background:#3b4f5f;border:1px solid #628099;border-radius:1px;box-sizing:border-box}
+body[data-theme="vscode"] .template-card:hover .template-preview i{background:#20527a;border-color:#3794ff}
+body[data-theme="vscode"] .layout-hint{margin:12px 0 0;color:#aaa;font-size:10px;line-height:1.5}
+body[data-theme="vscode"] .desk-settings{right:7px;width:258px;padding:14px}
+body[data-theme="vscode"] .desk-settings label{display:flex;align-items:center;gap:8px;margin:10px 0;font-size:11px}
+body[data-theme="vscode"] .desk-settings input[type=checkbox]{width:15px;height:15px;accent-color:#3794ff}
+body[data-theme="vscode"] .desk-settings input[type=range]{width:100%;accent-color:#3794ff}
+body[data-theme="vscode"] .desk-settings .settings-range{display:block;margin:14px 0 5px}
+body[data-theme="vscode"] .desk-settings .settings-range span{float:right;color:#9cdcfe}
+body[data-theme="vscode"] .desk-settings .button{width:100%;justify-content:center;margin-top:12px}
+body[data-theme="vscode"] .blank-prompt{height:100%;min-height:0;display:grid;place-items:center;color:#999}
+body[data-theme="vscode"] .blank-prompt button{width:40px;height:40px;border:1px dashed #676767;background:transparent;color:#b8b8b8;font-size:22px;cursor:pointer}
+body[data-theme="vscode"] .blank-prompt button:hover{border-color:#3794ff;color:#fff}
+body[data-theme="vscode"] .tool-window.docked{min-width:0;min-height:0;max-width:none;box-sizing:border-box;container-type:inline-size}
+body[data-theme="vscode"] .tool-window.docked .tool-header{gap:3px;padding:4px 5px}
+body[data-theme="vscode"] .tool-window.docked .tool-header .tool-kind{display:none}
+body[data-theme="vscode"] .tool-window.docked .tool-header button{padding:2px 4px;min-width:18px}
+@container (max-width:170px){.tool-header .tool-icon,.tool-header button[data-action="rename-window"],.tool-header button[data-action="minimize-window"],.tool-header button[data-action="maximize-window"]{display:none}
+}
+body[data-theme="vscode"] .dock-preview{position:absolute;z-index:9998;pointer-events:none;border:2px solid #60a9ea;background:#3794ff33;box-shadow:inset 0 0 0 1px #60a9ea66}
+body[data-theme="vscode"] .builder{gap:9px}
+body[data-theme="vscode"] .builder-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+body[data-theme="vscode"] .builder label{display:grid;gap:4px;color:#bbb;font-size:10px}
+body[data-theme="vscode"] .builder input,body[data-theme="vscode"] .builder select{width:100%;min-width:0;padding:7px;font-size:11px}
+body[data-theme="vscode"] .builder .field-name-input{flex:1 1 0;width:auto;min-width:80px}
+body[data-theme="vscode"] .builder .field-kind-select{flex:0 0 105px;width:105px}
+body[data-theme="vscode"] .builder .tool-entry .button{flex:none}
+body[data-theme="vscode"] .builder .codex-description{min-height:90px!important}
+body[data-theme="vscode"] .builder-options{margin-bottom:4px}
+body[data-theme="vscode"] .custom-fields{display:grid}
+body[data-theme="vscode"] .template-split .custom-fields{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+body[data-theme="vscode"] .template-dashboard .custom-fields{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+body[data-theme="vscode"] .ui-cards .custom-field{background:#30343b;border:1px solid #4d5968;padding:10px}
+body[data-theme="vscode"] .ui-minimal .custom-field{border:0;padding:4px 0}
+body[data-theme="vscode"] .ux-stepper{display:flex;align-items:center;gap:7px;margin:9px 0}
+body[data-theme="vscode"] .ux-stepper span{color:#aaa;font-size:10px}
+body[data-theme="vscode"] .ux-review{display:grid;gap:7px;margin:8px 0}
+body[data-theme="vscode"] .ux-review-row{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid #454545;padding:6px 0}
+body[data-theme="vscode"] .snap-guide{position:absolute;z-index:9999;pointer-events:none;background:#3794ff;opacity:.8}
+body[data-theme="vscode"] .snap-guide.vertical{top:0;bottom:0;width:1px}
+body[data-theme="vscode"] .snap-guide.horizontal{left:0;right:0;height:1px}
+@media(min-width:761px) and (max-width:1100px){body[data-theme="vscode"] .template-gallery{left:5px;right:5px}
+body[data-theme="vscode"] .template-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:760px){body[data-theme="vscode"] .layout-b main{height:auto;min-height:calc(100vh - 72px);overflow:visible}
+body[data-theme="vscode"] .window-studio{min-height:520px}
+body[data-theme="vscode"] .window-canvas{display:grid;gap:10px;padding:10px;overflow:visible}
+body[data-theme="vscode"] .tool-window{position:relative!important;left:auto!important;top:auto!important;width:100%!important;height:auto!important;min-height:220px}
+body[data-theme="vscode"] .window-resize-handle{display:none}
+body[data-theme="vscode"] .template-gallery{left:5px;right:5px}
+body[data-theme="vscode"] .template-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+body[data-theme="vscode"] .desk-context{display:none}
+}
+body[data-theme="vscode"] .split-canvas{display:flex;flex:1;min-height:0;min-width:0;background:#1e1e1e;overflow:hidden}
+body[data-theme="vscode"] .split-node{display:flex;flex:1;min-width:0;min-height:0;overflow:hidden}
+body[data-theme="vscode"] .split-node.vertical{flex-direction:row}
+body[data-theme="vscode"] .split-node.horizontal{flex-direction:column}
+body[data-theme="vscode"] .split-part{display:flex;min-width:0;min-height:0;overflow:hidden}
+body[data-theme="vscode"] .split-part.second{flex:1 1 0}
+body[data-theme="vscode"] .split-divider{flex:0 0 6px;position:relative;background:#3c3c3c;touch-action:none;user-select:none;z-index:2}
+body[data-theme="vscode"] .split-node.vertical>.split-divider{cursor:col-resize;border-left:1px solid #515151;border-right:1px solid #515151}
+body[data-theme="vscode"] .split-node.horizontal>.split-divider{cursor:row-resize;border-top:1px solid #515151;border-bottom:1px solid #515151}
+body[data-theme="vscode"] .split-divider:hover,body[data-theme="vscode"] .split-divider.dragging,body[data-theme="vscode"] .split-divider:focus-visible{background:#3794ff;outline:none}
+body[data-theme="vscode"] .split-pane{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;background:#1e1e1e;overflow:hidden}
+body[data-theme="vscode"] .split-pane .tool-body{flex:1;min-height:0;overflow:auto;padding:12px}
+body[data-theme="vscode"] .split-pane .blank-prompt{min-height:100%}
+body[data-theme="vscode"] .split-pane .window-inner-add{margin:8px auto 3px}
+body[data-theme="vscode"] .split-layout-name{display:flex;align-items:center;padding:0 12px;color:#b8b8b8;font-size:10px;white-space:nowrap}
+body[data-theme="vscode"] .template-card[aria-pressed="true"]{border-color:#3794ff;background:#263544}
+@media(max-width:760px){body[data-theme="vscode"] .split-canvas{height:520px;min-height:520px}
+body[data-theme="vscode"] .split-layout-name{display:none}
+}
+body[data-theme="vscode"] .layout-b{--project-pane-width:300px;--project-pane-max:calc(100vw - 62px - 6px - 260px);grid-template-columns:62px minmax(170px,min(var(--project-pane-width),var(--project-pane-max))) 6px minmax(0,1fr)}
+body[data-theme="vscode"] .layout-b.project-hidden{grid-template-columns:62px minmax(0,1fr)}
+body[data-theme="vscode"] .layout-b.project-hidden .project-pane,body[data-theme="vscode"] .layout-b.project-hidden .project-resizer{display:none}
+body[data-theme="vscode"] .project-resizer{height:100vh;position:sticky;top:0;background:#3c3c3c;border-left:1px solid #515151;border-right:1px solid #515151;cursor:col-resize;touch-action:none;user-select:none;z-index:3}
+body[data-theme="vscode"] .project-resizer:hover,body[data-theme="vscode"] .project-resizer.dragging,body[data-theme="vscode"] .project-resizer:focus-visible{background:#3794ff;outline:none}
+body[data-theme="vscode"] .project-pane .brand{display:flex;min-width:0}
+body[data-theme="vscode"] .project-hide{margin-left:auto;border:0;background:transparent;color:#b9b9b9;font-size:16px;padding:2px 6px}
+body[data-theme="vscode"] .project-hide:hover{background:#3c3c3c;color:#fff}
+body[data-theme="vscode"] .mobile-project-toggle{display:none}
+body[data-theme="vscode"] .primary-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(170px,28%);gap:0;min-height:180px;border:1px solid #3c3c3c}
+body[data-theme="vscode"] .primary-content{min-width:0;padding:12px;background:#1e1e1e}
+body[data-theme="vscode"] .primary-content h3{font-size:12px;font-weight:600;margin:0 0 10px;color:#ddd}
+body[data-theme="vscode"] .document-editor{min-height:280px;resize:vertical;line-height:1.7;font-size:12px}
+body[data-theme="vscode"] .annotation-pane{min-width:0;padding:10px;background:#252526;border-left:1px solid #3c3c3c}
+body[data-theme="vscode"] .annotation-head{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#ccc;font-size:11px;font-weight:600;margin-bottom:8px}
+body[data-theme="vscode"] .primary-actions{display:flex;align-items:center;gap:5px}
+body[data-theme="vscode"] .annotation-head button{border:1px solid #555;background:#333;color:#ddd;padding:4px 7px;white-space:nowrap}
+body[data-theme="vscode"] .annotation-head button:hover{border-color:#3794ff}
+body[data-theme="vscode"] .annotation-help{font-size:10px;color:#999;line-height:1.5;margin:5px 0}
+body[data-theme="vscode"] .annotation-list{display:grid;gap:8px;margin-top:10px}
+body[data-theme="vscode"] .annotation-card{border:1px solid #505050;border-left:3px solid #3794ff;background:#2d2d30;padding:8px;min-width:0;font-size:10px;line-height:1.5;color:#ddd;overflow-wrap:anywhere}
+body[data-theme="vscode"] .annotation-card.link{border-left-color:#6cc4a1}
+body[data-theme="vscode"] .annotation-card-header{display:flex;align-items:center;gap:6px;color:#aaa;margin-bottom:5px}
+body[data-theme="vscode"] .annotation-card-header span{margin-right:auto}
+body[data-theme="vscode"] .annotation-card-header button{border:0;background:transparent;color:#aaa;padding:1px 3px;font-size:12px}
+body[data-theme="vscode"] .annotation-card-header button:hover{color:#fff}
+body[data-theme="vscode"] .annotation-quote{display:block;width:100%;text-align:left;border:0;border-left:2px solid #777;background:#383838;color:#b8d7f0;padding:5px 7px;margin:5px 0;font-size:10px;overflow-wrap:anywhere}
+body[data-theme="vscode"] .annotation-card p{margin:5px 0 0;white-space:pre-wrap}
+body[data-theme="vscode"] .annotation-card a{color:#77bdff;overflow-wrap:anywhere}
+body[data-theme="vscode"] .annotation-composer{display:grid;gap:7px;margin-top:8px;border-top:1px solid #444;padding-top:9px}
+body[data-theme="vscode"] .annotation-composer label{display:grid;gap:4px;color:#aaa;font-size:10px}
+body[data-theme="vscode"] .annotation-composer input,body[data-theme="vscode"] .annotation-composer select,body[data-theme="vscode"] .annotation-composer textarea{width:100%;min-width:0;background:#333;color:#ddd;border:1px solid #555;border-radius:2px;padding:6px;font-size:11px}
+body[data-theme="vscode"] .annotation-composer textarea{min-height:70px;resize:vertical}
+body[data-theme="vscode"] .annotation-composer-actions{display:flex;gap:6px;flex-wrap:wrap}
+body[data-theme="vscode"] .annotation-error{color:#f48771;font-size:10px}
+body[data-theme="vscode"] .blank-actions{display:flex;align-items:center;justify-content:center;gap:7px;flex-wrap:wrap;max-width:520px}
+body[data-theme="vscode"] .blank-actions button{width:auto;height:36px;border:1px solid #555;background:#2d2d30;color:#ddd;font-size:11px;padding:0 10px}
+body[data-theme="vscode"] .blank-actions button:first-child{width:38px;font-size:20px;border-style:dashed}
+body[data-theme="vscode"] .blank-actions button:hover{border-color:#3794ff;color:#fff}
+body[data-theme="vscode"] .browser-toolbar,body[data-theme="vscode"] .files-toolbar,body[data-theme="vscode"] .terminal-toolbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:9px}
+body[data-theme="vscode"] .browser-toolbar input,body[data-theme="vscode"] .terminal-toolbar input{flex:1;min-width:100px}
+body[data-theme="vscode"] .split-pane.browser-pane .tool-body{display:flex;flex-direction:column;padding:0;overflow:hidden}
+body[data-theme="vscode"] .browser-pane .builder{flex:none;max-height:45%;overflow:auto;margin:8px}
+body[data-theme="vscode"] .browser-primary-layout{position:relative;display:flex;flex:1;min-height:0;border:0}
+body[data-theme="vscode"] .browser-primary-layout .primary-content{display:flex;flex:1;flex-direction:column;min-height:0;padding:0;overflow:hidden}
+body[data-theme="vscode"] .browser-heading{height:28px;flex:none;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 8px;border-bottom:1px solid #3c3c3c;background:#252526;color:#c6c6c6;font-size:10px}
+body[data-theme="vscode"] .browser-heading button{border:0;background:transparent;color:#aaa;font-size:10px;padding:3px 5px}
+body[data-theme="vscode"] .browser-heading button:hover{color:#fff;background:#3c3c3c}
+body[data-theme="vscode"] .browser-workspace{display:flex;flex:1;flex-direction:column;min-height:0}
+body[data-theme="vscode"] .browser-workspace .browser-toolbar{flex:none;flex-wrap:nowrap;gap:3px;margin:0;padding:4px 6px;border-bottom:1px solid #3c3c3c;background:#252526}
+body[data-theme="vscode"] .browser-toolbar button,body[data-theme="vscode"] .browser-toolbar a{display:grid;place-items:center;flex:none;min-width:26px;height:27px;padding:2px 5px;border:0;border-radius:3px;background:transparent;color:#c6c6c6;text-decoration:none;font-size:13px}
+body[data-theme="vscode"] .browser-toolbar button:hover:not(:disabled),body[data-theme="vscode"] .browser-toolbar a:hover{background:#3c3c3c;color:#fff}
+body[data-theme="vscode"] .browser-toolbar button:disabled{opacity:.35;cursor:default}
+body[data-theme="vscode"] .browser-toolbar input{height:27px;min-width:0;padding:4px 7px;border:1px solid #505050;border-radius:3px;background:#1e1e1e;color:#ddd;font-size:11px}
+body[data-theme="vscode"] .browser-viewport{position:relative;flex:1;min-height:0;background:#fff}
+body[data-theme="vscode"] .browser-start{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px;background:#1e1e1e;color:#d4d4d4;text-align:center}
+body[data-theme="vscode"] .browser-start strong{font-size:19px;font-weight:500}
+body[data-theme="vscode"] .browser-start span{font-size:11px;color:#999}
+body[data-theme="vscode"] .browser-error{flex:none;margin:0;padding:5px 8px;background:#4b302d;color:#ffd4cf;font-size:10px}
+body[data-theme="vscode"] .browser-primary-layout>.annotation-pane{position:relative;flex:none;width:min(260px,40%);overflow:auto;border-left:1px solid #3c3c3c}
+#browser-portals{position:fixed;inset:0;pointer-events:none;z-index:4}
+#browser-portals .browser-frame{position:fixed;display:block;border:0;background:#fff;pointer-events:auto}
+body[data-theme="vscode"] .file-list{display:grid;gap:2px;max-height:230px;overflow:auto;border:1px solid #454545;background:#252526}
+body[data-theme="vscode"] .file-list button{display:flex;gap:7px;align-items:center;width:100%;border:0;background:transparent;color:#ddd;text-align:left;padding:6px 8px;font-size:11px;min-width:0}
+body[data-theme="vscode"] .file-list button:hover{background:#37373d}
+body[data-theme="vscode"] .file-list button span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+body[data-theme="vscode"] .file-preview,body[data-theme="vscode"] .terminal-output{display:block;white-space:pre-wrap;overflow:auto;background:#111;color:#d4d4d4;border:1px solid #454545;padding:9px;font:11px/1.5 Consolas,monospace}
+body[data-theme="vscode"] .file-preview{max-height:300px}
+body[data-theme="vscode"] .terminal-output{height:280px}
+body[data-theme="vscode"] .terminal-toolbar .button{flex:none}
+body[data-theme="vscode"] .builder input.codex-description{min-height:34px!important;height:34px}
+body[data-theme="vscode"] .split-pane{container-type:inline-size}
+@container (max-width:680px){.primary-layout:not(.browser-primary-layout){display:block!important}
+.browser-primary-layout{display:flex!important}
+.primary-layout:not(.browser-primary-layout) .annotation-pane{border-left:0!important;border-top:1px solid #3c3c3c}
+}
+@media(min-width:761px) and (max-width:1100px){body[data-theme="vscode"] .layout-b{--project-pane-width:210px;--project-pane-max:calc(100vw - 56px - 6px - 260px);grid-template-columns:56px minmax(170px,min(var(--project-pane-width),var(--project-pane-max))) 6px minmax(0,1fr)}
+body[data-theme="vscode"] .layout-b.project-hidden{grid-template-columns:56px minmax(0,1fr)}
+}
+@media(max-width:760px){body[data-theme="vscode"] .layout-b,body[data-theme="vscode"] .layout-b.project-hidden{display:block}
+body[data-theme="vscode"] .project-resizer{display:none}
+body[data-theme="vscode"] .mobile-project-toggle{display:block;flex:none;width:39px;border:0;border-right:1px solid #3c3c3c;background:#252526;color:#ccc}
+body[data-theme="vscode"] .mobile-project-toggle:hover{background:#3c3c3c;color:#fff}
+}
+body[data-theme="vscode"] .control-nav{display:flex;align-items:center;gap:10px;width:100%;margin:2px 0 14px;padding:10px;border:0;border-radius:2px;background:#2d2d30;color:#ddd;text-align:left;font-size:12px}
+body[data-theme="vscode"] .control-nav:hover,body[data-theme="vscode"] .control-nav.active{background:#37373d;color:#fff}
+body[data-theme="vscode"] .control-nav.active{border-left:2px solid #3794ff}
+body[data-theme="vscode"] .control-nav span:first-child{width:18px;text-align:center;color:#9cdcfe;font-size:16px}
+body[data-theme="vscode"] .control-center{height:100%;min-height:0;overflow:auto;background:#1e1e1e;color:#d4d4d4}
+body[data-theme="vscode"] .control-topbar{height:37px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 16px;border-bottom:1px solid #3c3c3c;background:#252526;color:#eee;font-size:11px}
+body[data-theme="vscode"] .control-topbar button{border:0;background:transparent;color:#aaa;font-size:11px}
+body[data-theme="vscode"] .control-topbar button:hover{color:#fff}
+body[data-theme="vscode"] .control-body{max-width:1120px;margin:auto;padding:34px 34px 70px}
+body[data-theme="vscode"] .control-title{display:flex;align-items:flex-end;justify-content:space-between;gap:15px;margin-bottom:22px}
+body[data-theme="vscode"] .control-title small{color:#9cdcfe;font-size:10px;letter-spacing:.12em}
+body[data-theme="vscode"] .control-title h1{margin:5px 0 5px;font-size:29px;font-weight:550;letter-spacing:.02em}
+body[data-theme="vscode"] .control-title p{margin:0;color:#999;font-size:11px;line-height:1.5}
+body[data-theme="vscode"] .control-primary{flex:none;border:1px solid #007acc;background:#0e639c;color:#fff;border-radius:2px;padding:8px 11px;font-size:11px}
+body[data-theme="vscode"] .control-primary:hover{background:#1177bb}
+body[data-theme="vscode"] .control-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:16px}
+body[data-theme="vscode"] .control-metric,body[data-theme="vscode"] .control-panel{border:1px solid #3c3c3c;background:#252526}
+body[data-theme="vscode"] .control-metric{padding:16px 17px;min-width:0}
+body[data-theme="vscode"] .control-metric span{display:block;color:#a8a8a8;font-size:10px}
+body[data-theme="vscode"] .control-metric strong{display:block;margin-top:8px;color:#eee;font-size:25px;font-weight:500}
+body[data-theme="vscode"] .control-grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(220px,1fr);gap:14px;align-items:start}
+body[data-theme="vscode"] .control-panel{min-width:0;padding:18px}
+body[data-theme="vscode"] .control-panel h2{margin:0 0 13px;font-size:13px;font-weight:600}
+body[data-theme="vscode"] .control-panel p{margin:0;color:#aaa;font-size:11px;line-height:1.6}
+body[data-theme="vscode"] .control-current{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;background:#2d2d30;border-left:2px solid #3794ff}
+body[data-theme="vscode"] .control-current strong{display:block;color:#eee;font-size:12px}
+body[data-theme="vscode"] .control-current small{display:block;margin-top:4px;color:#aaa;font-size:10px}
+body[data-theme="vscode"] .control-current button,body[data-theme="vscode"] .control-project button,body[data-theme="vscode"] .control-progress button{border:0;background:transparent;color:#9cdcfe;font-size:11px;text-align:left}
+body[data-theme="vscode"] .control-current button:hover,body[data-theme="vscode"] .control-project button:hover,body[data-theme="vscode"] .control-progress button:hover{text-decoration:underline;color:#fff}
+body[data-theme="vscode"] .control-filters{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 12px}
+body[data-theme="vscode"] .control-filters button{border:1px solid #505050;background:#2d2d30;color:#bbb;border-radius:2px;padding:5px 8px;font-size:10px}
+body[data-theme="vscode"] .control-filters button.active{border-color:#3794ff;color:#fff;background:#26415a}
+body[data-theme="vscode"] .control-project-list{display:grid;gap:3px}
+body[data-theme="vscode"] .control-project{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;padding:9px 3px;border-top:1px solid #393939;min-width:0}
+body[data-theme="vscode"] .control-project .control-project-icon{display:grid;place-items:center;flex:none;width:26px;height:26px;background:#37373d;color:#9cdcfe;font-size:12px}
+body[data-theme="vscode"] .control-project .control-project-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#ddd}
+body[data-theme="vscode"] .control-project small{color:#999;font-size:10px;white-space:nowrap}
+body[data-theme="vscode"] .control-usage-bar{flex:0 0 100%;height:3px;background:#383838}
+body[data-theme="vscode"] .control-usage-bar i{display:block;height:100%;background:#3794ff}
+body[data-theme="vscode"] .control-progress{display:flex;align-items:center;gap:8px;padding:9px 0;border-top:1px solid #393939;font-size:11px}
+body[data-theme="vscode"] .control-progress button{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+body[data-theme="vscode"] .control-progress strong{color:#9cdcfe;font-size:10px;font-weight:500}
+body[data-theme="vscode"] .control-empty{padding:12px 0;color:#999;font-size:11px;line-height:1.5}
+body[data-theme="vscode"] .plan-panel{margin:14px 0}
+body[data-theme="vscode"] .plan-heading h2{margin:0 0 5px}
+body[data-theme="vscode"] .plan-form{display:flex;align-items:end;gap:9px;flex-wrap:wrap;margin:15px 0 8px}
+body[data-theme="vscode"] .plan-form label{display:grid;gap:5px;color:#aaa;font-size:10px}
+body[data-theme="vscode"] .plan-title-field{flex:1 1 260px;min-width:180px}
+body[data-theme="vscode"] .plan-due-field{flex:0 1 195px;min-width:170px}
+body[data-theme="vscode"] .plan-form input{width:100%;min-width:0;height:34px;border:1px solid #505050;border-radius:2px;background:#1e1e1e;color:#eee;padding:6px 9px;font-family:inherit;font-size:12px}
+body[data-theme="vscode"] .plan-form input:focus{outline:1px solid #3794ff;border-color:#3794ff}
+body[data-theme="vscode"] .plan-form button{height:34px;border:1px solid #007acc;border-radius:2px;background:#0e639c;color:#fff;padding:0 13px;font-family:inherit;font-size:11px;cursor:pointer}
+body[data-theme="vscode"] .plan-list{margin-top:10px;border-top:1px solid #3c3c3c}
+body[data-theme="vscode"] .plan-item{display:flex;align-items:center;gap:10px;min-width:0;padding:10px 4px;border-bottom:1px solid #393939}
+body[data-theme="vscode"] .plan-item input[type=checkbox]{flex:none;width:15px;height:15px;accent-color:#3794ff;cursor:pointer}
+body[data-theme="vscode"] .plan-source-mark{flex:none;width:15px;color:#4ec9b0;text-align:center;font-size:12px}
+body[data-theme="vscode"] .plan-item-body{flex:1;min-width:0}
+body[data-theme="vscode"] .plan-item-body strong{display:block;color:#eee;font-size:12px;font-weight:500;overflow-wrap:anywhere}
+body[data-theme="vscode"] .plan-item-body small{display:block;margin-top:4px;color:#a8a8a8;font-size:10px;overflow-wrap:anywhere}
+body[data-theme="vscode"] .plan-item.done .plan-item-body{opacity:.58}
+body[data-theme="vscode"] .plan-item.done strong{text-decoration:line-through}
+body[data-theme="vscode"] .plan-item button{flex:none;border:1px solid #4b4b4b;border-radius:2px;background:#303034;color:#ccc;padding:5px 8px;font-size:10px;cursor:pointer}
+body[data-theme="vscode"] .plan-item button:hover{background:#3d3d42;color:#fff}
+body[data-theme="vscode"] .plan-panel .plan-footnote{margin-top:10px;color:#858585;font-size:10px}
+body[data-theme="vscode"] .plan-panel .plan-error{color:#f48771}
+@media(max-width:1100px){body[data-theme="vscode"] .control-body{padding:24px 18px 60px}
+body[data-theme="vscode"] .control-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
+body[data-theme="vscode"] .control-grid{grid-template-columns:1fr}
+}
+@media(max-width:760px){body[data-theme="vscode"] .control-center{min-height:520px}
+body[data-theme="vscode"] .control-title{display:block}
+body[data-theme="vscode"] .control-primary{margin-top:13px}
+}
+
+  </style>
+  <style>
+body[data-theme="vscode"] .category-head{display:flex;align-items:stretch;gap:2px}
+body[data-theme="vscode"] .category-head .category-toggle{flex:1;min-width:0}
+body[data-theme="vscode"] .category-projects .project-row{grid-template-columns:22px minmax(0,1fr) 24px}
+body[data-theme="vscode"] .tree-add{flex:none;width:24px;border:0;border-radius:2px;background:transparent;color:#aaa;font-size:15px}
+body[data-theme="vscode"] .tree-add:hover{background:#3c3c3c;color:#fff}
+body[data-theme="vscode"] .category-head>.tree-add{background:#2d2d30}
+body[data-theme="vscode"] .child-button .child-label{min-width:0;overflow:hidden;text-overflow:ellipsis;flex:1}
+body[data-theme="vscode"] .child-progress{color:#999;font-size:9px;flex:none}
+body[data-theme="vscode"] .tree-create{display:grid;gap:8px;margin:8px 0;padding:10px;border:1px solid #555;background:#2d2d30;color:#ddd;font-size:11px}
+body[data-theme="vscode"] .tree-create label{display:grid;gap:4px}
+body[data-theme="vscode"] .tree-create input,body[data-theme="vscode"] .tree-create select,body[data-theme="vscode"] .tree-create textarea{width:100%;min-width:0;padding:6px}
+body[data-theme="vscode"] .tree-create textarea{min-height:54px;resize:vertical}
+body[data-theme="vscode"] .tree-create small{color:#aaa;line-height:1.45}
+body[data-theme="vscode"] .tree-create-actions{display:flex;gap:6px}
+body[data-theme="vscode"] .tree-create-actions button{border:1px solid #555;background:#3c3c3c;color:#ddd;padding:5px 9px}
+body[data-theme="vscode"] .tree-create-actions button[type=submit]{border-color:#007acc;background:#0e639c;color:#fff}
+body[data-theme="vscode"] .tree-create-error{color:#f48771;margin:0}
+body[data-theme="vscode"] .desk-progress{flex:none;border:0;border-left:1px solid #3c3c3c;background:#252526;color:#bbb;padding:0 10px;font-size:10px}
+body[data-theme="vscode"] .desk-progress:hover{background:#3c3c3c;color:#fff}
+body[data-theme="vscode"] .progress-popover{position:absolute;z-index:5;right:39px;top:39px;width:230px;padding:12px;border:1px solid #555;background:#252526;color:#ddd;box-shadow:0 8px 25px #0008;font-size:11px}
+body[data-theme="vscode"] .progress-popover label{display:grid;gap:8px}
+body[data-theme="vscode"] .progress-popover input{width:100%}
+body[data-theme="vscode"] .progress-popover p{color:#aaa;font-size:10px;line-height:1.5}
+
+  </style>
+  <link rel="stylesheet" href="/workbench/education-network.css">
+  <script src="/workbench/education-network.js"></script>
+</head>
+<body>
+  <div id="app" class="app"></div>
+  <div id="browser-portals"></div>
+  <div class="demo-statusbar" aria-label="工作区状态"><span id="demo-status-context">本机工作区</span><span class="save-indicator"><span id="layout-save-status" role="status">正在恢复界面…</span><button id="layout-save-retry" hidden></button></span><span>UTF-8　·　本地工作台</span></div>
+  <script>
+    const variants = [
+      {id:"a", name:"常驻侧栏"},
+      {id:"b", name:"图标栏 + 项目树"},
+      {id:"c", name:"项目树 + 详情栏"}
+    ];
+    // 已登记项目是工具访问的权限上下文；自定义分类和小项目随界面状态保存。
+    const projects = [
+      {id:"console", name:"Workstation-Visual-Console", children:[{id:"workbench",name:"网页工作台"},{id:"plugins",name:"工作流插件"},{id:"native",name:"原生备选"}]},
+      {id:"university", name:"University", children:[{id:"control",name:"控制工程"},{id:"fluid",name:"液压传动"},{id:"machine",name:"机械设计"},{id:"math",name:"数学竞赛"},{id:"thermal",name:"热工基础"}]},
+      {id:"challenge", name:"ChallengeCup2026", children:[{id:"materials",name:"申报材料"},{id:"data",name:"研究数据"},{id:"presentation",name:"成果展示"}]},
+      {id:"business", name:"Guochuang2026-BizPlan", children:[{id:"plan",name:"商业计划"},{id:"evidence",name:"佐证材料"}]},
+      {id:"sandbox", name:"Sandbox", children:[]}
+    ];
+    const categories = [
+      {id:"writing",name:"文字处理",icon:"▤",projects:["challenge","business"]},
+      {id:"education",name:"教育学习",icon:"▧",projects:["university"]},
+      {id:"tools",name:"工具与开发",icon:"⌘",projects:["console"]},
+      {id:"experiments",name:"实验与临时",icon:"◫",projects:["sandbox"]}
+    ];
+    const baseCategories=categories.map(category=>({...category,projects:[...category.projects]}));
+    const baseChildren=new Map(projects.map(project=>[project.id,project.children.map(child=>({...child}))]));
+    const state = {variant:"b",theme:"vscode",view:"project",project:"console",child:"workbench",open:new Set(["console","university"]),openCategories:new Set(["writing","education","tools"]),projectPaneOpen:true,projectPaneWidth:null,layoutOpen:false,progressOpen:false,create:null,reveal:null,query:"",notice:""};
+    const boards = new Map([["console/workbench",[
+      {id:1,kind:"blank",title:"内容区 1",builderOpen:false},
+      {id:2,kind:"blank",title:"内容区 2",builderOpen:false}
+    ]]]);
+    const boardLayouts=new Map(),splitTrees=new Map();
+    let windowSerial=2,fieldSerial=0,annotationSerial=0,dividerDrag=null,projectDrag=null;
+    const boardKey = () => `${state.project}/${state.child||"overview"}`;
+    const projectUsage=new Map();
+    const planItems=[];
+    const planDraft={title:"",due:"",error:""};
+    
+    
+    
+    let usageLastTick=Date.now(),usageWasActive=false,usageProject=null;
+    function usageEligible(){return state.view==="project"&&document.visibilityState==="visible"&&document.hasFocus()}
+    function tickUsage(){const now=Date.now();if(usageWasActive&&usageProject){const elapsed=Math.max(0,Math.min(5,(now-usageLastTick)/1000));projectUsage.set(usageProject,(projectUsage.get(usageProject)||0)+elapsed)}usageLastTick=now;usageWasActive=usageEligible();usageProject=usageWasActive?state.project:null}
+    function formatUsage(value){const seconds=Math.max(0,Math.floor(Number(value)||0)),hours=Math.floor(seconds/3600),minutes=Math.floor(seconds%3600/60);return hours?`${hours}时${minutes}分`:`${minutes}分${seconds%60}秒`}
+    
+    
+    
+    function currentWindows(){const key=boardKey();if(!boards.has(key))boards.set(key,[]);return boards.get(key)}
+    function findWindow(id){return currentWindows().find(item=>item.id===Number(id))}
+    const escapeHtml = value => String(value).replace(/[&<>"']/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[char]));
+    const selectedProject = () => projects.find(item=>item.id===state.project)||projects[0];
+    const projectFolder = project => project.folder||project.name;
+    const projectIdForFolder = folder => `p_${folder.toLowerCase()}`;
+    const selectedChild = () => selectedProject().children.find(item=>item.id===state.child);
+    const selectedCategory = () => categories.find(item=>item.projects.includes(state.project))||categories[0];
+    function recommendedLayout(projectId){
+      const project=projects.find(item=>item.id===projectId),existing=project?.children.map(child=>boardLayouts.get(`${projectId}/${child.id}`)).find(Boolean);
+      if(existing)return existing;
+      const category=categories.find(item=>item.projects.includes(projectId));
+      return {challenge:"side-stack",business:"side-stack",university:"top-bottom",console:"halves",sandbox:"single"}[projectId]||{writing:"side-stack",education:"top-bottom",tools:"halves",experiments:"single"}[category?.id]||"halves";
+    }
+    function projectCreateForm(){
+      const draft=state.create;if(!draft)return "";
+      const project=projects.find(item=>item.id===draft.project),category=categories.find(item=>item.id===draft.category);
+      const title=draft.kind==="category"?"新建分类":draft.kind==="child"?`在 ${project?.name||"项目"} 下新建小项目`:draft.kind==="project"?`在 ${category?.name||"分类"} 下新建项目`:`归入 ${category?.name||"分类"} 的项目`;
+      let fields="";
+      if(draft.kind==="category")fields=`<label>分类名称<input data-role="create-name" name="name" maxlength="40" required value="${escapeHtml(draft.name||"")}" placeholder="例如：科研写作"></label>`;
+      if(draft.kind==="child"){
+        const recommended=recommendedLayout(draft.project),chosen=draft.layout||recommended;
+        fields=`<label>小项目名称<input data-role="create-name" name="name" maxlength="60" required value="${escapeHtml(draft.name||"")}" placeholder="例如：课程笔记"></label><label>初始分割布局<select name="layout">${layoutCatalog.map(layout=>`<option value="${layout.id}" ${layout.id===chosen?"selected":""}>${escapeHtml(layout.name)}${layout.id===recommended?" · 推荐":""}</option>`).join("")}</select></label><small>新页面使用相同的工作台功能，内容与进度独立；建好后可随时换布局。</small>`;
+      }
+      if(draft.kind==="project"){
+        const recommended={writing:"side-stack",education:"top-bottom",tools:"halves",experiments:"single"}[category?.id]||"halves",chosen=draft.layout||recommended;
+        fields=`<label>项目名称<input data-role="create-name" name="name" maxlength="60" required value="${escapeHtml(draft.name||"")}" placeholder="例如：课程资料整理"></label><label>目录名（可选）<input name="folder" maxlength="64" value="${escapeHtml(draft.folder||"")}" placeholder="留空自动生成；也可填英文名称"></label><label>项目说明（可选）<textarea name="description" maxlength="1000" placeholder="这个项目要完成什么">${escapeHtml(draft.description||"")}</textarea></label><label>初始分割布局<select name="layout">${layoutCatalog.map(layout=>`<option value="${layout.id}" ${layout.id===chosen?"selected":""}>${escapeHtml(layout.name)}${layout.id===recommended?" · 推荐":""}</option>`).join("")}</select></label><small>会在工作站 Projects 下创建真实项目目录；新项目的内容和进度独立保存。</small>`;
+      }
+      if(draft.kind==="assign")fields=`<label>选择已登记项目<select name="project">${projects.filter(item=>!category?.projects.includes(item.id)).map(item=>`<option value="${item.id}" ${draft.projectChoice===item.id?"selected":""}>${escapeHtml(item.name)} · 当前在 ${escapeHtml(categories.find(group=>group.projects.includes(item.id))?.name||"未分类")}</option>`).join("")}</select></label><small>仅调整工作台中的分类，不移动项目文件。</small>`;
+      return `<form class="tree-create" data-role="project-create"><strong>${escapeHtml(title)}</strong>${fields}${draft.error?`<p class="tree-create-error" role="alert">${escapeHtml(draft.error)}</p>`:""}<div class="tree-create-actions"><button type="submit" ${draft.loading?"disabled":""}>${draft.loading?"创建中…":draft.kind==="assign"?"归入分类":"创建"}</button><button type="button" data-action="cancel-create" ${draft.loading?"disabled":""}>取消</button></div></form>`;
+    }
+    function tree(){
+      const query=state.query.trim().toLocaleLowerCase();
+      const rows=categories.map(category=>{
+        const categoryMatch=category.name.toLocaleLowerCase().includes(query);
+        const matches=category.projects.map(id=>projects.find(project=>project.id===id)).filter(Boolean).map(project=>{
+          const parentMatch=categoryMatch||project.name.toLocaleLowerCase().includes(query);
+          const children=project.children.filter(child=>!query||parentMatch||child.name.toLocaleLowerCase().includes(query));
+          if(query&&!parentMatch&&!children.length)return "";
+          const expanded=state.open.has(project.id)||Boolean(query);
+          return `<div class="project-group"><div class="project-row ${state.project===project.id&&!state.child?"selected":""}"><button class="tree-toggle" data-action="toggle" data-project="${project.id}" aria-label="${expanded?"折叠":"展开"} ${escapeHtml(project.name)}" aria-expanded="${expanded}">${project.children.length?expanded?"▾":"▸":"·"}</button><button class="tree-name" data-action="select-project" data-project="${project.id}" title="${escapeHtml(project.name)}">${escapeHtml(project.name)}</button><button class="tree-add" data-action="open-create" data-kind="child" data-project="${project.id}" title="新增小项目" aria-label="在 ${escapeHtml(project.name)} 下新增小项目">＋</button></div>${expanded&&children.length?`<div class="children">${children.map(child=>`<button class="child-button ${state.project===project.id&&state.child===child.id?"selected":""}" data-action="select-child" data-project="${project.id}" data-child="${child.id}"><span class="child-dot"></span><span class="child-label">${escapeHtml(child.name)}</span><small class="child-progress">${Math.max(0,Math.min(100,Number(child.progress)||0))}%</small></button>`).join("")}</div>`:""}</div>`;
+        }).filter(Boolean);
+        if(query&&!matches.length&&!categoryMatch)return "";
+        const expanded=state.openCategories.has(category.id)||Boolean(query);
+        return `<div class="category-block"><div class="category-head"><button class="category-toggle" data-action="toggle-category" data-category="${category.id}" aria-expanded="${expanded}"><span>${category.icon}</span><span>${escapeHtml(category.name)}</span><span class="count">${category.projects.length}</span><span class="chevron">${expanded?"▾":"▸"}</span></button><button class="tree-add" data-action="open-create" data-kind="assign" data-category="${category.id}" title="归类已有项目" aria-label="向 ${escapeHtml(category.name)} 归类已有项目">↳</button><button class="tree-add" data-action="open-create" data-kind="project" data-category="${category.id}" title="新建项目" aria-label="在 ${escapeHtml(category.name)} 下新建项目">＋</button></div>${expanded?`<div class="category-projects">${category.id==="education"?`<button class="child-button ${educationActive()?"selected":""}" data-action="open-education"><span class="child-dot"></span><span>知识网络</span></button>`:""}${matches.join("")||'<div class="empty">暂无项目，点击右侧“＋”新建项目。</div>'}</div>`:""}</div>`;
+      }).filter(Boolean).join("");
+      return `<div class="tree">${rows||'<div class="empty">没有匹配的项目</div>'}</div>`;
+    }
+    function projectArea(){return `<div class="section-title">按功能分类的项目 <button data-action="open-create" data-kind="category" title="新增分类" aria-label="新增分类">＋</button></div>${projectCreateForm()}<input class="project-search" type="search" placeholder="搜索分类、项目或小项目" value="${escapeHtml(state.query)}" aria-label="搜索分类和项目">${tree()}`}
+    
+    
+    function nav(){return `<div class="section-title">工作区</div><button class="nav-button active" data-action="demo"><span class="nav-ico">⌂</span> 总览</button><button class="nav-button" data-action="demo"><span class="nav-ico">▤</span> 项目操作</button><button class="nav-button" data-action="demo"><span class="nav-ico">⚙</span> 设置</button>`}
+    function side(){return `<aside class="sidebar"><div class="brand"><span class="mark">W</span><span>Personal Workstation</span></div><div class="sidebar-body"><button class="nav-button" data-action="demo" style="border:1px solid var(--line);margin-bottom:5px"><span class="nav-ico">＋</span> 新建任务</button>${nav()}${projectArea()}</div><div class="side-bottom">本机工作台 · 布局演示<br>功能分类与小项目关系暂作示意</div></aside>`}
+    function pane(){return `<aside class="project-pane"><div class="brand"><span>项目</span><button class="project-hide" data-action="toggle-project-pane" title="隐藏项目栏" aria-label="隐藏项目栏">‹</button></div><div class="pane-body"><button class="control-nav ${state.view==="console"?"active":""}" data-action="open-console" aria-current="${state.view==="console"?"page":"false"}"><span>⌂</span><span>中控台</span></button>${projectArea()}</div><div class="side-bottom">项目内容自动保存在本机</div></aside>`}
+    
+    const WORKBENCH_TOKEN="__TOKEN__";
+    const toolNames={blank:"空白",document:"文档",todo:"待办",browser:"内置浏览器",files:"文件资源管理器",terminal:"终端 · pwsh",custom:"自定义"};
+    const toolIcons={blank:"□",document:"✎",todo:"☑",browser:"◉",files:"▤",terminal:"⌘",custom:"▦"};
+    const fieldNames={text:"短文本",textarea:"长文本",number:"数字",checkbox:"勾选",url:"网址"};
+    const actionNames={none:"只记录",sum_numbers:"数字求和",subtract_numbers:"首项减其余",count_checked:"统计勾选",copy_summary:"复制摘要",open_first_url:"打开首个网址"};
+    const uiNames={editor:"编辑器",cards:"卡片",minimal:"极简"};
+    const uxNames={direct:"直接填写",guided:"逐项引导",review:"先预览后编辑"};
+    const formatNames={form:"表单",split:"双栏",dashboard:"仪表盘"};
+    const layoutCatalog=[
+      {id:"single",name:"整块",hint:"不分割",slots:[[0,0,1,1]]},
+      {id:"halves",name:"左右",hint:"一条可拖动竖线",slots:[[0,0,.5,1],[.5,0,.5,1]]},
+      {id:"top-bottom",name:"上下",hint:"一条可拖动横线",slots:[[0,0,1,.5],[0,.5,1,.5]]},
+      {id:"thirds",name:"三栏",hint:"两条可拖动竖线",slots:[[0,0,1/3,1],[1/3,0,1/3,1],[2/3,0,1/3,1]]},
+      {id:"side-stack",name:"主区＋右侧上下",hint:"竖线与横线",slots:[[0,0,.62,1],[.62,0,.38,.5],[.62,.5,.38,.5]]},
+      {id:"quad",name:"四格",hint:"两侧各有可拖动横线",slots:[[0,0,.5,.5],[.5,0,.5,.5],[0,.5,.5,.5],[.5,.5,.5,.5]]}
+    ];
+    function blankWindow(id,title){return {id,kind:"blank",template:"blank",title,builderOpen:false,uiStyle:"editor",uxMode:"direct",format:"form",formatNotes:"",codexText:"",values:{},annotations:[],step:0,editing:false}}
+    function newBlankWindow(title){return blankWindow(++windowSerial,title)}
+    const leaf=id=>({paneId:id});
+    const split=(direction,ratio,first,second)=>({direction,ratio,first,second});
+    function makeSplitTree(layoutId,ids){const p=index=>leaf(ids[index]);switch(layoutId){
+      case "single":return p(0);
+      case "top-bottom":return split("horizontal",.5,p(0),p(1));
+      case "thirds":return split("vertical",1/3,p(0),split("vertical",.5,p(1),p(2)));
+      case "side-stack":return split("vertical",.62,p(0),split("horizontal",.5,p(1),p(2)));
+      case "quad":return split("vertical",.5,split("horizontal",.5,p(0),p(2)),split("horizontal",.5,p(1),p(3)));
+      default:return split("vertical",.5,p(0),p(1));
+    }}
+    function applyLayout(layoutId){const layout=layoutCatalog.find(entry=>entry.id===layoutId);if(!layout)return false;const windows=currentWindows();while(windows.length<layout.slots.length)windows.push(newBlankWindow(`内容区 ${windows.length+1}`));boardLayouts.set(boardKey(),layoutId);splitTrees.set(boardKey(),makeSplitTree(layoutId,windows.map(item=>item.id)));return true}
+    function ensureSplitTree(){if(!splitTrees.has(boardKey()))applyLayout(boardKey()==="console/workbench"?"halves":"single");return splitTrees.get(boardKey())}
+    function findSplitNode(path){let node=ensureSplitTree();for(const step of path){node=step==="0"?node?.first:node?.second}return node?.direction?node:null}
+    function renderTemplateGallery(){if(!state.layoutOpen)return "";return `<section class="desk-popover template-gallery" aria-label="选择分割布局"><div class="popover-head"><strong>分割线类型</strong><button data-action="close-popovers" aria-label="关闭布局选择">×</button></div><div class="template-grid">${layoutCatalog.map(layout=>`<button class="template-card" data-action="select-layout" data-layout="${layout.id}" aria-pressed="${boardLayouts.get(boardKey())===layout.id}"><span class="template-preview" aria-hidden="true">${layout.slots.map(slot=>`<i style="left:${slot[0]*100}%;top:${slot[1]*100}%;width:${slot[2]*100}%;height:${slot[3]*100}%"></i>`).join("")}</span><strong>${layout.name}</strong><small>${layout.hint}</small></button>`).join("")}</div><p class="layout-hint">拖动分割线可调整比例；切换类型会保留已有内容。</p></section>`}
+    function renderBuilder(item){
+      if(!item.builderOpen)return "";
+      const manual=item.kind==="custom"?`<div class="tool-entry"><input class="field-name-input" data-window-id="${item.id}" placeholder="字段名称" aria-label="字段名称"><select class="field-kind-select" data-window-id="${item.id}">${Object.entries(fieldNames).map(([value,name])=>`<option value="${value}">${name}</option>`).join("")}</select><button class="button" data-action="add-field" data-window-id="${item.id}">＋ 字段</button></div><div class="custom-action"><span>内置操作</span><select class="custom-action-select" data-window-id="${item.id}" aria-label="内容区操作">${Object.entries(actionNames).map(([value,name])=>`<option value="${value}" ${item.schema?.action===value?"selected":""}>${name}</option>`).join("")}</select></div>`:"";
+      return `<div class="builder"><div class="primary-actions"><strong>主内容</strong><button class="button" data-action="configure-window" data-window-id="${item.id}">关闭选择</button>${item.kind!=="blank"?`<button class="button" data-action="clear-window" data-window-id="${item.id}">取消当前内容</button>`:""}</div><p>每个内容区只放一种主内容；笔记和外部链接通过标注附着在主内容上。</p><div class="builder-options">${["document","todo","browser","files","terminal","custom"].map(kind=>`<button data-action="set-preset" data-window-id="${item.id}" data-preset="${kind}">${toolNames[kind]}</button>`).join("")}</div>${manual}<div class="builder-grid"><label>呈现格式<select data-role="window-format" data-window-id="${item.id}">${Object.entries(formatNames).map(([value,name])=>`<option value="${value}" ${(item.format||"form")===value?"selected":""}>${name}</option>`).join("")}</select></label><label>UI 风格<select data-role="ui-style" data-window-id="${item.id}">${Object.entries(uiNames).map(([value,name])=>`<option value="${value}" ${(item.uiStyle||"editor")===value?"selected":""}>${name}</option>`).join("")}</select></label><label>UX 交互<select data-role="ux-mode" data-window-id="${item.id}">${Object.entries(uxNames).map(([value,name])=>`<option value="${value}" ${(item.uxMode||"direct")===value?"selected":""}>${name}</option>`).join("")}</select></label><label>格式细节<input data-role="format-notes" data-window-id="${item.id}" maxlength="200" value="${escapeHtml(item.formatNotes||"")}" placeholder="例如：三列指标、左右对照"></label></div><label>一句话扩展内容<input class="codex-description" data-role="codex-description" data-window-id="${item.id}" maxlength="1000" value="${escapeHtml(item.codexText||"")}" placeholder="例如：记录项目预算并自动计算差额"></label><button class="button primary" data-action="codex-draft" data-window-id="${item.id}" ${item.loading?"disabled":""}>${item.loading?"Codex 正在制作…":"提交给 Codex 制作预览"}</button><p>只生成受限字段与内置操作；结果在当前内容区试用，刷新后清空。</p><div class="tool-error" data-error-for="${item.id}" role="status">${escapeHtml(item.error||"")}</div></div>`;
+    }
+    function renderCustom(item){
+      const schema=item.schema||{fields:[],action:"none"},values=item.values||{};
+      const intro=`<p class="tool-help">${escapeHtml(schema.description||"按需填写内容区字段。")}</p>`;
+      if(item.uxMode==="review"&&!item.editing){const rows=schema.fields.map(field=>`<div class="ux-review-row"><span>${escapeHtml(field.label)}</span><strong>${escapeHtml(field.kind==="checkbox"?(values[field.id]?"已勾选":"未勾选"):(values[field.id]??"—"))}</strong></div>`).join("");return `${intro}<div class="ux-review">${rows||'<p class="tool-help">暂无字段。</p>'}</div><button class="button" data-action="ux-edit" data-window-id="${item.id}">编辑内容</button>${item.result?`<div class="custom-result" role="status">${escapeHtml(item.result)}</div>`:""}`}
+      const step=Math.max(0,Math.min(schema.fields.length-1,item.step||0));
+      const fields=item.uxMode==="guided"?schema.fields.slice(step,step+1):schema.fields;
+      const controls=item.uxMode==="guided"&&schema.fields.length?`<div class="ux-stepper"><button class="button" data-action="ux-prev" data-window-id="${item.id}" ${step===0?"disabled":""}>← 上一项</button><span>${step+1} / ${schema.fields.length}</span><button class="button" data-action="ux-next" data-window-id="${item.id}" ${step===schema.fields.length-1?"disabled":""}>下一项 →</button></div>`:"";
+      const fieldHtml=fields.map(field=>{const value=values[field.id],label=escapeHtml(field.label);const input=field.kind==="textarea"?`<textarea data-role="custom-field" data-window-id="${item.id}" data-field-id="${field.id}" placeholder="${escapeHtml(field.placeholder||"")}">${escapeHtml(value||"")}</textarea>`:field.kind==="checkbox"?`<input type="checkbox" data-role="custom-field" data-window-id="${item.id}" data-field-id="${field.id}" ${value?"checked":""}>`:`<input type="${field.kind==="url"?"url":field.kind==="number"?"number":"text"}" data-role="custom-field" data-window-id="${item.id}" data-field-id="${field.id}" value="${escapeHtml(value??"")}" placeholder="${escapeHtml(field.placeholder||"")}">`;return `<div class="custom-field"><div class="custom-field-head"><label>${label}</label>${item.builderOpen?`<button data-action="remove-field" data-window-id="${item.id}" data-field-id="${field.id}" aria-label="删除字段 ${label}">×</button>`:""}</div>${input}</div>`}).join("")||'<p class="tool-help">点击“＋”添加字段。</p>';
+      return `${intro}<div class="custom-fields">${fieldHtml}</div>${controls}${item.uxMode==="review"?`<button class="button" data-action="ux-finish" data-window-id="${item.id}">完成并预览</button>`:""}${schema.action!=="none"?`<div class="custom-action"><button class="button" data-action="run-custom-action" data-window-id="${item.id}">${actionNames[schema.action]||"执行"}</button></div>`:""}${item.result?`<div class="custom-result" role="status">${escapeHtml(item.result)}</div>`:""}`;
+    }
+    function renderAnnotations(item){
+      const draft=item.annotationDraft;
+      const cards=(item.annotations||[]).map(annotation=>`<article class="annotation-card ${annotation.kind}" data-annotation-id="${annotation.id}"><div class="annotation-card-header"><span>${annotation.kind==="link"?"↗ 外部链接":"✎ 笔记"}</span><button data-action="edit-annotation" data-window-id="${item.id}" data-annotation-id="${annotation.id}" aria-label="编辑标注">✎</button><button data-action="remove-annotation" data-window-id="${item.id}" data-annotation-id="${annotation.id}" aria-label="删除标注">×</button></div><button class="annotation-quote" data-action="jump-annotation" data-window-id="${item.id}" data-annotation-id="${annotation.id}">${annotation.quote?`“${escapeHtml(annotation.quote)}”`:"关联整份内容"}</button>${annotation.kind==="link"?`<a href="${escapeHtml(annotation.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(annotation.label||annotation.url)}</a>`:`<p>${escapeHtml(annotation.text)}</p>`}</article>`).join("");
+      const composer=draft?`<div class="annotation-composer"><div class="annotation-help">${draft.quote?`引用：“${escapeHtml(draft.quote)}”`:"关联整份内容"}</div><label>类型<select data-role="annotation-kind" data-window-id="${item.id}"><option value="note" ${draft.kind==="note"?"selected":""}>笔记</option><option value="link" ${draft.kind==="link"?"selected":""}>外部链接</option></select></label>${draft.kind==="link"?`<label>名称<input data-role="annotation-label" data-window-id="${item.id}" value="${escapeHtml(draft.label||"")}" placeholder="链接名称"></label><label>网址<input data-role="annotation-url" data-window-id="${item.id}" value="${escapeHtml(draft.url||"")}" placeholder="https://…"></label>`:`<label>笔记<textarea data-role="annotation-text" data-window-id="${item.id}" placeholder="写下说明或想法">${escapeHtml(draft.text||"")}</textarea></label>`}<div class="annotation-composer-actions"><button class="button primary" data-action="save-annotation" data-window-id="${item.id}">保存标注</button><button class="button" data-action="cancel-annotation" data-window-id="${item.id}">取消</button></div><div class="annotation-error" role="status">${escapeHtml(draft.error||"")}</div></div>`:"";
+      return `<aside class="annotation-pane" aria-label="主内容标注"><div class="annotation-head"><span>标注 · ${(item.annotations||[]).length}</span><button data-action="new-annotation" data-window-id="${item.id}" aria-label="插入标注">＋ 标注</button></div><p class="annotation-help">选中文字后插入笔记或外部链接；未选中时关联整份内容。</p>${composer}<div class="annotation-list">${cards}</div></aside>`;
+    }
+    function renderBrowser(item){
+      const history=item.browserHistory||[""],index=item.browserHistoryIndex??0;
+      return `<div class="browser-workspace"><div class="browser-toolbar" role="toolbar" aria-label="浏览器导航"><button data-action="browser-back" data-window-id="${item.id}" title="返回上一个输入的地址" aria-label="返回" ${index<=0?"disabled":""}>←</button><button data-action="browser-forward" data-window-id="${item.id}" title="前往下一个输入的地址" aria-label="前进" ${index>=history.length-1?"disabled":""}>→</button><button data-action="browser-reload" data-window-id="${item.id}" title="重新打开当前地址" aria-label="重新打开" ${item.browserUrl?"":"disabled"}>↻</button><button data-action="browser-home" data-window-id="${item.id}" title="新标签页" aria-label="新标签页">＋</button><input type="text" inputmode="url" spellcheck="false" autocomplete="off" data-role="browser-address" data-window-id="${item.id}" value="${escapeHtml(item.browserDraft??item.browserUrl??"")}" placeholder="输入网址，如 example.org" aria-label="浏览器地址"><button data-action="browser-go" data-window-id="${item.id}" title="打开地址" aria-label="打开地址">↵</button>${item.browserUrl?`<a href="${escapeHtml(item.browserUrl)}" target="_blank" rel="noopener noreferrer" title="在新标签页打开" aria-label="在新标签页打开">↗</a>`:""}</div>${item.browserError?`<p class="browser-error" role="status">${escapeHtml(item.browserError)}</p>`:""}<div class="browser-viewport" data-browser-host="${item.id}">${item.browserUrl?"":'<div class="browser-start"><strong>新标签页</strong><span>在上方输入网址，网页会直接显示在这里。</span></div>'}</div></div>`;
+    }
+    const browserFrames=new Map();
+    function syncBrowserFrames(){
+      const portal=document.querySelector("#browser-portals");if(!portal)return;
+      const visible=new Set();
+      for(const host of document.querySelectorAll(".browser-viewport[data-browser-host]")){
+        const item=findWindow(host.dataset.browserHost);if(!item?.browserUrl)continue;
+        const rect=host.getBoundingClientRect();if(rect.width<4||rect.height<4)continue;
+        visible.add(item.id);
+        let entry=browserFrames.get(item.id);
+        if(!entry){const frame=document.createElement("iframe");frame.className="browser-frame";frame.title="内置浏览器页面";frame.setAttribute("sandbox","allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-modals allow-downloads");frame.referrerPolicy="no-referrer";portal.append(frame);entry={frame,url:""};browserFrames.set(item.id,entry)}
+        if(entry.url!==item.browserUrl){entry.frame.src=item.browserUrl;entry.url=item.browserUrl}
+        Object.assign(entry.frame.style,{display:"block",left:`${rect.left}px`,top:`${rect.top}px`,width:`${rect.width}px`,height:`${rect.height}px`});
+      }
+      for(const [id,entry] of browserFrames)if(!visible.has(id))entry.frame.style.display="none";
+    }
+    function navigateBrowser(item,url){
+      const history=item.browserHistory||[""],index=item.browserHistoryIndex??0;
+      if(history[index]!==url){item.browserHistory=history.slice(0,index+1).concat(url);item.browserHistoryIndex=index+1}
+      item.browserUrl=url;item.browserDraft=url;item.browserError="";
+    }
+    function renderFiles(item){const relative=item.filePath||"",entries=item.fileEntries||[],parent=relative.includes("/")?relative.slice(0,relative.lastIndexOf("/")):"";return `<div class="files-toolbar"><strong>${escapeHtml(selectedProject().name)} / ${escapeHtml(relative||"项目根目录")}</strong><button class="button" data-action="file-up" data-window-id="${item.id}" data-path="${escapeHtml(parent)}" ${relative?"":"disabled"}>上一级</button><button class="button" data-action="file-refresh" data-window-id="${item.id}">刷新</button></div>${item.fileError?`<div class="tool-error" role="status">${escapeHtml(item.fileError)}</div>`:""}<div class="file-list" aria-label="项目文件列表">${item.fileLoading?'<p class="annotation-help">正在读取目录…</p>':entries.map(entry=>`<button data-action="file-entry" data-window-id="${item.id}" data-path="${escapeHtml(entry.relative)}" data-kind="${entry.kind}"><span>${entry.kind==="directory"?"▸":"·"}</span><span>${escapeHtml(entry.name)}</span></button>`).join("")||'<p class="annotation-help">文件夹为空。</p>'}</div>${item.filePreview?`<p class="tool-help">预览：${escapeHtml(item.filePreview.relative)}${item.filePreview.truncated?" · 已截断":""}</p><pre class="file-preview">${escapeHtml(item.filePreview.content)}</pre>`:""}`}
+    function renderTerminal(item){return `<div class="terminal-toolbar">${item.terminalSession?`<span class="tool-help">${escapeHtml(selectedProject().name)} · pwsh</span><button class="button" data-action="terminal-stop" data-window-id="${item.id}">关闭会话</button>`:`<button class="button primary" data-action="terminal-start" data-window-id="${item.id}">启动 pwsh</button>`}</div><pre class="terminal-output" data-terminal-output="${item.id}" aria-label="PowerShell 输出">${escapeHtml(item.terminalOutput||"")}</pre><div class="terminal-toolbar"><input data-role="terminal-command" data-window-id="${item.id}" value="${escapeHtml(item.terminalCommand||"")}" placeholder="输入 PowerShell 命令" aria-label="PowerShell 命令" ${item.terminalSession?"":"disabled"}><button class="button" data-action="terminal-send" data-window-id="${item.id}" ${item.terminalSession?"":"disabled"}>运行</button></div>${item.terminalError?`<div class="tool-error" role="status">${escapeHtml(item.terminalError)}</div>`:""}<p class="tool-help">命令由你手动提交，在当前项目目录的本机会话中执行。</p>`}
+    function renderTool(item){
+      let body=renderBuilder(item);
+      if(item.kind==="blank")body+=`<div class="blank-prompt" aria-label="空白内容区"><div class="blank-actions"><button data-action="configure-window" data-window-id="${item.id}" title="选择主内容" aria-label="选择主内容">＋</button>${["browser","files","terminal","custom"].map(kind=>`<button data-action="set-preset" data-window-id="${item.id}" data-preset="${kind}">${toolIcons[kind]} ${toolNames[kind]}</button>`).join("")}</div></div>`;
+      else{
+        let primary="";
+        if(item.kind==="document")primary=`<textarea class="document-editor" data-role="document" data-window-id="${item.id}" aria-label="文档正文" placeholder="在这里输入正文；选中文字可添加标注。">${escapeHtml(item.documentText||"")}</textarea><p class="tool-help">正文自动保存在本机工作站，刷新后可继续编辑。</p>`;
+        if(item.kind==="todo")primary=`<div class="tool-entry"><input class="todo-add-input" data-window-id="${item.id}" placeholder="新增待办" aria-label="新增待办"><button class="button" data-action="add-todo" data-window-id="${item.id}">添加</button></div><div class="tool-list">${(item.items||[]).map((todo,index)=>`<div class="tool-list-row ${todo.done?"done":""}"><label><input type="checkbox" data-role="todo-check" data-window-id="${item.id}" data-index="${index}" ${todo.done?"checked":""}><span>${escapeHtml(todo.text)}</span></label><button data-action="remove-todo" data-window-id="${item.id}" data-index="${index}" aria-label="删除待办">×</button></div>`).join("")||'<p class="tool-help">还没有待办。</p>'}</div>`;
+        if(item.kind==="browser")primary=renderBrowser(item);
+        if(item.kind==="files")primary=renderFiles(item);
+        if(item.kind==="terminal")primary=renderTerminal(item);
+        if(item.kind==="custom")primary=renderCustom(item);
+        if(item.kind==="browser")body+=`<div class="primary-layout browser-primary-layout"><div class="primary-content"><div class="browser-heading"><span>◉ 网页空间</span><span class="primary-actions"><button data-action="browser-annotations" data-window-id="${item.id}" aria-expanded="${!!item.browserAnnotationsOpen}">标注 ${(item.annotations||[]).length}</button><button data-action="configure-window" data-window-id="${item.id}" aria-label="更换主内容">更换主内容</button><button data-action="clear-window" data-window-id="${item.id}" title="取消当前内容，返回自由选择">取消</button></span></div>${primary}</div>${item.browserAnnotationsOpen?renderAnnotations(item):""}</div>`;
+        else body+=`<div class="primary-layout"><div class="primary-content"><div class="annotation-head"><h3>${toolIcons[item.kind]||"▦"} ${toolNames[item.kind]||"主内容"}</h3><span class="primary-actions"><button data-action="configure-window" data-window-id="${item.id}" aria-label="更换主内容">更换主内容</button><button data-action="clear-window" data-window-id="${item.id}" title="取消当前内容，返回自由选择">取消</button></span></div>${primary}</div>${renderAnnotations(item)}</div>`;
+      }
+      return `<section class="split-pane template-${escapeHtml(item.template||"blank")} ui-${escapeHtml(item.uiStyle||"editor")}${item.kind==="browser"?" browser-pane":""}" data-window-id="${item.id}" aria-label="${escapeHtml(item.title)}"><div class="tool-body">${body}</div></section>`;
+    }
+    function renderSplitNode(node,path=""){
+      if(!node.direction)return renderTool(findWindow(node.paneId));
+      const percent=(node.ratio*100).toFixed(4),orientation=node.direction==="vertical"?"vertical":"horizontal";
+      return `<div class="split-node ${node.direction}" data-split-path="${path}"><div class="split-part first" style="flex:0 0 calc(${percent}% - 3px)">${renderSplitNode(node.first,path+"0")}</div><div class="split-divider" data-divider-path="${path}" role="separator" tabindex="0" aria-orientation="${orientation}" aria-label="拖动调整分割线" aria-valuemin="10" aria-valuemax="90" aria-valuenow="${Math.round(node.ratio*100)}"></div><div class="split-part second">${renderSplitNode(node.second,path+"1")}</div></div>`;
+    }
+    function studio(){
+      const tree=ensureSplitTree(),layout=layoutCatalog.find(entry=>entry.id===boardLayouts.get(boardKey()));
+      const child=selectedChild(),progress=child?Math.max(0,Math.min(100,Number(child.progress)||0)):0;
+      return `<section class="window-studio"><div class="desk-chrome"><button class="mobile-project-toggle" data-action="toggle-project-pane" aria-label="${state.projectPaneOpen?"隐藏":"显示"}项目栏" aria-expanded="${state.projectPaneOpen}" title="${state.projectPaneOpen?"隐藏":"显示"}项目栏">▦</button><div class="desk-context" title="${escapeHtml(selectedProject().name)} / ${escapeHtml(child?.name||"项目总览")}">▦ ${escapeHtml(child?.name||selectedProject().name)}</div><span class="split-layout-name">${escapeHtml(layout?.name||"分割布局")}</span><div class="desk-tabs"></div>${state.notice?`<span class="desk-message" title="${escapeHtml(state.notice)}" role="status">${escapeHtml(state.notice)}</span>`:""}${child?`<button class="desk-progress" data-action="show-progress" aria-expanded="${state.progressOpen}" title="调整小项目进度">进度 <span data-progress-label>${progress}%</span></button>`:""}<button class="desk-add ${state.layoutOpen?"active":""}" data-action="show-layouts" title="选择分割线类型" aria-label="选择分割线类型">＋</button></div>${renderTemplateGallery()}${child&&state.progressOpen?`<div class="progress-popover"><label>${escapeHtml(child.name)} · 进度 <strong data-progress-label>${progress}%</strong><input type="range" min="0" max="100" step="5" value="${progress}" data-role="child-progress" aria-label="${escapeHtml(child.name)} 进度"></label><p>手动记录此小项目的进度；每个小项目独立保存。</p></div>`:""}<div class="split-canvas">${renderSplitNode(tree)}</div></section>`;
+    }
+    function cards(){const project=selectedProject(),category=selectedCategory();const siblings=category.projects.map(id=>projects.find(item=>item.id===id)).filter(Boolean);return `<div class="cards"><section class="card"><div class="card-head"><h2>项目层级</h2><small>分类 → 项目 → 小项目</small></div><div class="stage-list"><div class="stage"><span class="num">1</span><b>${escapeHtml(category.name)}</b><small>功能分类</small></div><div class="stage"><span class="num">2</span><b>${escapeHtml(project.name)}</b><small>项目</small></div><div class="stage current"><span class="num">3</span><b>${escapeHtml(selectedChild()?.name||"项目总览")}</b><small>${selectedChild()?"小项目":"当前层级"}</small></div></div></section><section class="card"><div class="card-head"><h2>${escapeHtml(category.name)}下的项目</h2><small>${siblings.length} 个</small></div><div class="activity">${siblings.map(item=>`<div class="activity-row"><time>项目</time><span>${escapeHtml(item.name)}<br><span class="muted">${item.children.length} 个示例小项目</span></span></div>`).join("")}</div></section></div>`}
+    
+    function planPanel(){
+
+      const entries=[...planItems.map(item=>({...item,kind:"personal",source:"个人添加",detail:""}))];
+      entries.sort((a,b)=>Number(!!a.done)-Number(!!b.done)||(a.due||"9999").localeCompare(b.due||"9999")||a.title.localeCompare(b.title));
+      const pending=entries.filter(item=>!item.done).length;
+      const rows=entries.map(item=>`<div class="plan-item ${item.done?"done":""}" data-plan-kind="${item.kind}">${item.kind==="personal"?`<input type="checkbox" data-role="plan-done" data-id="${escapeHtml(item.id)}" aria-label="完成 ${escapeHtml(item.title)}" ${item.done?"checked":""}>`:'<span class="plan-source-mark" aria-hidden="true">◉</span>'}<div class="plan-item-body"><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(item.source)}${item.detail?` · ${escapeHtml(item.detail)}`:""}${item.due?` · ${item.kind==="homework"?"截止":"计划时间"} ${escapeHtml(item.due.replace("T"," "))}`:""}</small></div>${item.kind==="personal"?`<button type="button" data-action="remove-plan" data-id="${escapeHtml(item.id)}" aria-label="移除 ${escapeHtml(item.title)}">移除</button>`:`<button type="button" data-action="open-saved-site" data-id="${escapeHtml(item.siteId)}">打开 ↗</button>`}</div>`).join("");
+      return `<section class="control-panel plan-panel" aria-label="计划事项"><div class="plan-heading"><div><h2>计划事项</h2><p>${pending} 项待处理 · 个人计划自动保存。</p></div></div><form class="plan-form" data-role="plan-add"><label class="plan-title-field">事项<input name="title" type="text" maxlength="160" required placeholder="添加一项个人计划" value="${escapeHtml(planDraft.title)}"></label><label class="plan-due-field">计划时间（可选）<input name="due" type="datetime-local" value="${escapeHtml(planDraft.due)}"></label><button type="submit">＋ 添加</button></form>${planDraft.error?`<p class="plan-error" role="alert">${escapeHtml(planDraft.error)}</p>`:""}<div class="plan-list">${rows||'<div class="control-empty">暂无计划事项。添加个人计划后会保存在本机。</div>'}</div><p class="plan-footnote">为计划添加可选时间，完成后勾选即可。</p></section>`;
+    }
+    function controlCenter(){
+      const children=projects.flatMap(project=>project.children.map(child=>({project,child})));
+      const underway=children.filter(({child})=>Number(child.progress)>0&&Number(child.progress)<100);
+      const current=selectedProject(),currentChild=selectedChild();
+      const usageRows=[...projects].sort((a,b)=>(projectUsage.get(b.id)||0)-(projectUsage.get(a.id)||0));
+      const totalUsage=usageRows.reduce((sum,project)=>sum+(projectUsage.get(project.id)||0),0);
+      const maxUsage=Math.max(1,...usageRows.map(project=>Math.floor(projectUsage.get(project.id)||0)));
+      return `<section class="control-center" aria-label="中控台"><div class="control-topbar"><span>⌂ &nbsp;中控台</span><button data-action="resume-workbench">返回当前工作台 ↗</button></div><div class="control-body"><div class="control-title"><div><small>PERSONAL WORKSTATION / OVERVIEW</small><h1>中控台</h1><p>查看项目使用时长和小项目进度，点击项目进入工作台。</p></div><button class="control-primary" data-action="resume-workbench">继续工作 →</button></div>${planPanel()}<div class="control-metrics"><div class="control-metric"><span>功能分类</span><strong>${categories.length}</strong></div><div class="control-metric"><span>项目</span><strong>${projects.length}</strong></div><div class="control-metric"><span>小项目</span><strong>${children.length}</strong></div><div class="control-metric"><span>累计使用</span><strong>${formatUsage(totalUsage)}</strong></div></div><div class="control-grid"><div><section class="control-panel"><h2>上次选择</h2><div class="control-current"><div><strong>${escapeHtml(current.name)}</strong><small>${escapeHtml(selectedCategory().name)} / ${escapeHtml(currentChild?.name||"项目总览")}</small></div><button data-action="resume-workbench">打开 →</button></div></section><section class="control-panel" style="margin-top:14px"><h2>项目使用时长</h2><p>仅累计项目工作台处于前台时的时间；切换到中控台或其他窗口后暂停。</p><div class="control-project-list" style="margin-top:12px">${usageRows.map(project=>`<div class="control-project"><span class="control-project-icon">◫</span><button class="control-project-name" data-action="select-project" data-project="${escapeHtml(project.id)}">${escapeHtml(project.name)}</button><small>${formatUsage(projectUsage.get(project.id)||0)}</small><button data-action="select-project" data-project="${escapeHtml(project.id)}" aria-label="打开 ${escapeHtml(project.name)}">↗</button><div class="control-usage-bar"><i style="width:${Math.round(Math.floor(projectUsage.get(project.id)||0)/maxUsage*100)}%"></i></div></div>`).join("")}</div></section></div><div><section class="control-panel"><h2>小项目进度</h2><p>这里汇总手动填写了进度的小项目。</p><div style="margin-top:12px">${underway.length?underway.slice(0,8).map(({project,child})=>`<div class="control-progress"><button data-action="select-child" data-project="${escapeHtml(project.id)}" data-child="${escapeHtml(child.id)}">${escapeHtml(child.name)} <span style="color:#999">· ${escapeHtml(project.name)}</span></button><strong>${Math.round(Number(child.progress))}%</strong></div>`).join(""):'<div class="control-empty">暂无正在推进的小项目。进入项目后可在顶部设置进度。</div>'}</div></section></div></div></div></section>`;
+    }
+    const educationCourses={machine:"machine-design",thermal:"thermal-engineering",control:"control-engineering",fluid:"fluid-power",math:"math-competition"};
+    let educationWorkspace=false;
+    const educationActive=()=>state.view==="project"&&state.project==="university"&&!educationWorkspace&&(!state.child||Object.hasOwn(educationCourses,state.child));
+    function openEducation(course){state.view="project";state.project="university";state.child=Object.keys(educationCourses).find(key=>educationCourses[key]===course)||"machine";state.open.add("university");state.openCategories.add("education");state.layoutOpen=false;state.progressOpen=false;educationWorkspace=false;render()}
+    function applyEducationLink(){const value=new URLSearchParams(location.search).get("education");if(value){state.view="project";state.project="university";state.child=Object.keys(educationCourses).find(key=>educationCourses[key]===value)||"machine";state.open.add("university");state.openCategories.add("education")}}
+    function main(){return `<main>${state.view==="console"?controlCenter():educationActive()?EducationNetwork.html():studio()}</main>`}
+    
+    function render(){
+      tickUsage();
+      document.body.dataset.theme="vscode";
+      document.body.dataset.educationMap=String(educationActive());
+      const app=document.querySelector("#app");
+      const sidebarScroll=app.querySelector(".pane-body")?.scrollTop||0;
+
+      EducationNetwork.unmount();
+      app.innerHTML=`<div class="layout-b${state.projectPaneOpen?"":" project-hidden"}" ${state.projectPaneWidth?`style="--project-pane-width:${state.projectPaneWidth}px"`:""}><nav class="icon-rail" aria-label="主导航"><span class="mark">W</span><button class="rail-button ${state.view==="console"?"active":""}" data-action="open-console" title="中控台" aria-label="打开中控台">⌂</button><button class="rail-button ${state.projectPaneOpen&&state.view==="project"?"active":""}" data-action="toggle-project-pane" title="${state.projectPaneOpen?"隐藏":"显示"}项目栏" aria-label="${state.projectPaneOpen?"隐藏":"显示"}项目栏" aria-expanded="${state.projectPaneOpen}">▦</button><button class="rail-button" data-action="demo" title="任务">▤</button><button class="rail-button rail-bottom" data-action="demo" title="设置">⚙</button></nav>${pane()}<div class="project-resizer" role="separator" tabindex="0" aria-orientation="vertical" aria-label="拖动调整项目栏宽度" aria-valuemin="170" aria-valuemax="600" aria-valuenow="${state.projectPaneWidth||(innerWidth<=1100?210:300)}"></div>${main()}</div>`;
+      const sidebar=app.querySelector(".pane-body");if(sidebar)sidebar.scrollTop=sidebarScroll;
+
+      if(state.reveal){
+        const selector=state.reveal.child?`.child-button[data-child="${state.reveal.child}"]`:state.reveal.project?`.tree-name[data-project="${state.reveal.project}"]`:`.category-toggle[data-category="${state.reveal.category}"]`;
+        app.querySelector(selector)?.scrollIntoView({block:"nearest"});state.reveal=null;
+      }
+      document.querySelector("#demo-status-context").textContent=state.view==="console"?"中控台 / 所有项目":`${selectedProject().name} / ${selectedChild()?.name||"项目总览"}`;
+      syncBrowserFrames();
+      if(educationActive())EducationNetwork.mount(app.querySelector(".edu-network"),educationCourses[state.child]||"machine-design",openEducation,()=>{educationWorkspace=true;render()},WORKBENCH_TOKEN);
+      scheduleSave();
+
+    }
+    function captureTextSelection(target){
+      if(!target?.matches?.('[data-role="document"],[data-role="custom-field"]')||typeof target.selectionStart!=="number")return;
+      const item=findWindow(target.dataset.windowId),start=target.selectionStart,end=target.selectionEnd;
+      if(item)item.lastSelection=end>start?{quote:target.value.slice(start,end).slice(0,160),start,end,fieldId:target.dataset.fieldId||""}:null;
+    }
+    function validAnnotationSelection(item){
+      const selection=item.lastSelection;if(!selection?.quote)return null;
+      const source=selection.fieldId?String(item.values?.[selection.fieldId]??""):String(item.documentText||"");
+      if(source.slice(selection.start,selection.end)===selection.quote)return selection;
+      const start=source.indexOf(selection.quote);return start>=0?{...selection,start,end:start+selection.quote.length}:null;
+    }
+    function jumpToAnnotation(item,annotation){
+      if(!annotation?.quote)return;
+      const pane=document.querySelector(`.split-pane[data-window-id="${item.id}"]`);
+      const field=annotation.fieldId?pane?.querySelector(`[data-field-id="${annotation.fieldId}"]`):pane?.querySelector('[data-role="document"]');
+      if(!field||typeof field.setSelectionRange!=="function")return;
+      const text=field.value||"",start=text.slice(annotation.start,annotation.end)===annotation.quote?annotation.start:text.indexOf(annotation.quote);
+      if(start<0)return;field.focus();field.setSelectionRange(start,start+annotation.quote.length);field.scrollIntoView({block:"nearest"});
+    }
+    async function embeddedApi(path,payload){const response=await fetch(path,{method:"POST",headers:{"Content-Type":"application/json","X-Workstation-Token":WORKBENCH_TOKEN},body:JSON.stringify(payload)});const data=await response.json();if(!response.ok)throw Error(data.error||"工作台请求失败");return data}
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    const saveEnabled=!new URLSearchParams(location.search).has("smoke");
+    let persistReady=false,persistRevision=0,lastSavedJson="",queuedJson="",saveTimer=null,saveRunning=false,saveBlocked=false,loadFailed=false;
+    const saveStatus=document.querySelector("#layout-save-status"),saveRetry=document.querySelector("#layout-save-retry");
+    function showSaveStatus(message,retry=""){
+      saveStatus.textContent=message;saveRetry.hidden=!retry;saveRetry.textContent=retry;
+    }
+    function cleanText(value,limit=2000){return typeof value==="string"?value.slice(0,limit):""}
+    function safeBrowserUrl(value){
+      if(!value)return "";
+      try{const url=new URL(value);if(!["http:","https:"].includes(url.protocol))return "";url.username="";url.password="";url.search="";url.hash="";return url.href}catch{return ""}
+    }
+    function validBoardKey(key){
+      if(typeof key!=="string")return false;
+      const parts=key.split("/");if(parts.length!==2)return false;
+      const project=projects.find(value=>value.id===parts[0]);
+      return !!project&&(parts[1]==="overview"||project.children.some(value=>value.id===parts[1]));
+    }
+    function savedWindow(item){
+      const base={id:item.id,kind:item.kind,title:item.title,template:item.template||"blank",builderOpen:!!item.builderOpen,uiStyle:item.uiStyle||"editor",uxMode:item.uxMode||"direct",format:item.format||"form",step:item.step||0,editing:!!item.editing,browserAnnotationsOpen:!!item.browserAnnotationsOpen,annotations:item.annotations||[]};
+      if(item.kind==="document")base.documentText=item.documentText||"";
+      if(item.kind==="todo")base.items=item.items||[];
+      if(item.kind==="custom"){base.schema=item.schema||{title:item.title,description:"",fields:[],action:"none"};base.values=item.values||{}}
+      if(item.kind==="browser")base.browserUrl=safeBrowserUrl(item.browserUrl);
+      if(item.kind==="files")base.filePath=item.filePath||"";
+      return base;
+    }
+    function snapshotState(){
+      return {version:1,navigation:{projects:projects.filter(project=>!baseChildren.has(project.id)).map(project=>({id:project.id,name:project.name,folder:projectFolder(project)})),categories:categories.map(category=>({id:category.id,name:category.name,icon:category.icon,projects:[...category.projects]})),children:projects.map(project=>[project.id,project.children.map(child=>({id:child.id,name:child.name,progress:Math.max(0,Math.min(100,Number(child.progress)||0))}))])},selection:{view:state.view,project:state.project,child:state.child,open:[...state.open],openCategories:[...state.openCategories],projectPaneOpen:state.projectPaneOpen,projectPaneWidth:state.projectPaneWidth},usage:[...projectUsage].filter(([id,seconds])=>projects.some(project=>project.id===id)&&Number.isFinite(seconds)&&seconds>=0).map(([id,seconds])=>[id,Math.floor(seconds)]),boards:[...boards].filter(([key])=>validBoardKey(key)).map(([key,items])=>[key,items.map(savedWindow)]),layouts:[...boardLayouts].filter(([key])=>validBoardKey(key)),splits:[...splitTrees].filter(([key])=>validBoardKey(key)),serials:{window:windowSerial,field:fieldSerial,annotation:annotationSerial},plans:planItems.map(item=>({id:item.id,title:item.title,due:item.due,done:item.done,createdAt:item.createdAt}))};
+    }
+    function restoreNavigation(navigation){
+      if(!navigation||typeof navigation!=="object")return;
+      if(Array.isArray(navigation.projects))for(const raw of navigation.projects.slice(0,200)){
+        if(!raw||typeof raw.folder!=="string"||!/^[A-Za-z0-9][A-Za-z0-9._-]{1,63}$/.test(raw.folder)||raw.id!==projectIdForFolder(raw.folder)||projects.some(project=>project.id===raw.id))continue;
+        projects.push({id:raw.id,name:cleanText(raw.name,60).trim()||raw.folder,folder:raw.folder,children:[]});
+      }
+      if(Array.isArray(navigation.children))for(const row of navigation.children){
+        if(!Array.isArray(row)||!Array.isArray(row[1]))continue;
+        const project=projects.find(item=>item.id===row[0]);if(!project)continue;
+        const originals=baseChildren.get(project.id)||[],known=new Map(originals.map(child=>[child.id,child]));
+        const seen=new Set(),restored=[];
+        for(const raw of row[1].slice(0,100)){
+          if(!raw||typeof raw.id!=="string"||seen.has(raw.id))continue;
+          const original=known.get(raw.id),custom=/^s_[a-f0-9]{32}$/.test(raw.id);
+          if(!original&&!custom)continue;
+          seen.add(raw.id);restored.push({id:raw.id,name:original?.name||cleanText(raw.name,60).trim()||"小项目",progress:Math.max(0,Math.min(100,Number(raw.progress)||0))});
+        }
+        for(const original of originals)if(!seen.has(original.id))restored.push({...original,progress:0});
+        project.children=restored;
+      }
+      if(!Array.isArray(navigation.categories))return;
+      const seenCategories=new Set(),restoredCategories=[];
+      for(const raw of navigation.categories.slice(0,30)){
+        if(!raw||typeof raw.id!=="string"||seenCategories.has(raw.id))continue;
+        const original=baseCategories.find(item=>item.id===raw.id),custom=/^c_[a-f0-9]{32}$/.test(raw.id);
+        if(!original&&!custom)continue;
+        seenCategories.add(raw.id);restoredCategories.push({id:raw.id,name:original?.name||cleanText(raw.name,40).trim()||"新分类",icon:original?.icon||"◇",projects:Array.isArray(raw.projects)?raw.projects.filter(id=>projects.some(project=>project.id===id)):[]});
+      }
+      for(const original of baseCategories)if(!seenCategories.has(original.id))restoredCategories.push({...original,projects:[]});
+      const assigned=new Set();for(const category of restoredCategories)category.projects=category.projects.filter(id=>{if(assigned.has(id))return false;assigned.add(id);return true});
+      for(const original of baseCategories)for(const id of original.projects)if(!assigned.has(id)){restoredCategories.find(item=>item.id===original.id).projects.push(id);assigned.add(id)}
+      for(const project of projects)if(!assigned.has(project.id)){restoredCategories.find(item=>item.id==="experiments").projects.push(project.id);assigned.add(project.id)}
+      categories.splice(0,categories.length,...restoredCategories);
+    }
+    function restoredWindow(raw){
+      if(!raw||!Number.isSafeInteger(raw.id)||raw.id<=0)return null;
+      const item=blankWindow(raw.id,cleanText(raw.title,100)||`内容区 ${raw.id}`);
+      item.kind=Object.hasOwn(toolNames,raw.kind)?raw.kind:"blank";
+      item.template=cleanText(raw.template,30)||"blank";
+      item.builderOpen=!!raw.builderOpen;
+      item.uiStyle=Object.hasOwn(uiNames,raw.uiStyle)?raw.uiStyle:"editor";
+      item.uxMode=Object.hasOwn(uxNames,raw.uxMode)?raw.uxMode:"direct";
+      item.format=Object.hasOwn(formatNames,raw.format)?raw.format:"form";
+      item.step=Number.isInteger(raw.step)?Math.max(0,Math.min(7,raw.step)):0;
+      item.editing=!!raw.editing;
+      item.browserAnnotationsOpen=!!raw.browserAnnotationsOpen;
+      item.annotations=Array.isArray(raw.annotations)?raw.annotations.slice(0,1000).filter(entry=>entry&&/^a\d+$/.test(entry.id)&&["note","link"].includes(entry.kind)).map(entry=>({id:entry.id,kind:entry.kind,text:cleanText(entry.text,2000),label:cleanText(entry.label,80),url:entry.kind==="link"?cleanText(entry.url,2048):"",quote:cleanText(entry.quote,160),start:Number.isInteger(entry.start)?entry.start:null,end:Number.isInteger(entry.end)?entry.end:null,fieldId:/^[A-Za-z][A-Za-z0-9_]{0,19}$/.test(entry.fieldId||"")?entry.fieldId:""})):[];
+      if(item.kind==="document")item.documentText=cleanText(raw.documentText,1000000);
+      if(item.kind==="todo")item.items=Array.isArray(raw.items)?raw.items.slice(0,1000).map(todo=>({text:cleanText(todo?.text,1000),done:!!todo?.done})):[];
+      if(item.kind==="custom"){
+        const schema=raw.schema||{};
+        const fields=Array.isArray(schema.fields)?schema.fields.slice(0,8).filter(field=>field&&/^[A-Za-z][A-Za-z0-9_]{0,19}$/.test(field.id)&&Object.hasOwn(fieldNames,field.kind)).map(field=>({id:field.id,label:cleanText(field.label,80),kind:field.kind,placeholder:cleanText(field.placeholder,160)})):[];
+        item.schema={title:cleanText(schema.title,100)||item.title,description:cleanText(schema.description,1000),fields,action:Object.hasOwn(actionNames,schema.action)?schema.action:"none"};
+        item.values={};for(const field of fields){const value=raw.values?.[field.id];item.values[field.id]=field.kind==="checkbox"?!!value:cleanText(value,100000)}
+      }
+      if(item.kind==="browser"){item.browserUrl=safeBrowserUrl(raw.browserUrl);item.browserDraft=item.browserUrl;item.browserHistory=item.browserUrl?["",item.browserUrl]:[""];item.browserHistoryIndex=item.browserHistory.length-1}
+      if(item.kind==="files"){item.filePath=cleanText(raw.filePath,1000);item.fileEntries=null;item.filePreview=null}
+      if(item.kind==="terminal"){item.terminalSession=null;item.terminalOutput="";item.terminalCommand=""}
+      return item;
+    }
+    function restoredTree(node,ids,depth=0){
+      if(!node||typeof node!=="object"||depth>8)return null;
+      if(Number.isSafeInteger(node.paneId))return ids.has(node.paneId)?{paneId:node.paneId}:null;
+      if(!["vertical","horizontal"].includes(node.direction)||typeof node.ratio!=="number"||node.ratio<.1||node.ratio>.9)return null;
+      const first=restoredTree(node.first,ids,depth+1),second=restoredTree(node.second,ids,depth+1);
+      return first&&second?{direction:node.direction,ratio:node.ratio,first,second}:null;
+    }
+    function restoreState(snapshot){
+      if(!snapshot||snapshot.version!==1)return;
+      restoreNavigation(snapshot.navigation);
+      planItems.length=0;
+      if(Array.isArray(snapshot.plans))for(const raw of snapshot.plans.slice(0,300)){
+        if(!raw||typeof raw.id!=="string"||!/^plan_[a-f0-9]{32}$/.test(raw.id)||planItems.some(item=>item.id===raw.id))continue;
+        const title=cleanText(raw.title,160).trim(),due=typeof raw.due==="string"&&/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(raw.due)?raw.due:"";
+        if(title)planItems.push({id:raw.id,title,due,done:raw.done===true,createdAt:cleanText(raw.createdAt,40)});
+      }
+      projectUsage.clear();if(Array.isArray(snapshot.usage))for(const row of snapshot.usage.slice(0,500)){if(Array.isArray(row)&&projects.some(project=>project.id===row[0])&&Number.isFinite(row[1])&&row[1]>=0)projectUsage.set(row[0],Math.min(row[1],1e9))}
+      const choice=snapshot.selection||{};
+      const project=projects.find(entry=>entry.id===choice.project);
+      if(project){state.project=project.id;state.child=project.children.some(entry=>entry.id===choice.child)?choice.child:""}
+      state.view=choice.view==="console"?"console":"project";
+      if(Array.isArray(choice.open))state.open=new Set(choice.open.filter(id=>projects.some(entry=>entry.id===id)));
+      if(Array.isArray(choice.openCategories))state.openCategories=new Set(choice.openCategories.filter(id=>categories.some(entry=>entry.id===id)));
+
+      if(typeof choice.projectPaneOpen==="boolean")state.projectPaneOpen=choice.projectPaneOpen;
+      state.projectPaneWidth=Number.isFinite(choice.projectPaneWidth)?Math.max(170,Math.min(600,Math.round(choice.projectPaneWidth))):null;
+      if(Array.isArray(snapshot.boards)){
+        boards.clear();for(const row of snapshot.boards.slice(0,500)){
+          if(!Array.isArray(row)||!validBoardKey(row[0])||!Array.isArray(row[1]))continue;
+          const seen=new Set(),items=[];
+          for(const raw of row[1].slice(0,30)){const item=restoredWindow(raw);if(!item||seen.has(item.id))continue;seen.add(item.id);if(item.kind==="files")item.projectName=projectFolder(projects.find(entry=>entry.id===row[0].split("/")[0]));items.push(item);windowSerial=Math.max(windowSerial,item.id);for(const annotation of item.annotations)annotationSerial=Math.max(annotationSerial,Number(annotation.id.slice(1))||0);for(const field of item.schema?.fields||[])if(/^f\d+$/.test(field.id))fieldSerial=Math.max(fieldSerial,Number(field.id.slice(1))||0)}
+          boards.set(row[0],items);
+        }
+      }
+      boardLayouts.clear();if(Array.isArray(snapshot.layouts))for(const row of snapshot.layouts){if(Array.isArray(row)&&validBoardKey(row[0])&&layoutCatalog.some(entry=>entry.id===row[1]))boardLayouts.set(row[0],row[1])}
+      splitTrees.clear();if(Array.isArray(snapshot.splits))for(const row of snapshot.splits){if(!Array.isArray(row)||!validBoardKey(row[0]))continue;const ids=new Set((boards.get(row[0])||[]).map(item=>item.id)),tree=restoredTree(row[1],ids);if(tree)splitTrees.set(row[0],tree)}
+      if(snapshot.serials){windowSerial=Math.max(windowSerial,Number(snapshot.serials.window)||0);fieldSerial=Math.max(fieldSerial,Number(snapshot.serials.field)||0);annotationSerial=Math.max(annotationSerial,Number(snapshot.serials.annotation)||0)}
+    }
+    function scheduleSave(){
+      if(!saveEnabled||!persistReady||saveBlocked)return;
+      queuedJson=JSON.stringify(snapshotState());
+      if(queuedJson===lastSavedJson){if(!saveRunning)showSaveStatus("已保存");return}
+      showSaveStatus("未保存");clearTimeout(saveTimer);saveTimer=setTimeout(()=>flushSave(),450);
+    }
+    async function flushSave(keepalive=false){
+      if(!saveEnabled||!persistReady||saveBlocked||saveRunning||!queuedJson||queuedJson===lastSavedJson)return;
+      clearTimeout(saveTimer);const candidate=queuedJson;saveRunning=true;showSaveStatus("保存中…");
+      try{
+        const response=await fetch("/api/workbench/layout-state/save",{method:"POST",headers:{"Content-Type":"application/json","X-Workstation-Token":WORKBENCH_TOKEN},body:JSON.stringify({revision:persistRevision,state:JSON.parse(candidate)}),keepalive});
+        const data=await response.json();
+        if(response.status===409){saveBlocked=true;showSaveStatus("其他页面已更新 · 本页修改未保存","载入最新");return}
+        if(!response.ok)throw Error(data.error||"保存失败");
+        persistRevision=data.revision;lastSavedJson=candidate;showSaveStatus("已保存");
+      }catch(error){showSaveStatus(`保存失败：${String(error.message||error)}`,"重试");return}
+      finally{saveRunning=false}
+      if(queuedJson!==lastSavedJson)scheduleSave();
+    }
+    async function reconcileRegisteredProjects(){
+      const response=await fetch("/api/workbench/overview",{cache:"no-store"});
+      if(!response.ok)throw Error("项目目录读取失败");
+      const overview=await response.json();
+      for(const row of overview.projects||[]){
+        const folder=row?.name;if(typeof folder!=="string"||!/^[A-Za-z0-9][A-Za-z0-9._-]{1,63}$/.test(folder))continue;
+        if(projects.some(project=>projectFolder(project).toLowerCase()===folder.toLowerCase()))continue;
+        const id=projectIdForFolder(folder);if(projects.some(project=>project.id===id))continue;
+        projects.push({id,name:folder,folder,children:[]});categories.find(category=>category.id==="experiments").projects.push(id);
+      }
+    }
+    async function initializeWorkbench(){
+      if(!saveEnabled){applyEducationLink();render();showSaveStatus("测试页面 · 不保存");return}
+      persistReady=false;saveBlocked=false;loadFailed=false;clearTimeout(saveTimer);showSaveStatus("正在恢复界面…");
+      try{
+        const data=await embeddedApi("/api/workbench/layout-state/load",{});
+        if(data.state)restoreState(data.state);
+        try{await reconcileRegisteredProjects()}catch{state.notice="项目目录暂未同步"}
+        persistRevision=data.revision;applyEducationLink();render();lastSavedJson=data.state?JSON.stringify(data.state):"";persistReady=true;
+        showSaveStatus(data.state?"已恢复 · 已保存":"正在建立保存");
+        if(!data.state||JSON.stringify(snapshotState())!==lastSavedJson)scheduleSave();
+        for(const item of currentWindows())if(item.kind==="files"&&item.fileEntries===null)loadProjectFiles(item);
+      }catch(error){loadFailed=true;render();showSaveStatus(`读取失败：${String(error.message||error)}`,"重试")}
+    }
+    saveRetry.addEventListener("click",()=>{if(saveBlocked)location.reload();else if(loadFailed)initializeWorkbench();else flushSave()});
+    async function loadProjectFiles(item){item.fileLoading=true;item.fileError="";render();try{const data=await embeddedApi("/api/workbench/project-files",{project:item.projectName,relative:item.filePath||""});item.fileEntries=data.entries;item.filePath=data.relative;item.filePreview=null}catch(error){item.fileError=String(error.message||error)}finally{item.fileLoading=false;render()}}
+    async function pollTerminal(item){if(!item.terminalSession||item.terminalPolling)return;item.terminalPolling=true;try{const data=await embeddedApi("/api/workbench/terminal/poll",{session_id:item.terminalSession,cursor:item.terminalCursor||0});item.terminalCursor=data.cursor;item.terminalOutput=(data.truncated?"[较早输出已截断]\n":"")+(data.truncated?"":item.terminalOutput||"")+data.output;if(item.terminalOutput.length>100000)item.terminalOutput=item.terminalOutput.slice(-100000);if(!data.running)item.terminalSession=null;const pre=document.querySelector(`.split-pane[data-window-id="${item.id}"] [data-terminal-output]`);if(pre){pre.textContent=item.terminalOutput;pre.scrollTop=pre.scrollHeight}}catch(error){item.terminalError=String(error.message||error);item.terminalSession=null;render()}finally{item.terminalPolling=false}}
+    async function toolAction(button){
+      const {action,windowId,index,preset,fieldId,annotationId}=button.dataset;
+       if(!["show-layouts","select-layout","close-popovers","configure-window","clear-window","set-preset","add-field","remove-field","run-custom-action","codex-draft","add-todo","remove-todo","ux-edit","ux-prev","ux-next","ux-finish","new-annotation","save-annotation","cancel-annotation","edit-annotation","remove-annotation","jump-annotation","browser-go","browser-back","browser-forward","browser-reload","browser-home","browser-annotations","file-up","file-refresh","file-entry","terminal-start","terminal-send","terminal-stop"].includes(action))return false;
+      const windows=currentWindows(),item=findWindow(windowId);
+      if(action==="show-layouts"){
+         state.layoutOpen=!state.layoutOpen;state.progressOpen=false;
+       }else if(action==="close-popovers"){
+         state.layoutOpen=false;
+      }else if(action==="select-layout"){
+        applyLayout(button.dataset.layout);state.layoutOpen=false;
+       }else if(!item)return true;
+       else if(action==="configure-window"){
+         item.builderOpen=!item.builderOpen;
+      }else if(action==="clear-window"){
+        if(item.kind==="terminal"&&item.terminalSession){
+          try{await embeddedApi("/api/workbench/terminal/close",{session_id:item.terminalSession})}
+          catch(error){item.terminalError=`关闭会话失败：${String(error.message||error)}`;render();return true}
+        }
+        if(item.kind==="browser"){browserFrames.get(item.id)?.frame.remove();browserFrames.delete(item.id)}
+        const position=windows.indexOf(item);if(position>=0)windows[position]=blankWindow(item.id,item.title);
+      }else if(action==="set-preset"){
+        if(!["document","todo","browser","files","terminal","custom"].includes(preset))return true;
+        if(item.kind==="terminal"&&item.terminalSession&&preset!=="terminal"){await embeddedApi("/api/workbench/terminal/close",{session_id:item.terminalSession});item.terminalSession=null}
+        const previousKind=item.kind;item.kind=preset;item.template=preset==="todo"?"checklist":preset;item.builderOpen=preset==="custom";item.error="";item.result="";
+        if(previousKind==="browser"&&preset!=="browser"){browserFrames.get(item.id)?.frame.remove();browserFrames.delete(item.id)}
+        if(preset==="document"&&previousKind!==preset)item.documentText="";
+        if(preset==="todo"&&previousKind!==preset)item.items=[];
+        if(preset==="custom"&&previousKind!==preset){item.schema={title:item.title,description:"",fields:[],action:"none"};item.values={}}
+        if(preset==="browser"&&previousKind!==preset){item.browserUrl="";item.browserDraft="";item.browserHistory=[""];item.browserHistoryIndex=0;item.browserError="";item.browserAnnotationsOpen=false}
+        if(preset==="files"){item.projectName=projectFolder(selectedProject());item.filePath="";item.fileEntries=[];item.filePreview=null;await loadProjectFiles(item);return true}
+        if(preset==="terminal"){item.projectName=projectFolder(selectedProject());item.terminalOutput||=""}
+       }else if(action==="browser-go"){
+         try{const typed=(item.browserDraft||"").trim(),candidate=/^https?:\/\//i.test(typed)||typed.includes("://")?typed:`https://${typed}`,url=new URL(candidate);if(!["http:","https:"].includes(url.protocol)||!url.hostname)throw Error();navigateBrowser(item,url.href);const entry=browserFrames.get(item.id);if(entry?.url===url.href)entry.frame.src=url.href}catch{item.browserError="请输入有效的 http(s) 网址。"}
+       }else if(action==="browser-home"){
+         navigateBrowser(item,"");
+       }else if(action==="browser-back"||action==="browser-forward"){
+         const delta=action==="browser-back"?-1:1,next=(item.browserHistoryIndex??0)+delta,history=item.browserHistory||[""];
+         if(next<0||next>=history.length)return true;item.browserHistoryIndex=next;item.browserUrl=history[next];item.browserDraft=item.browserUrl;item.browserError="";
+       }else if(action==="browser-reload"){
+         if(!item.browserUrl)return true;const entry=browserFrames.get(item.id);if(entry)entry.frame.src=item.browserUrl;else render();return true;
+       }else if(action==="browser-annotations"){
+         item.browserAnnotationsOpen=!item.browserAnnotationsOpen;
+       }else if(action==="file-up"||action==="file-refresh"||action==="file-entry"){
+         if(action==="file-entry"&&button.dataset.kind==="file"){try{item.filePreview=await embeddedApi("/api/workbench/project-file/preview",{project:item.projectName,relative:button.dataset.path});item.fileError=""}catch(error){item.fileError=String(error.message||error)}render();return true}
+         item.filePath=action==="file-refresh"?item.filePath||"":button.dataset.path||"";item.filePreview=null;await loadProjectFiles(item);return true;
+       }else if(action==="terminal-start"){
+         try{const data=await embeddedApi("/api/workbench/terminal/start",{project:item.projectName||projectFolder(selectedProject())});item.terminalSession=data.session_id;item.terminalCursor=0;item.terminalOutput="";item.terminalError=""}catch(error){item.terminalError=String(error.message||error)}
+       }else if(action==="terminal-send"){
+         if(!item.terminalSession)return true;const command=(item.terminalCommand||"").trim();if(!command)return true;
+         try{await embeddedApi("/api/workbench/terminal/input",{session_id:item.terminalSession,command});item.terminalCommand="";item.terminalError=""}catch(error){item.terminalError=String(error.message||error)}
+       }else if(action==="terminal-stop"){
+         if(item.terminalSession)await embeddedApi("/api/workbench/terminal/close",{session_id:item.terminalSession});item.terminalSession=null;
+       }else if(action==="ux-edit"){
+        item.editing=true;
+      }else if(action==="ux-finish"){
+        item.editing=false;
+      }else if(action==="ux-prev"||action==="ux-next"){
+        const delta=action==="ux-next"?1:-1;item.step=Math.max(0,Math.min((item.schema?.fields.length||1)-1,(item.step||0)+delta));
+      }else if(action==="add-field"){
+        if(item.kind!=="custom")return true;
+         const box=button.closest(".split-pane"),name=box.querySelector(".field-name-input").value.trim().slice(0,40),kind=box.querySelector(".field-kind-select").value;
+        if(!name||!fieldNames[kind]){item.error="请填写字段名称并选择类型。";render();return true}
+         if(item.schema.fields.length>=8){item.error="一个内容区最多添加 8 个字段。";render();return true}
+        item.schema.fields.push({id:`f${++fieldSerial}`,label:name,kind,placeholder:""});item.error="";
+      }else if(action==="remove-field"){
+        if(item.kind!=="custom")return true;
+        item.schema.fields=item.schema.fields.filter(field=>field.id!==fieldId);delete item.values[fieldId];
+      }else if(action==="run-custom-action"){
+        if(item.kind!=="custom")return true;
+        const {action:operation,fields}=item.schema;
+        const numbers=fields.filter(field=>field.kind==="number").map(field=>Number(item.values[field.id]||0));
+        if(operation==="sum_numbers")item.result=`合计：${numbers.reduce((sum,value)=>sum+value,0)}`;
+        if(operation==="subtract_numbers")item.result=`差额：${numbers.length?numbers[0]-numbers.slice(1).reduce((sum,value)=>sum+value,0):0}`;
+        if(operation==="count_checked")item.result=`已勾选：${fields.filter(field=>field.kind==="checkbox"&&item.values[field.id]).length}`;
+        if(operation==="copy_summary"){
+          const summary=fields.map(field=>`${field.label}：${item.values[field.id]??""}`).join("\n");
+          try{await navigator.clipboard.writeText(summary);item.result="摘要已复制。"}catch{item.result="无法访问剪贴板，请检查浏览器权限。"}
+        }
+        if(operation==="open_first_url"){
+          const value=fields.filter(field=>field.kind==="url").map(field=>item.values[field.id]).find(Boolean);
+          try{const url=new URL(value);if(!["http:","https:"].includes(url.protocol))throw Error();window.open(url.href,"_blank","noopener,noreferrer");item.result="已打开网址。"}catch{item.result="请先填写完整的 http(s) 网址。"}
+        }
+      }else if(action==="codex-draft"){
+        if(item.loading)return true;
+        const description=(item.codexText||"").trim();
+         if(description.length<4){item.error="请用一句话描述所需内容，至少 4 个字。";render();return true}
+        if(location.protocol==="file:"){item.error="请从本地工作台地址 /workbench 打开，才能连接 Codex。";render();return true}
+        item.loading=true;item.error="";render();
+        try{
+           const response=await fetch("/api/workbench/window-draft",{method:"POST",headers:{"Content-Type":"application/json","X-Workstation-Token":WORKBENCH_TOKEN},body:JSON.stringify({project:projectFolder(selectedProject()),child:selectedChild()?.id||"overview",description,format:item.format||"form",format_notes:item.formatNotes||"",ui_style:item.uiStyle||"editor",ux_mode:item.uxMode||"direct",template:"custom"})});
+          const data=await response.json();if(!response.ok)throw Error(data.error||"Codex 制作失败");
+          if(!data.schema||!Array.isArray(data.schema.fields))throw Error("Codex 返回的内容区格式不完整");
+           item.kind="custom";item.template=item.format==="split"?"split":item.format==="dashboard"?"dashboard":"blank";item.title=data.schema.title;item.schema=data.schema;item.values={};item.result="";item.step=0;item.editing=false;item.builderOpen=false;state.notice=`已生成内容区预览 · ${data.run_id}`;
+        }catch(error){item.error=String(error.message||error)}finally{item.loading=false;render()}
+        return true;
+      }
+       else if(action==="new-annotation"){
+         const anchor=validAnnotationSelection(item);
+         item.annotationDraft={kind:"note",text:"",label:"",url:"",quote:anchor?.quote||"",start:anchor?.start??null,end:anchor?.end??null,fieldId:anchor?.fieldId||"",error:""};
+       }else if(action==="cancel-annotation"){
+         item.annotationDraft=null;
+       }else if(action==="save-annotation"){
+         const draft=item.annotationDraft;if(!draft)return true;
+         if(draft.kind==="note"&&!draft.text.trim()){draft.error="请填写笔记内容。";render();return true}
+         if(draft.kind==="link"){try{const url=new URL(draft.url.trim());if(!["http:","https:"].includes(url.protocol))throw Error();draft.url=url.href}catch{draft.error="请输入完整的 http(s) 网址。";render();return true}}
+         const entry={...draft,id:draft.editingId||`a${++annotationSerial}`,text:draft.text.trim().slice(0,2000),label:draft.label.trim().slice(0,80),error:undefined,editingId:undefined};
+         item.annotations ||= [];const existing=item.annotations.findIndex(value=>value.id===entry.id);if(existing>=0)item.annotations[existing]=entry;else item.annotations.push(entry);item.annotationDraft=null;
+       }else if(action==="edit-annotation"){
+         const annotation=item.annotations?.find(value=>value.id===annotationId);if(annotation)item.annotationDraft={...annotation,editingId:annotation.id,error:""};
+       }else if(action==="remove-annotation"){
+         item.annotations=(item.annotations||[]).filter(value=>value.id!==annotationId);
+       }else if(action==="jump-annotation"){
+         const annotation=item.annotations?.find(value=>value.id===annotationId);jumpToAnnotation(item,annotation);return true;
+       }else if(action==="add-todo"){
+         const input=document.querySelector(`.todo-add-input[data-window-id="${item.id}"]`),value=input.value.trim();if(!value)return true;item.items.push({text:value,done:false});
+       }else if(action==="remove-todo"){
+         item.items.splice(Number(index),1);
+       }
+      render();if((action==="set-preset"&&preset==="browser")||action==="browser-home")document.querySelector(`.split-pane[data-window-id="${item?.id}"] [data-role="browser-address"]`)?.focus();return true;
+    }
+    const appElement=document.querySelector("#app");
+    
+    
+    
+    
+    appElement.addEventListener("submit",event=>{
+      if(event.target.dataset.role!=="plan-add")return;
+      event.preventDefault();const data=new FormData(event.target),title=String(data.get("title")||"").trim(),due=String(data.get("due")||"");
+      planDraft.title=title;planDraft.due=due;planDraft.error="";
+      if(!title||title.length>160)planDraft.error="请输入 1–160 字的事项名称。";
+      else if(due&&!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(due))planDraft.error="计划时间格式无效。";
+      else if(planItems.length>=300)planDraft.error="个人计划最多保存 300 项。";
+      else{planItems.push({id:`plan_${crypto.randomUUID().replaceAll("-","")}`,title,due,done:false,createdAt:new Date().toISOString()});planDraft.title="";planDraft.due=""}
+      render();if(!planDraft.error)document.querySelector('.plan-form [name="title"]')?.focus();
+    });
+    
+    appElement.addEventListener("click",async event=>{const button=event.target.closest("button[data-action]");if(!button)return;
+      
+      
+      
+      
+      
+      
+      
+      if(await toolAction(button))return;const {action,project,child,category,kind}=button.dataset;
+      if(action==="open-education"){openEducation(educationCourses[state.child]||"machine-design");return}
+      if(action==="select-project"||action==="select-child")educationWorkspace=false;
+      if(action==="remove-plan"){
+        const index=planItems.findIndex(item=>item.id===button.dataset.id);
+        if(index>=0){planItems.splice(index,1);render()}return;
+      }
+      
+      
+      
+      
+      
+      if(action==="open-create"){
+        if(kind==="category"||kind==="child"&&projects.some(item=>item.id===project)||["assign","project"].includes(kind)&&categories.some(item=>item.id===category))state.create={kind,project,category,error:""};
+        render();document.querySelector('.tree-create [data-role="create-name"],.tree-create select')?.focus();return;
+      }
+      if(action==="cancel-create"){state.create=null;render();return}
+      if(action==="show-progress"){state.progressOpen=!state.progressOpen;state.layoutOpen=false;render();return}
+      if(action==="open-console"){state.view="console";state.layoutOpen=false;state.progressOpen=false}
+      else if(action==="resume-workbench"){state.view="project"}
+      else if(action==="toggle-category"){if(state.openCategories.has(category))state.openCategories.delete(category);else state.openCategories.add(category)}
+      else if(action==="toggle-project-pane"){state.projectPaneOpen=!state.projectPaneOpen}
+      else if(action==="toggle"){if(state.open.has(project))state.open.delete(project);else state.open.add(project)}
+      else if(action==="select-project"&&projects.some(item=>item.id===project)){state.view="project";state.project=project;state.child="";state.open.add(project);state.progressOpen=false;state.create=null;state.notice=""}
+      else if(action==="select-child"&&projects.find(item=>item.id===project)?.children.some(item=>item.id===child)){state.view="project";state.project=project;state.child=child;state.open.add(project);state.progressOpen=false;state.create=null;state.notice=""}
+      else if(action==="demo"){state.notice="这个入口尚未连接实际功能。"}
+      render();
+    });
+    appElement.addEventListener("submit",async event=>{
+      const form=event.target.closest('[data-role="project-create"]');if(!form)return;event.preventDefault();
+      const draft=state.create;if(!draft||draft.loading)return;const data=new FormData(form),name=String(data.get("name")||"").trim();
+      draft.name=name;draft.layout=String(data.get("layout")||"");draft.projectChoice=String(data.get("project")||"");draft.folder=String(data.get("folder")||"").trim();draft.description=String(data.get("description")||"").trim();
+      if(draft.kind==="category"){
+        if(!name||name.length>40)draft.error="请输入 1–40 字的分类名称。";
+        else if(categories.some(item=>item.name.toLocaleLowerCase()===name.toLocaleLowerCase()))draft.error="已有同名分类。";
+        else if(categories.length>=30)draft.error="分类数量已达上限。";
+        else{const id=`c_${crypto.randomUUID().replaceAll("-","")}`;categories.push({id,name,icon:"◇",projects:[]});state.openCategories.add(id);state.create=null;state.reveal={category:id};state.query="";state.notice=`已新增分类：${name}`}
+      }else if(draft.kind==="assign"){
+        const category=categories.find(item=>item.id===draft.category),projectId=String(data.get("project")||"");
+        if(!category||!projects.some(item=>item.id===projectId)||category.projects.includes(projectId))draft.error="请选择可归入的项目。";
+        else{for(const item of categories)item.projects=item.projects.filter(id=>id!==projectId);category.projects.push(projectId);state.openCategories.add(category.id);state.open.add(projectId);state.create=null;state.reveal={category:category.id};state.query="";state.notice="项目已归入分类。"}
+      }else if(draft.kind==="project"){
+        const category=categories.find(item=>item.id===draft.category),layoutId=draft.layout;
+        const folder=draft.folder||(/^[A-Za-z0-9][A-Za-z0-9._-]{1,63}$/.test(name)?name:`Project-${new Date().toISOString().slice(0,10).replaceAll("-","")}-${crypto.randomUUID().slice(0,6)}`);
+        if(!category)draft.error="分类不存在。";
+        else if(!name||name.length>60)draft.error="请输入 1–60 字的项目名称。";
+        else if(!/^[A-Za-z0-9][A-Za-z0-9._-]{1,63}$/.test(folder))draft.error="目录名需为 2–64 位英文字母、数字、点、下划线或短横线。";
+        else if(projects.some(item=>item.name.toLocaleLowerCase()===name.toLocaleLowerCase()||projectFolder(item).toLowerCase()===folder.toLowerCase()))draft.error="项目名称或目录名已存在。";
+        else if(!layoutCatalog.some(item=>item.id===layoutId))draft.error="请选择分割布局。";
+        else{
+          draft.loading=true;draft.error="";render();
+          try{const created=await embeddedApi("/api/v4/project-create",{name:folder,description:draft.description});if(created.status!=="created"||created.name!==folder)throw Error("项目创建结果不完整")}
+          catch(error){draft.loading=false;draft.error=String(error.message||error);render();return}
+          const id=projectIdForFolder(folder);
+          projects.push({id,name,folder,children:[]});category.projects.push(id);state.view="project";state.project=id;state.child="";state.open.add(id);state.openCategories.add(category.id);state.progressOpen=false;state.create=null;state.reveal={project:id};state.query="";applyLayout(layoutId);state.notice=`已新建项目：${name}`;render();await flushSave();return;
+        }
+      }else if(draft.kind==="child"){
+        const project=projects.find(item=>item.id===draft.project),layoutId=String(data.get("layout")||"");
+        if(!project)draft.error="父项目不存在。";
+        else if(!name||name.length>60)draft.error="请输入 1–60 字的小项目名称。";
+        else if(project.children.some(item=>item.name.toLocaleLowerCase()===name.toLocaleLowerCase()))draft.error="该项目下已有同名小项目。";
+        else if(project.children.length>=100)draft.error="小项目数量已达上限。";
+        else if(!layoutCatalog.some(item=>item.id===layoutId))draft.error="请选择分割布局。";
+        else{const id=`s_${crypto.randomUUID().replaceAll("-","")}`;project.children.push({id,name,progress:0});state.view="project";state.project=project.id;state.child=id;state.open.add(project.id);state.openCategories.add(categories.find(item=>item.projects.includes(project.id))?.id);state.progressOpen=false;state.create=null;state.reveal={child:id};state.query="";applyLayout(layoutId);state.notice=`已创建小项目 · ${layoutCatalog.find(item=>item.id===layoutId).name}布局`}
+      }
+      render();if(state.create)document.querySelector('.tree-create [data-role="create-name"],.tree-create select')?.focus();
+    });
+    appElement.addEventListener("input",event=>{const target=event.target,role=target.dataset.role;if(role==="document"){const item=findWindow(target.dataset.windowId);if(item){item.documentText=target.value;captureTextSelection(target);scheduleSave()}return}if(["codex-description","format-notes"].includes(role)){const item=findWindow(target.dataset.windowId);if(item)item[role==="codex-description"?"codexText":"formatNotes"]=target.value;return}if(role==="custom-field"){const item=findWindow(target.dataset.windowId);if(item){item.values[target.dataset.fieldId]=target.type==="checkbox"?target.checked:target.value;scheduleSave()}return}if(["annotation-text","annotation-label","annotation-url"].includes(role)){const item=findWindow(target.dataset.windowId),draft=item?.annotationDraft;if(draft){draft[role.slice("annotation-".length)]=target.value;draft.error=""}return}if(role==="browser-address"||role==="terminal-command"){const item=findWindow(target.dataset.windowId);if(item)item[role==="browser-address"?"browserDraft":"terminalCommand"]=target.value;return}if(!target.classList.contains("project-search"))return;const start=target.selectionStart;state.query=target.value;render();const input=document.querySelector(".project-search");input.focus();input.setSelectionRange(start,start)});
+    appElement.addEventListener("input",event=>{const input=event.target;if(!input.closest('[data-role="plan-add"]'))return;if(input.name==="title")planDraft.title=input.value;else if(input.name==="due")planDraft.due=input.value;planDraft.error=""});
+    appElement.addEventListener("input",event=>{if(event.target.dataset.role!=="child-progress")return;const child=selectedChild();if(!child)return;child.progress=Math.max(0,Math.min(100,Number(event.target.value)||0));document.querySelectorAll('[data-progress-label],.child-button.selected .child-progress').forEach(element=>element.textContent=`${child.progress}%`);scheduleSave()});
+    appElement.addEventListener("change",event=>{const target=event.target,role=target.dataset.role;if(role==="annotation-kind"){const item=findWindow(target.dataset.windowId);if(item?.annotationDraft){item.annotationDraft.kind=target.value;item.annotationDraft.error="";render()}return}if(["window-format","ui-style","ux-mode"].includes(role)){const item=findWindow(target.dataset.windowId);if(item){item[role==="window-format"?"format":role==="ui-style"?"uiStyle":"uxMode"]=target.value;item.step=0;item.editing=false;render()}return}if(role==="custom-field"){const item=findWindow(target.dataset.windowId);if(item){item.values[target.dataset.fieldId]=target.type==="checkbox"?target.checked:target.value;scheduleSave()}return}if(target.matches(".custom-action-select")){const item=findWindow(target.dataset.windowId);if(item&&actionNames[target.value]){item.schema.action=target.value;item.result="";render()}return}if(role!=="todo-check")return;const item=findWindow(target.dataset.windowId),todo=item?.items[Number(target.dataset.index)];if(!todo)return;todo.done=target.checked;target.closest(".tool-list-row").classList.toggle("done",todo.done);scheduleSave()});
+    appElement.addEventListener("change",event=>{if(event.target.dataset.role!=="plan-done")return;const item=planItems.find(entry=>entry.id===event.target.dataset.id);if(!item)return;item.done=event.target.checked;render()});
+    appElement.addEventListener("select",event=>captureTextSelection(event.target));
+    appElement.addEventListener("keydown",event=>{if(event.key==="Escape"&&state.create){state.create=null;render()}});
+    appElement.addEventListener("pointerdown",event=>{if(event.target.closest('[data-action="new-annotation"]'))captureTextSelection(document.activeElement)});
+    appElement.addEventListener("keydown",event=>{const projectHandle=event.target.closest(".project-resizer");if(projectHandle){const delta=event.key==="ArrowRight"?16:event.key==="ArrowLeft"?-16:0;if(delta){event.preventDefault();setProjectPaneWidth(projectHandle,projectHandle.parentElement.querySelector(".project-pane").getBoundingClientRect().width+delta)}return}const divider=event.target.closest(".split-divider");if(divider){const node=findSplitNode(divider.dataset.dividerPath);if(!node)return;const delta=node.direction==="vertical"?(event.key==="ArrowRight"?.03:event.key==="ArrowLeft"?-.03:0):(event.key==="ArrowDown"?.03:event.key==="ArrowUp"?-.03:0);if(delta){event.preventDefault();setDividerRatio(divider,node,node.ratio+delta)}return}if(event.key!=="Enter")return;const input=event.target;if(input.matches(".todo-add-input,[data-role=browser-address],[data-role=terminal-command],[data-role=annotation-url]")){event.preventDefault();const action=input.matches(".todo-add-input")?"add-todo":input.dataset.role==="browser-address"?"browser-go":input.dataset.role==="terminal-command"?"terminal-send":"save-annotation";input.closest(".split-pane").querySelector(`[data-action="${action}"]`)?.click()}});
+    function setDividerRatio(divider,node,ratio){const parent=divider.parentElement,extent=node.direction==="vertical"?parent.clientWidth:parent.clientHeight,min=Math.min(.45,Math.max(.1,120/Math.max(extent,1)));node.ratio=Math.max(min,Math.min(1-min,ratio));parent.querySelector(":scope > .split-part.first").style.flexBasis=`calc(${(node.ratio*100).toFixed(4)}% - 3px)`;divider.setAttribute("aria-valuenow",Math.round(node.ratio*100));syncBrowserFrames();if(!dividerDrag)scheduleSave()}
+    function setProjectPaneWidth(handle,width){const layout=handle.parentElement,rail=layout.querySelector(".icon-rail").getBoundingClientRect().width,max=Math.min(600,layout.clientWidth-rail-handle.getBoundingClientRect().width-260);state.projectPaneWidth=Math.round(Math.max(170,Math.min(Math.max(170,max),width)));layout.style.setProperty("--project-pane-width",`${state.projectPaneWidth}px`);handle.setAttribute("aria-valuenow",state.projectPaneWidth);syncBrowserFrames();if(!projectDrag)scheduleSave()}
+    appElement.addEventListener("pointerdown",event=>{const handle=event.target.closest(".project-resizer");if(!handle||!state.projectPaneOpen)return;projectDrag={handle,pointer:event.pointerId};handle.classList.add("dragging");handle.setPointerCapture(event.pointerId);event.preventDefault()});
+    appElement.addEventListener("pointermove",event=>{if(!projectDrag||projectDrag.pointer!==event.pointerId)return;const pane=projectDrag.handle.parentElement.querySelector(".project-pane").getBoundingClientRect();setProjectPaneWidth(projectDrag.handle,event.clientX-pane.left)});
+    for(const type of ["pointerup","pointercancel"])appElement.addEventListener(type,event=>{if(projectDrag?.pointer!==event.pointerId)return;projectDrag.handle.classList.remove("dragging");projectDrag=null;scheduleSave()});
+    appElement.addEventListener("pointerdown",event=>{const divider=event.target.closest(".split-divider");if(!divider)return;const node=findSplitNode(divider.dataset.dividerPath);if(!node)return;dividerDrag={divider,node,pointer:event.pointerId,key:boardKey()};divider.classList.add("dragging");divider.setPointerCapture(event.pointerId);event.preventDefault()});
+    appElement.addEventListener("pointermove",event=>{if(!dividerDrag||dividerDrag.pointer!==event.pointerId||dividerDrag.key!==boardKey())return;const {divider,node}=dividerDrag,rect=divider.parentElement.getBoundingClientRect(),axis=node.direction==="vertical"?event.clientX-rect.left:event.clientY-rect.top,extent=node.direction==="vertical"?rect.width:rect.height;setDividerRatio(divider,node,axis/extent)});
+    for(const type of ["pointerup","pointercancel"])appElement.addEventListener(type,event=>{if(dividerDrag?.pointer!==event.pointerId)return;dividerDrag.divider.classList.remove("dragging");dividerDrag=null;scheduleSave()});
+    window.addEventListener("resize",syncBrowserFrames);
+    window.addEventListener("scroll",syncBrowserFrames,true);
+    window.addEventListener("focus",tickUsage);
+    window.addEventListener("blur",()=>{tickUsage();scheduleSave()});
+    setInterval(tickUsage,1000);
+    setInterval(()=>{if(state.view==="project")scheduleSave()},30000);
+    setInterval(()=>{for(const items of boards.values())for(const item of items)if(item.terminalSession)pollTerminal(item)},800);
+    document.addEventListener("visibilitychange",()=>{tickUsage();if(document.visibilityState==="hidden"){scheduleSave();flushSave()}});
+    window.addEventListener("pagehide",()=>{tickUsage();scheduleSave();flushSave(true);for(const items of boards.values())for(const item of items)if(item.terminalSession)fetch("/api/workbench/terminal/close",{method:"POST",headers:{"Content-Type":"application/json","X-Workstation-Token":WORKBENCH_TOKEN},body:JSON.stringify({session_id:item.terminalSession}),keepalive:true})});
+    
+    initializeWorkbench();
+  </script>
+</body>
+</html>
+

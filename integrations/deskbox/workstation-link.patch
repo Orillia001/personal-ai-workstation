@@ -1,0 +1,220 @@
+--- a/src/DeskBox/ViewModels/TodoWidgetViewModel.cs
++++ b/src/DeskBox/ViewModels/TodoWidgetViewModel.cs
+@@ -763,6 +763,7 @@
+         }
+ 
+         _isDisposed = true;
++        _workstationStop?.Cancel();
+         _localizationService.LanguageChanged -= OnLanguageChanged;
+     }
+ 
+--- a/src/DeskBox/ViewModels/TodoWidgetViewModel.ItemOperations.cs
++++ b/src/DeskBox/ViewModels/TodoWidgetViewModel.ItemOperations.cs
+@@ -32,6 +32,7 @@
+         RefreshVisibleItems();
+         RefreshCountProperties();
+         IsInitialized = true;
++        StartWorkstationLink();
+     }
+ 
+     public async Task<TodoItemViewModel?> AddInputAsync()
+@@ -47,7 +48,7 @@
+         return item;
+     }
+ 
+-    public async Task<TodoItemViewModel?> AddItemAsync(string? text, bool isImportant = false, DateTimeOffset? dueDate = null)
++    public async Task<TodoItemViewModel?> AddItemAsync(string? text, bool isImportant = false, DateTimeOffset? dueDate = null, string? itemId = null)
+     {
+         string normalizedText = NormalizeText(text);
+         if (string.IsNullOrWhiteSpace(normalizedText))
+@@ -58,7 +59,7 @@
+         var now = DateTimeOffset.UtcNow;
+         var item = new TodoItem
+         {
+-            Id = Guid.NewGuid().ToString("N"),
++            Id = itemId ?? Guid.NewGuid().ToString("N"),
+             Text = normalizedText,
+             IsImportant = isImportant,
+             DueDate = NormalizeDueDate(dueDate),
+--- a/src/DeskBox/ViewModels/TodoWidgetViewModel.FilteringAndAppearance.cs
++++ b/src/DeskBox/ViewModels/TodoWidgetViewModel.FilteringAndAppearance.cs
+@@ -70,6 +70,9 @@
+ 
+     private async Task SaveAsync()
+     {
++        _workstationSaves++;
++        try
++        {
+         NormalizeSortOrders();
+         var liveIds = new HashSet<string>(
+             Items.Select(item => item.Item.Id),
+@@ -87,6 +90,9 @@
+         {
+             Items = Items.Select(item => item.Item).Concat(persistedTombstones).ToList()
+         });
++    
++        }
++        finally { _workstationSaves--; }
+     }
+ 
+     private void RefreshVisibleItems(TodoItemViewModel? preferredMovedItem = null)
+--- /dev/null
++++ b/src/DeskBox/ViewModels/TodoWidgetViewModel.Workstation.cs
+@@ -0,0 +1,157 @@
++using System.IO.Pipes;
++using System.Security.Cryptography;
++using System.Text;
++using System.Text.Json.Nodes;
++using DeskBox.Services;
++using DeskBox.Models;
++using Microsoft.UI.Dispatching;
++
++namespace DeskBox.ViewModels;
++
++public sealed partial class TodoWidgetViewModel
++{
++    private CancellationTokenSource? _workstationStop;
++    private int _workstationSaves;
++
++    private void StartWorkstationLink()
++    {
++        if (_workstationStop is not null) return;
++        var dispatcher = DispatcherQueue.GetForCurrentThread();
++        if (dispatcher is null) return;
++        _workstationStop = new CancellationTokenSource();
++        var token = _workstationStop.Token;
++        var name = $"DeskBox.Workstation.{DeskBoxDataPathService.Current.InstanceScope}.{_config.Id}";
++        _ = Task.Run(async () =>
++        {
++            while (!token.IsCancellationRequested)
++            {
++                try
++                {
++                    await using var pipe = new NamedPipeServerStream(name, PipeDirection.InOut, 1,
++                        PipeTransmissionMode.Byte, PipeOptions.Asynchronous | PipeOptions.CurrentUserOnly);
++                    await pipe.WaitForConnectionAsync(token);
++                    using var timeout = CancellationTokenSource.CreateLinkedTokenSource(token);
++                    timeout.CancelAfter(TimeSpan.FromSeconds(15));
++                    var bytes = new List<byte>();
++                    var buffer = new byte[4096];
++                    while (true)
++                    {
++                        int count = await pipe.ReadAsync(buffer, timeout.Token);
++                        if (count == 0) throw new IOException("Incomplete request");
++                        bytes.AddRange(buffer.AsSpan(0, count).ToArray());
++                        if (bytes.Count > 65536) throw new IOException("Request too large");
++                        if (bytes.Contains((byte)'\n')) break;
++                    }
++                    var request = JsonNode.Parse(Encoding.UTF8.GetString(bytes.ToArray()))?.AsObject()
++                        ?? throw new IOException("Invalid request");
++                    var completion = new TaskCompletionSource<JsonObject>(TaskCreationOptions.RunContinuationsAsynchronously);
++                    if (!dispatcher.TryEnqueue(async () =>
++                    {
++                        try { completion.TrySetResult(await ApplyWorkstationRequestAsync(request)); }
++                        catch (Exception e) { completion.TrySetResult(new JsonObject { ["error"] = e.Message }); }
++                    })) throw new IOException("UI unavailable");
++                    var result = await completion.Task.WaitAsync(timeout.Token);
++                    var options = new System.Text.Json.JsonSerializerOptions
++                    {
++                        Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
++                    };
++                    await pipe.WriteAsync(Encoding.UTF8.GetBytes(result.ToJsonString(options) + "\n"), timeout.Token);
++                    await pipe.FlushAsync(timeout.Token);
++                }
++                catch (OperationCanceledException) when (token.IsCancellationRequested) { break; }
++                catch (Exception e)
++                {
++                    App.Log($"[WorkstationTodo] {e.GetType().Name}: {e.Message}");
++                    try { await Task.Delay(500, token); } catch (OperationCanceledException) { break; }
++                }
++            }
++        }, token);
++    }
++
++    private string WorkstationRevision() => Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(_store.StorePath))).ToLowerInvariant();
++
++    private async Task<JsonObject> ApplyWorkstationRequestAsync(JsonObject request)
++    {
++        string action = request["action"]?.GetValue<string>() ?? "";
++        if (_isDisposed || !IsInitialized) throw new InvalidOperationException("DeskBox 待办尚未就绪");
++        if (action == "ping")
++        {
++            var rows = new JsonArray();
++            foreach (var item in Items)
++                rows.Add(new JsonObject { ["id"] = item.Item.Id, ["title"] = item.Text,
++                    ["due"] = item.DueDate?.ToString("O"), ["done"] = item.IsCompleted,
++                    ["recurring"] = item.Recurrence is not null });
++            return new JsonObject { ["ready"] = true, ["revision"] = WorkstationRevision(),
++                ["items"] = rows, ["saving"] = _workstationSaves > 0 };
++        }
++        if (_workstationSaves > 0 || IsDetailPageOpen || Items.Any(i => i.IsEditing))
++            throw new InvalidOperationException("DeskBox 正在编辑或保存，请结束当前编辑后重试");
++        if (request["revision"]?.GetValue<string>() != WorkstationRevision())
++            throw new InvalidOperationException("DeskBox 内容已变化，请刷新后重试");
++        string id = request["id"]?.GetValue<string>() ?? "";
++        string? title = request["title"]?.GetValue<string>();
++        DateTimeOffset? due = null;
++        if (action is "add" or "edit" or "import")
++        {
++            if (string.IsNullOrWhiteSpace(title) || title.Length > 500)
++                throw new ArgumentException("请输入 1–500 字的事项标题");
++            string? value = request["due"]?.GetValue<string>();
++            if (!string.IsNullOrEmpty(value)) due = DateTimeOffset.Parse(value, System.Globalization.CultureInfo.InvariantCulture);
++        }
++        bool ok;
++        switch (action)
++        {
++            case "import":
++                if (!System.Text.RegularExpressions.Regex.IsMatch(id, "^plan_[a-f0-9]{32}$"))
++                    throw new ArgumentException("原计划标识无效");
++                if (FindItem(id) is null && !_tombstones.Any(i => i.Id == id))
++                {
++                    bool completed = request["done"]?.GetValue<bool>() == true;
++                    var model = new TodoItem { Id = id, Text = title!.Trim(), DueDate = NormalizeDueDate(due),
++                        IsCompleted = completed, CompletedAt = completed ? DateTimeOffset.UtcNow : null,
++                        CreatedAt = DateTimeOffset.TryParse(request["createdAt"]?.GetValue<string>(), out var created) ? created : DateTimeOffset.UtcNow,
++                        UpdatedAt = DateTimeOffset.UtcNow };
++                    Items.Insert(0, new TodoItemViewModel(model, _localizationService));
++                    RefreshVisibleItems(); RefreshCountProperties();
++                }
++                // Also persist on an idempotent retry: a previous save may have failed.
++                await SaveAsync();
++                ok = true;
++                break;
++            case "add":
++                if (string.IsNullOrEmpty(id)) id = Guid.NewGuid().ToString("N");
++                if (!System.Text.RegularExpressions.Regex.IsMatch(id, "^[a-f0-9]{32}$"))
++                    throw new ArgumentException("事项标识无效");
++                if (FindItem(id) is not null || _tombstones.Any(i => i.Id == id))
++                {
++                    await SaveAsync();
++                    ok = true;
++                }
++                else ok = await AddItemAsync(title, false, due, id) is not null;
++                break;
++            case "edit":
++                var item = FindItem(id) ?? throw new ArgumentException("事项已不存在，请刷新");
++                item.Text = title!.Trim();
++                item.UpdatedAt = DateTimeOffset.UtcNow;
++                ok = Nullable.Equals(item.DueDate, NormalizeDueDate(due)) || await SetDueDateAsync(id, due);
++                RefreshVisibleItems();
++                await SaveAsync();
++                break;
++            case "complete":
++                ok = await SetCompletedAsync(id, request["done"]!.GetValue<bool>());
++                if (ok) await SaveAsync();
++                break;
++            case "delete":
++                if (_tombstones.Any(i => i.Id == id))
++                {
++                    await SaveAsync();
++                    ok = true;
++                }
++                else ok = await DeleteItemAsync(id);
++                break;
++            default: throw new ArgumentException("不支持的事项操作");
++        }
++        if (!ok) throw new InvalidOperationException("事项未保存，请刷新列表重试");
++        return new JsonObject { ["saved"] = true, ["revision"] = WorkstationRevision() };
++    }
++}

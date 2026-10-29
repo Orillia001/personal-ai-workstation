@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "工作站 · 课程提醒",
+  "version": "0.3.0",
+  "description": "使用当前 Edge 会话，只读同步雨课堂考试提醒和课程伴侣待提交作业。",
+  "background": {"service_worker": "background.js"},
+  "host_permissions": [
+    "https://*.yuketang.cn/*",
+    "http://eol.imut.edu.cn/*",
+    "http://127.0.0.1:8765/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://*.yuketang.cn/*"],
+      "js": ["rain-reader.js", "rain-content.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["http://eol.imut.edu.cn/meol/personal/*"],
+      "js": ["theol-reader.js", "theol-content.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["http://127.0.0.1:8765/*"],
+      "js": ["workbench-content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

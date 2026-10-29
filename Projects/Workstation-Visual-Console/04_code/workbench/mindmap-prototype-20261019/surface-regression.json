@@ -1,0 +1,281 @@
+{
+  "phase": "regression",
+  "checks": [
+    {
+      "name": "展开/收起保留缩放与被点击章节的位置",
+      "pass": true,
+      "evidence": {
+        "before": {
+          "scale": 1.2,
+          "x": 561.4,
+          "y": 466
+        },
+        "after": {
+          "scale": 1.2,
+          "x": 561.4,
+          "y": 466
+        },
+        "anchor": {
+          "x": 875.4000244140625,
+          "y": 181.19998168945312,
+          "width": 307.2000732421875,
+          "height": 72
+        },
+        "next": {
+          "x": 875.4000244140625,
+          "y": 181.19998168945312,
+          "width": 307.2000732421875,
+          "height": 72
+        }
+      }
+    },
+    {
+      "name": "打开知识内容保留视角",
+      "pass": true,
+      "evidence": {
+        "before": {
+          "scale": 1.2,
+          "x": 561.4,
+          "y": 466
+        },
+        "after": {
+          "scale": 1.2,
+          "x": 561.4,
+          "y": 466
+        }
+      }
+    },
+    {
+      "name": "内容正常显示",
+      "pass": true
+    },
+    {
+      "name": "关闭内容保留视角",
+      "pass": true
+    },
+    {
+      "name": "搜索仍可主动定位并打开结果",
+      "pass": true
+    },
+    {
+      "name": "更改Demo标记保留视角和内容滚动",
+      "pass": true
+    },
+    {
+      "name": "切换课程返回保留原视角与展开",
+      "pass": true
+    },
+    {
+      "name": "尺寸变化保留缩放与画布中心",
+      "pass": true,
+      "evidence": {
+        "beforeResize": {
+          "scale": 1.2,
+          "x": -217,
+          "y": 881.2
+        },
+        "afterResize": {
+          "scale": 1.2,
+          "x": -307,
+          "y": 831.2
+        }
+      }
+    },
+    {
+      "name": "单指从章节节点拖动且松手不误展开",
+      "pass": true,
+      "evidence": {
+        "before": {
+          "scale": 1,
+          "x": 436,
+          "y": 366
+        },
+        "after": {
+          "scale": 1,
+          "x": 501,
+          "y": 411
+        }
+      }
+    },
+    {
+      "name": "双指同时平移和缩放并跟随手指中心",
+      "pass": true,
+      "evidence": {
+        "before": {
+          "scale": 1,
+          "x": 501,
+          "y": 411
+        },
+        "after": {
+          "scale": 1.33333,
+          "x": 521,
+          "y": 426
+        }
+      }
+    },
+    {
+      "name": "双指松开一指后可继续拖动",
+      "pass": true,
+      "evidence": {
+        "before": {
+          "scale": 1.33333,
+          "x": 521,
+          "y": 426
+        },
+        "after": {
+          "scale": 1.33333,
+          "x": 556,
+          "y": 451
+        }
+      }
+    },
+    {
+      "name": "触控点按只切换一次且章节原位保留",
+      "pass": true
+    },
+    {
+      "name": "系统取消触控后下一次点按正常",
+      "pass": true
+    },
+    {
+      "name": "触控笔拖动画布",
+      "pass": true,
+      "evidence": {
+        "before": {
+          "scale": 0.529221,
+          "x": 517.445,
+          "y": 366
+        },
+        "after": {
+          "scale": 0.529221,
+          "x": 557.445,
+          "y": 396
+        }
+      }
+    },
+    {
+      "name": "笔按下时忽略同时触碰的手掌",
+      "pass": true
+    },
+    {
+      "name": "触控板双向滚动平移",
+      "pass": true,
+      "evidence": {
+        "before": {
+          "scale": 0.529221,
+          "x": 557.445,
+          "y": 396
+        },
+        "after": {
+          "scale": 0.529221,
+          "x": 549.445,
+          "y": 380
+        },
+        "input": {
+          "x": 8,
+          "y": 16,
+          "mode": 0
+        }
+      }
+    },
+    {
+      "name": "触控板缩放跟随指针且不缩放整页",
+      "pass": true,
+      "evidence": {
+        "before": {
+          "scale": 0.529221,
+          "x": 549.445,
+          "y": 380
+        },
+        "after": {
+          "scale": 0.63783,
+          "x": 658.1,
+          "y": 451.829
+        }
+      }
+    },
+    {
+      "name": "背景双击不会重置全图",
+      "pass": true
+    },
+    {
+      "name": "详情可原生触控滚动且不拖动底图",
+      "pass": true,
+      "evidence": {
+        "panelScroll": {
+          "scroll": 145,
+          "client": 428,
+          "full": 598
+        },
+        "before": {
+          "scale": 1,
+          "x": -241,
+          "y": 612
+        },
+        "after": {
+          "scale": 1,
+          "x": -241,
+          "y": 612
+        }
+      }
+    },
+    {
+      "name": "触控详情更改标记不重置滚动",
+      "pass": true
+    },
+    {
+      "name": "Surface主要操作目标至少44像素",
+      "pass": true,
+      "evidence": [
+        {
+          "element": "INPUT",
+          "width": 290,
+          "height": 44
+        },
+        {
+          "element": "BUTTON",
+          "width": 44,
+          "height": 44
+        },
+        {
+          "element": "BUTTON",
+          "width": 44,
+          "height": 44
+        },
+        {
+          "element": "BUTTON",
+          "width": 44,
+          "height": 44
+        },
+        {
+          "element": "mm-close",
+          "width": 44,
+          "height": 44
+        },
+        {
+          "element": "SELECT",
+          "width": 90,
+          "height": 44
+        }
+      ]
+    },
+    {
+      "name": "键盘仍可平移画布",
+      "pass": true
+    },
+    {
+      "name": "键盘点开章节保留缩放和位置",
+      "pass": true
+    },
+    {
+      "name": "窄屏无水平页面溢出",
+      "pass": true
+    },
+    {
+      "name": "无页面脚本错误",
+      "pass": true,
+      "evidence": []
+    }
+  ],
+  "passed": true
+}

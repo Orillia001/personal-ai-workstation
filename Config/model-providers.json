@@ -1,0 +1,10 @@
+{
+  "routing_order": ["local", "codex-chatgpt", "openai-api", "deepseek-api"],
+  "providers": [
+    {"id": "codex-chatgpt", "kind": "codex", "billing": "chatgpt-plan", "env": null},
+    {"id": "ollama", "kind": "local-http", "billing": "local", "url": "http://127.0.0.1:11434/api/tags"},
+    {"id": "lm-studio", "kind": "local-openai", "billing": "local", "url": "http://127.0.0.1:1234/v1/models"},
+    {"id": "openai-api", "kind": "cloud-api", "billing": "separate-api", "env": "OPENAI_API_KEY", "model_env": "OPENAI_MODEL", "url": "https://api.openai.com/v1/responses"},
+    {"id": "deepseek-api", "kind": "cloud-api", "billing": "separate-api", "env": "DEEPSEEK_API_KEY", "model_env": "DEEPSEEK_MODEL", "url": "https://api.deepseek.com/chat/completions"}
+  ]
+}

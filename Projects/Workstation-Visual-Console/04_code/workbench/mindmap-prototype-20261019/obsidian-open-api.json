@@ -1,0 +1,63 @@
+{
+  "run_id": "EDU-MINDMAP-OBSIDIAN-OPEN-20261019-01",
+  "checks": [
+    {
+      "name": "预览注入打开令牌且保留客户端占位检测",
+      "pass": true
+    },
+    {
+      "name": "machine-design按知识点绑定解析对应笔记",
+      "pass": true
+    },
+    {
+      "name": "thermal-engineering按知识点绑定解析对应笔记",
+      "pass": true
+    },
+    {
+      "name": "control-engineering按知识点绑定解析对应笔记",
+      "pass": true
+    },
+    {
+      "name": "fluid-power按知识点绑定解析对应笔记",
+      "pass": true
+    },
+    {
+      "name": "math-competition按知识点绑定解析对应笔记",
+      "pass": true
+    },
+    {
+      "name": "拒绝外站发起打开",
+      "pass": true
+    },
+    {
+      "name": "拒绝缺少有效令牌",
+      "pass": true
+    },
+    {
+      "name": "不接受任意路径或URI",
+      "pass": true
+    },
+    {
+      "name": "拒绝非字符串参数",
+      "pass": true
+    },
+    {
+      "name": "无对应知识点时不启动应用",
+      "pass": true
+    },
+    {
+      "name": "无对应课程时不启动应用",
+      "pass": true
+    },
+    {
+      "name": "学习状态写入口仍关闭",
+      "pass": true
+    },
+    {
+      "name": "被拒绝的请求均未启动应用",
+      "pass": true
+    }
+  ],
+  "passed": true,
+  "app_launches_stubbed": 5
+}

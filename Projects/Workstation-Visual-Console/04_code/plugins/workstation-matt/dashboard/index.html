@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Matt · 工作流</title><link rel="stylesheet" href="/dashboard.css"><script src="/dashboard.js" defer></script></head>
+<body>
+<header><a class="brand" href="/" aria-label="Matt工作流首页"><span class="brand-mark">m</span><span>Matt <small>工作流</small></span></a><span class="local">LOCAL · CODEX</span><button id="refresh" type="button">刷新</button></header>
+<div id="connection" role="status" aria-live="polite">正在读取本地阶段记录…</div>
+<main>
+<aside aria-label="任务列表"><div class="aside-heading"><h1>工作中的任务</h1><span id="count"></span></div><label class="search"><span class="sr-only">搜索任务</span><input id="search" type="search" placeholder="搜索任务或项目" autocomplete="off"></label><label class="filter"><span>状态</span><select id="filter"><option value="all">全部任务</option><option value="running">进行中</option><option value="blocked">受阻</option><option value="pending">未开始</option><option value="completed">已完成</option></select></label><div id="tasks"></div><p class="aside-note">进度由 Codex 执行技能时记录<br>每 3 秒读取本地更新</p></aside>
+<section id="workspace" aria-label="工作流详情"><div class="empty"><span>m</span><h2>让过程有迹可循</h2><p>使用插件开始一项 Matt 任务后，<br>阶段、结果和验收证据会出现在这里。</p></div></section>
+</main>
+<footer><span>WORKSTATION / MATT</span><span>阶段记录 · 本地保存 · 只读看板</span></footer>
+</body></html>

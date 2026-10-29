@@ -1,0 +1,9 @@
+{
+  "enabled": false,
+  "source": "",
+  "project": null,
+  "interval_seconds": 10,
+  "stable_checks": 2,
+  "baseline_existing": true,
+  "action": "plan-only"
+}

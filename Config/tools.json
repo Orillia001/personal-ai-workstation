@@ -1,0 +1,22 @@
+{
+  "tools": [
+    {"name":"PowerShell","commands":["pwsh","powershell"],"capabilities":["shell","files","automation"]},
+    {"name":"Python","commands":["python"],"capabilities":["data","scripts","automation"]},
+    {"name":"Codex","commands":["codex"],"capabilities":["agent","code","files"]},
+    {"name":"VS Code","commands":["code"],"capabilities":["editor","terminal","git"]},
+    {"name":"VS Code GUI","candidates":["%LOCALAPPDATA%/Programs/Microsoft VS Code/Code.exe"],"capabilities":["editor","launcher"]},
+    {"name":"Git","commands":["git"],"capabilities":["diff","history","rollback"]},
+    {"name":"Quarto","commands":["quarto"],"capabilities":["markdown","reports","docx","html","pdf"]},
+    {"name":"XeLaTeX","commands":["xelatex"],"capabilities":["latex","pdf"]},
+    {"name":"BibTeX","commands":["bibtex"],"capabilities":["citations"]},
+    {"name":"Word","commands":["winword"],"candidates":["%ProgramFiles%/Microsoft Office/root/Office16/WINWORD.EXE","%ProgramFiles(x86)%/Microsoft Office/root/Office16/WINWORD.EXE"],"capabilities":["docx","office"]},
+    {"name":"Excel","commands":["excel"],"candidates":["%ProgramFiles%/Microsoft Office/root/Office16/EXCEL.EXE","%ProgramFiles(x86)%/Microsoft Office/root/Office16/EXCEL.EXE"],"capabilities":["xlsx","office","data"]},
+    {"name":"PowerPoint","commands":["powerpnt"],"candidates":["%ProgramFiles%/Microsoft Office/root/Office16/POWERPNT.EXE","%ProgramFiles(x86)%/Microsoft Office/root/Office16/POWERPNT.EXE"],"capabilities":["pptx","office","slides"]},
+    {"name":"Zotero","commands":["zotero"],"candidates":["%ProgramFiles%/Zotero/zotero.exe","%LOCALAPPDATA%/Programs/Zotero/zotero.exe"],"capabilities":["literature","citations"]},
+    {"name":"Browser","commands":["msedge","chrome"],"candidates":["%ProgramFiles(x86)%/Microsoft/Edge/Application/msedge.exe","%ProgramFiles%/Google/Chrome/Application/chrome.exe","%ProgramFiles(x86)%/Google/Chrome/Application/chrome.exe"],"capabilities":["browser","web"]},
+    {"name":"Tesseract OCR","commands":["tesseract"],"candidates":["%ProgramFiles%/Tesseract-OCR/tesseract.exe"],"capabilities":["ocr","images"]},
+    {"name":"Ollama","commands":["ollama"],"candidates":["%LOCALAPPDATA%/Programs/Ollama/ollama.exe"],"capabilities":["local-model","classification","summary","extraction"]},
+    {"name":"PDF Text","commands":["pdftotext"],"capabilities":["pdf","text-extraction"]},
+    {"name":"MATLAB","commands":["matlab"],"candidates":["%ProgramFiles%/MATLAB/R*/bin/matlab.exe"],"capabilities":["scientific-computing","data"]}
+  ]
+}

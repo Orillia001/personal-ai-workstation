@@ -1,0 +1,6 @@
+{
+  "language": "zh-CN",
+  "resource_policy": "local-first",
+  "default_agent_count": "1",
+  "file_policy": "preserve-originals"
+}

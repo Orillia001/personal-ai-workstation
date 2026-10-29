@@ -1,0 +1,14 @@
+{
+  "types": [
+    {"name":"education","indicators":["教育","学习","课程","课表","学期","学分","作业","考试","复习","掌握","教学进度"],"tools":["Teach","Codex","Quarto"],"capabilities":["learning-plan","mastery-evidence","progress-control"],"resource":"local-first-single-agent"},
+    {"name":"file-organization","indicators":["整理","分类","下载","文件","重复","归档","重命名"],"tools":["PowerShell","Python"],"capabilities":["files","automation"],"resource":"local-deterministic"},
+    {"name":"research","indicators":["研究","检索","查找","证据","最新","资料","调研"],"tools":["Codex","Browser","Zotero"],"capabilities":["agent","literature","citations"],"resource":"model-with-search-when-needed"},
+    {"name":"writing","indicators":["写作","论文","报告","正文","润色","改写","申报书"],"tools":["Codex","Quarto","Word","XeLaTeX"],"capabilities":["agent","reports","docx","pdf"],"resource":"single-agent"},
+    {"name":"data","indicators":["数据","统计","分析","表格","问卷","计算","绘图"],"tools":["Python","Excel","MATLAB"],"capabilities":["data","scientific-computing"],"resource":"local-compute"},
+    {"name":"coding","indicators":["代码","编程","脚本","调试","程序","自动化"],"tools":["Codex","VS Code","Git","Python"],"capabilities":["code","diff","automation"],"resource":"single-agent-with-tests"},
+    {"name":"slides","indicators":["幻灯片","PPT","路演","答辩","演示"],"tools":["PowerPoint","Quarto","Codex"],"capabilities":["slides","agent"],"resource":"single-agent"},
+    {"name":"literature","indicators":["文献","引用","参考文献","Zotero","BibTeX"],"tools":["Zotero","BibTeX","Quarto"],"capabilities":["literature","citations"],"resource":"local-first"},
+    {"name":"planning","indicators":["规划","计划","拆解","路线","方案","决策"],"tools":["Codex"],"capabilities":["agent"],"resource":"single-agent"},
+    {"name":"general","indicators":[],"tools":["Codex"],"capabilities":["agent"],"resource":"single-agent"}
+  ]
+}

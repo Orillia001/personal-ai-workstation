@@ -1,0 +1,21 @@
+{
+  "default_provider": "openai",
+  "policy": {
+    "send_files_by_default": false,
+    "log_prompt_content": false,
+    "require_confirmation_for_external_upload": true
+  },
+  "providers": {
+    "openai": {
+      "base_url": "https://api.openai.com/v1",
+      "api_key_env": "OPENAI_API_KEY",
+      "models": ["SET_MODEL_WHEN_ENABLED"]
+    },
+    "deepseek": {
+      "base_url": "https://api.deepseek.com",
+      "api_key_env": "DEEPSEEK_API_KEY",
+      "models": ["SET_MODEL_WHEN_ENABLED"]
+    }
+  }
+}
+

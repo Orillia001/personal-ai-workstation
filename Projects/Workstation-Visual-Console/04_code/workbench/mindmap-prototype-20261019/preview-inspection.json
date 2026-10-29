@@ -1,0 +1,32 @@
+{
+  "pageErrors": [],
+  "actions": [
+    {
+      "variant": "A",
+      "visibleNodes": 11,
+      "modules": 17
+    },
+    {
+      "variant": "B",
+      "sections": 17
+    },
+    {
+      "variant": "C",
+      "knowledgeRows": 9
+    },
+    {
+      "detail": "材料的疲劳强度",
+      "temporaryMark": "C · 分栏浏览   /   当前模块：强度与疲劳基础   /   演示标记：1 处\n学习状态为现有快照；演示标记不写入学习记录。"
+    },
+    {
+      "searchLocated": "强度"
+    },
+    {
+      "mobileOverflow": 0
+    },
+    {
+      "reloadNoDemoMarks": true
+    }
+  ],
+  "checked": true
+}

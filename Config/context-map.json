@@ -1,0 +1,185 @@
+{
+  "schema_version": 1,
+  "default_read": [
+    "AGENTS.md",
+    "README.md"
+  ],
+  "topics": {
+    "navigation": {
+      "when": "定位工作站、理解目录、选择查找入口",
+      "read": [
+        ".agents/README.md"
+      ],
+      "manual": [
+        {
+          "section": 22
+        }
+      ]
+    },
+    "project": {
+      "when": "创建或继续项目、查看控制文件",
+      "read": [
+        ".agents/skills/workstation-operator/SKILL.md"
+      ],
+      "manual": [
+        {
+          "section": 5
+        }
+      ]
+    },
+    "development": {
+      "when": "代码开发、界面或架构修改、缺陷修复；自动进入Matt工程流程",
+      "read": [
+        ".agents/skills/workstation-operator/SKILL.md",
+        "docs/agents/workflow.md"
+      ],
+      "manual": []
+    },
+    "workflow": {
+      "when": "工作流栏目、Codex技能及Agent本机数据映射",
+      "project": "Workstation-Visual-Console",
+      "read": [
+        ".agents/skills/workstation-operator/SKILL.md",
+        "Projects/Workstation-Visual-Console/docs/codex-data-map.md"
+      ],
+      "manual": []
+    },
+    "education": {
+      "when": "课程资料接入、管理配置、架构修改；日常教学用teaching",
+      "project": "University",
+      "read": [
+        ".agents/skills/teach/SKILL.md",
+        "Config/teach-course-framework.md",
+        "Projects/University/EDUCATION.md"
+      ],
+      "manual": [
+        {
+          "section": 21
+        }
+      ]
+    },
+    "ocr": {
+      "when": "扫描教材或图片识别、PDF文字提取",
+      "read": [],
+      "manual": [
+        {
+          "section": 12,
+          "subsection": "OCR"
+        },
+        {
+          "section": 12,
+          "subsection": "PDF"
+        }
+      ]
+    },
+    "files": {
+      "when": "文件扫描、复制整理、下载监控",
+      "read": [
+        ".agents/skills/workstation-operator/SKILL.md"
+      ],
+      "manual": [
+        {
+          "section": 11
+        }
+      ]
+    },
+    "knowledge": {
+      "when": "建立或查询项目全文索引",
+      "read": [],
+      "manual": [
+        {
+          "section": 8
+        }
+      ]
+    },
+    "models": {
+      "when": "模型状态、路由、只读AI方案",
+      "read": [],
+      "manual": [
+        {
+          "section": 9
+        }
+      ]
+    },
+    "execution": {
+      "when": "创建、批准、执行已授权请求",
+      "read": [],
+      "manual": [
+        {
+          "section": 10
+        }
+      ]
+    },
+    "backup": {
+      "when": "备份、校验与恢复",
+      "read": [],
+      "manual": [
+        {
+          "section": 14
+        }
+      ]
+    },
+    "service": {
+      "when": "网页连接、后台服务与本机诊断",
+      "read": [],
+      "manual": [
+        {
+          "section": 15
+        },
+        {
+          "section": 17,
+          "subsection": "控制台打不开"
+        }
+      ]
+    },
+    "latex": {
+      "when": "LaTeX文档创建、构建与清理",
+      "read": [],
+      "manual": [
+        {
+          "section": 2,
+          "subsection": "分类 LaTeX 文档项目"
+        }
+      ]
+    },
+    "render": {
+      "when": "Quarto、Word、PDF等输出",
+      "read": [],
+      "manual": [
+        {
+          "section": 13
+        }
+      ]
+    },
+    "proposal": {
+      "when": "计划书、申报书、立项书与项目提案",
+      "read": [
+        ".agents/skills/project-plan-writer/SKILL.md"
+      ],
+      "manual": []
+    },
+    "preferences": {
+      "when": "读取和保存用户明确的长期偏好",
+      "read": [
+        ".agents/skills/workstation-operator/SKILL.md"
+      ],
+      "manual": [
+        {
+          "section": 6
+        }
+      ]
+    },
+    "teaching": {
+      "when": "日常续课、进度、讲解与评阅；默认只取进度",
+      "project": "University",
+      "read": [
+        "Config/teaching-guide.md"
+      ],
+      "manual": [
+        {
+          "section": 21
+        }
+      ]
+    }
+  }
+}

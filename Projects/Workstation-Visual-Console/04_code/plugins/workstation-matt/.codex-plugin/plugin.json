@@ -1,0 +1,13 @@
+{
+  "name": "workstation-matt",
+  "version": "0.1.0",
+  "description": "Matt工程流程及本地可视化看板",
+  "skills": "./skills/",
+  "requires_local_executor": true,
+  "interface": {
+    "displayName": "工作站 · Matt 工作流",
+    "shortDescription": "工程流程、阶段进度与验收证据看板",
+    "developerName": "Personal AI Workstation",
+    "category": "Productivity"
+  }
+}

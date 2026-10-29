@@ -1,0 +1,67 @@
+{
+  "run_id": "EDU-MINDMAP-OBSIDIAN-OPEN-20261019-01",
+  "created_at": "2026-10-19T23:11:24.9684533+08:00",
+  "api_checks": 14,
+  "browser_checks": 11,
+  "surface_regression_checks": 25,
+  "passed": true,
+  "preview_process_id": 9440,
+  "production_shell_sha256": "4EDAB86815E08A0B871242B185BA636742457AC5390176702AEF8E7B8C5BAF28",
+  "learning_mutations": false,
+  "artifacts": [
+    {
+      "file": "mindmap-dark.js",
+      "sha256": "426B5EA0BC6F63600C1D45483E2851420EAFE2334FB5AF6139CAF2F6E75F6065"
+    },
+    {
+      "file": "mindmap-dark.css",
+      "sha256": "00013D2B29D025AD8A74BB3DE77BF7D5CDE148766C950539685203AC4DBE1526"
+    },
+    {
+      "file": "preview.py",
+      "sha256": "FCA38AFAA6422AD9609B2993A8512DDE6306651BB0BDB4D55613AF1D8ADDA595"
+    },
+    {
+      "file": "build.py",
+      "sha256": "0A12B7D48555195E5D5950A4A474FDBBB90B63F01CE4189720D39D8A207AA9DC"
+    },
+    {
+      "file": "mindmap-prototype.html",
+      "sha256": "8348EEA760DFEF2E3C9590A6226F1CE11B56556D02F18C166B834DE912B64BB2"
+    },
+    {
+      "file": "inspect-obsidian-open.py",
+      "sha256": "2CEE0BE85B304EA98D258A907C0C20CE3BBBFCF9AF10847A5C410E5065EC059B"
+    },
+    {
+      "file": "inspect-obsidian-open.cjs",
+      "sha256": "62E59C82A35DB9EB26FDE73D1D5DAF9ED006CC9BE0E3F9BE90A25CE8B4D2651D"
+    },
+    {
+      "file": "obsidian-open-api.json",
+      "sha256": "AEA0CAB022833A7BA291B7D667065C7D857F1C0EE1B132AD544912189D4635D1"
+    },
+    {
+      "file": "obsidian-open-browser.json",
+      "sha256": "302DB192431A91D96D2F88F31662894B29A660CC19A48B54A9354C855A7129C2"
+    },
+    {
+      "file": "surface-regression.json",
+      "sha256": "CB2D48DA399A801906912EA8F08CB08F0CDE352082ED8CF79D88504F0F7CB3CA"
+    },
+    {
+      "file": "obsidian-open-detail.png",
+      "sha256": "E8F5132EED7E01B8B2E6568658581E4ABF7985EE60C69C5D7C7BE45A87CFC45F"
+    },
+    {
+      "file": "obsidian-open-narrow.png",
+      "sha256": "BFB9B257195D59E3F30621DC898944F4B9988FBBEEEBC908FFF87D6C333B323B"
+    },
+    {
+      "file": "OBSIDIAN-OPEN.md",
+      "sha256": "E70EDE2BEAB6E6EF2339B423E661F2CBEA77750C36CF91AECBA58768EC795530"
+    }
+  ],
+  "verified_launch_window": "静强度 - 考研 - Obsidian 1.14.4",
+  "window_at_report_time": "磨损 - 考研 - Obsidian 1.14.4"
+}

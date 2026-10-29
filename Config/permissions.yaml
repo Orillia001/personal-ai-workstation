@@ -1,0 +1,17 @@
+version: 1
+defaults:
+  read_project_files: allow
+  create_new_files: allow
+  edit_working_files: allow
+  overwrite_sources: confirm
+  delete_or_bulk_move: confirm
+  install_software: confirm
+  change_system_settings: confirm
+  upload_project_content: confirm
+  send_messages_or_publish: confirm
+  git_commit_or_push: confirm
+protected_paths:
+  - 01_sources
+  - 03_data/raw
+  - 99_archive
+

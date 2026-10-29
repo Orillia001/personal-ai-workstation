@@ -1,0 +1,62 @@
+{
+  "run_id": "EDU-MINDMAP-SURFACE-20261019-01",
+  "created_at": "2026-10-19T23:03:28.7682206+08:00",
+  "preview_url": "http://127.0.0.1:8774/workbench?variant=A&education=machine-design&revision=dark",
+  "checks": 25,
+  "passed": true,
+  "page_errors": 0,
+  "production_shell_sha256": "4EDAB86815E08A0B871242B185BA636742457AC5390176702AEF8E7B8C5BAF28",
+  "surface_hardware_tested": false,
+  "learning_mutations": false,
+  "git_repository": false,
+  "artifacts": [
+    {
+      "file": "mindmap-dark.js",
+      "sha256": "722B7DE936373B9D4330CD240F6C1DB05B96C66CA9996F84293AFC296DA3A1E3"
+    },
+    {
+      "file": "mindmap-dark.css",
+      "sha256": "084C1EDD85FFAE3A552F235CF0B0EA66595D525DDB961CD5489F3F1E8C808A31"
+    },
+    {
+      "file": "mindmap-prototype.html",
+      "sha256": "C1883DE8561E0C01D3F49DC3C7535EC17F8557E9ED24A0726FFD73BE01AB0494"
+    },
+    {
+      "file": "surface-regression.cjs",
+      "sha256": "488C778BFE1DC7B2B549A32761E7269924218C1AB3D46D1A701A7E5C6C95605E"
+    },
+    {
+      "file": "surface-before.json",
+      "sha256": "C39D12E35FB7B98E213B911EB701236B04E451E8EE27A6C37F8C0E06348E7670"
+    },
+    {
+      "file": "surface-regression.json",
+      "sha256": "460C3E63A1F5ECAE2230DA766CEB4CF5AE25FD5D93A5B81490DA3B6E15535431"
+    },
+    {
+      "file": "SURFACE-ADAPTATION.md",
+      "sha256": "2153DCA1837D1C6811CE491338D6928BDF5B5B79A4CDD6FF4D4C0F4B1403D648"
+    },
+    {
+      "file": "surface-touch-initial.png",
+      "sha256": "6E75929CCE9C585092C0256C9473CA6C2017456F3D6CE9AA24735751AF068E0B"
+    },
+    {
+      "file": "surface-touch-overview.png",
+      "sha256": "E4819809640F4C1BC4DD3E76A93398EBF4357498DC11F0E155F794175813B0CB"
+    },
+    {
+      "file": "surface-touch-detail.png",
+      "sha256": "3B049FC11679AB3AC5983AECA6A64E6762E261CA8CFB703C615D9C80EA1FC516"
+    },
+    {
+      "file": "surface-touch-narrow.png",
+      "sha256": "2D9F74C245997AEA0765955C703C2023634E65C4163C668A22FBA1913C2107AA"
+    },
+    {
+      "file": "surface-desktop.png",
+      "sha256": "8C14201B140305C7BF7B5B4EC03EC2BA26722F5951C5E0FA6E6566A2AFC849C0"
+    }
+  ]
+}

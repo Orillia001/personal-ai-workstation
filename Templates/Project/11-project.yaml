@@ -1,0 +1,23 @@
+project:
+  name: __PROJECT_NAME__
+  status: active
+paths:
+  inbox: 00_inbox
+  sources: 01_sources
+  literature: 02_literature
+  data: 03_data
+  code: 04_code
+  figures: 05_figures
+  manuscript: 06_manuscript
+  slides: 07_slides
+  evidence: 08_evidence
+  output: 09_output
+  archive: 99_archive
+rules:
+  overwrite_raw_files: false
+  delete_files_without_confirmation: false
+  modify_archive: false
+  keep_logs: true
+agents:
+  enabled: true
+

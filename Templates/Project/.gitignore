@@ -1,0 +1,23 @@
+# Windows / Office
+Thumbs.db
+Desktop.ini
+~$*.docx
+~$*.xlsx
+~$*.pptx
+
+# Python / notebooks
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/
+
+# Quarto generated support folders
+*_files/
+.quarto/
+
+# Secrets and local state
+.env
+*.key
+*.pem
+*.log
+

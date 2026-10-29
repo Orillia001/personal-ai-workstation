@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Personal AI Workstation</title>
+  <style>
+    :root{color-scheme:light dark;--bg:light-dark(#f4f6f8,#0c1220);--surface:light-dark(#fff,#141d30);--soft:light-dark(#edf2f5,#1b2840);--text:light-dark(#16202a,#edf3fb);--muted:light-dark(#617181,#a7b6ca);--line:light-dark(#dce4e9,#2a3a55);--accent:light-dark(#087f5b,#63d5ae);--danger:light-dark(#b42318,#ffaaa4)}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,sans-serif}main{max-width:1180px;margin:auto;padding:28px 20px 60px}header{display:flex;justify-content:space-between;gap:20px;align-items:flex-end;margin-bottom:22px}h1{font-size:28px;margin:0}h2{font-size:18px;margin:0 0 14px}.muted{color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.stat,.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px}.stat{padding:15px}.value{font-size:25px;font-weight:650;color:var(--accent)}.panel{padding:18px;margin-top:14px}.columns{display:grid;grid-template-columns:1fr 1fr;gap:14px}.controls{display:flex;flex-wrap:wrap;gap:9px;align-items:end}label{display:grid;gap:5px;flex:1;min-width:170px}input,select,button{font:inherit;min-height:40px;border-radius:8px;border:1px solid var(--line)}input,select{background:var(--bg);color:var(--text);padding:7px 10px}button{padding:7px 13px;background:var(--soft);color:var(--text);cursor:pointer}button.primary{background:var(--accent);color:#07140f;border-color:transparent}button.danger{color:var(--danger)}button.small{min-height:30px;padding:3px 8px;font-size:13px}button:disabled{opacity:.5;cursor:not-allowed}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;margin-top:8px}th,td{text-align:left;padding:8px;border-bottom:1px solid var(--line);vertical-align:top}th{color:var(--muted);font-weight:500}.status{margin-top:10px;min-height:24px;color:var(--muted)}.output{white-space:pre-wrap;max-height:260px;overflow:auto;background:var(--soft);padding:10px;border-radius:8px}code{background:var(--soft);padding:2px 5px;border-radius:4px}.ok{color:var(--accent)}.bad{color:var(--danger)}@media(max-width:820px){.grid,.columns{grid-template-columns:1fr 1fr}}@media(max-width:520px){header{align-items:flex-start;flex-direction:column}.grid,.columns{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<main>
+  <header><div><h1>Personal AI Workstation</h1><div class="muted">本地控制中心 · 文件原件默认保留</div></div><button id="refresh">刷新状态</button></header>
+  <div class="grid" aria-label="工作站摘要">
+    <div class="stat"><div class="value" id="project-count">—</div><div>项目</div></div>
+    <div class="stat"><div class="value" id="tool-count">—</div><div>可用工具</div></div>
+    <div class="stat"><div class="value" id="task-count">—</div><div>任务</div></div>
+    <div class="stat"><div class="value" id="plan-count">—</div><div>整理计划</div></div>
+  </div>
+
+  <section class="panel"><h2>教育模块</h2>
+    <div id="education-result" class="status">正在快速读取课程目录…</div>
+    <div class="table-wrap"><table><thead><tr><th>科目</th><th>ID</th><th>状态</th><th>教材</th><th>课程内容</th></tr></thead><tbody id="education-rows"></tbody></table></div>
+  </section>
+
+  <div class="columns">
+    <section class="panel"><h2>判断工作类型</h2>
+      <form id="route-form" class="controls"><label>描述任务<input id="route-text" required placeholder="例如：整理下载的研究资料"></label><button class="primary">分析</button></form>
+      <div id="route-result" class="status" aria-live="polite"></div>
+      <div id="route-feedback" class="controls" hidden><button id="route-accept" type="button">采用这个方案</button><button id="route-reject" class="danger" type="button">不采用</button></div>
+    </section>
+    <section class="panel"><h2>添加任务</h2>
+      <form id="task-form" class="controls"><label>项目<select id="task-project"></select></label><label>任务<input id="task-title" required placeholder="要完成的结果"></label><button class="primary">添加</button></form>
+      <div id="task-result" class="status" aria-live="polite"></div>
+    </section>
+  </div>
+
+  <section class="panel"><h2>Codex AI 规划（ChatGPT 订阅）</h2>
+    <form id="ai-form" class="controls"><label>项目<select id="ai-project"></select></label><label>描述需求<input id="ai-text" required placeholder="例如：为项目建立文献综述流程"></label><button class="primary">生成只读方案</button></form>
+    <div id="ai-result" class="status" aria-live="polite">使用已登录的Codex与ChatGPT套餐用量；只读分析，不修改项目。</div>
+    <div id="ai-output" class="panel" style="white-space:pre-wrap" hidden></div>
+  </section>
+
+  <div class="columns">
+    <section class="panel"><h2>LaTeX 文档</h2>
+      <form id="latex-form" class="controls"><label>项目<select id="latex-project"></select></label><label>文档目录<input id="latex-document" required placeholder="例如：guochuang-business-plan"></label><button class="primary">编译</button><button id="latex-clean" type="button">清理</button></form>
+      <div id="latex-result" class="status" aria-live="polite">编译文件进入文档目录的 build，交付 PDF 进入 dist。</div>
+      <div id="latex-output" class="output" hidden></div>
+    </section>
+    <section class="panel"><h2>知识库</h2>
+      <form id="knowledge-form" class="controls"><label>项目<select id="knowledge-project"></select></label><label>搜索词<input id="knowledge-query" placeholder="例如：研究背景"></label><button class="primary">搜索</button><button id="knowledge-index" type="button">更新索引</button></form>
+      <div id="knowledge-result" class="status" aria-live="polite">项目内容保存在本地 SQLite，不上传。</div>
+      <div class="table-wrap"><table><thead><tr><th>文件</th><th>匹配</th></tr></thead><tbody id="knowledge-rows"></tbody></table></div>
+    </section>
+  </div>
+
+  <section class="panel"><h2>备份与审批</h2>
+    <div class="controls"><label>备份项目<select id="backup-project"></select></label><button id="backup-create" class="primary" type="button">创建备份</button></div>
+    <div id="v4-result" class="status" aria-live="polite"></div>
+    <div class="columns"><div class="table-wrap"><table><thead><tr><th>备份</th><th>文件数</th><th>状态</th></tr></thead><tbody id="backup-rows"></tbody></table></div><div class="table-wrap"><table><thead><tr><th>动作</th><th>项目</th><th>风险</th><th>状态</th><th>操作</th></tr></thead><tbody id="action-rows"></tbody></table></div></div>
+  </section>
+
+  <section class="panel"><h2>安全文件整理</h2>
+    <form id="scan-form" class="controls"><label>来源文件夹<input id="scan-source" required placeholder="C:\Users\Orillia\Downloads\资料"></label><label>目标项目<select id="scan-project"></select></label><button class="primary">扫描并生成计划</button></form>
+    <div id="scan-result" class="status" aria-live="polite"></div>
+    <div class="controls"><label>计划ID<input id="plan-id" placeholder="扫描后自动填入"></label><button id="apply-plan" type="button">批准复制计划</button><label>运行ID<input id="run-id" placeholder="执行后自动填入"></label><button id="undo-run" class="danger" type="button">撤销整理副本</button></div>
+    <div class="table-wrap"><table><thead><tr><th>文件</th><th>类别</th><th>目标</th><th>大小</th></tr></thead><tbody id="plan-rows"></tbody></table></div>
+  </section>
+
+  <section class="panel"><h2>GitHub 现成方案搜索</h2>
+    <form id="reuse-form" class="controls"><label>简洁关键词<input id="reuse-query" required placeholder="例如：python pdf table extraction"></label><button class="primary">搜索并评估</button></form>
+    <div id="reuse-result" class="status" aria-live="polite">只搜索和生成评审清单，不会克隆、安装或运行代码。</div>
+    <div class="table-wrap"><table><thead><tr><th>项目</th><th>评分</th><th>Stars</th><th>语言</th><th>许可证</th><th>风险提示</th></tr></thead><tbody id="reuse-rows"></tbody></table></div>
+  </section>
+
+  <div class="columns">
+    <section class="panel"><h2>项目</h2><div class="table-wrap"><table><thead><tr><th>名称</th><th>状态</th></tr></thead><tbody id="projects"></tbody></table></div></section>
+    <section class="panel"><h2>工具</h2><div class="table-wrap"><table><thead><tr><th>工具</th><th>状态</th></tr></thead><tbody id="tools"></tbody></table></div></section>
+  </div>
+  <section class="panel"><h2>任务与执行</h2><div class="table-wrap"><table><thead><tr><th>时间</th><th>项目</th><th>类型/任务</th><th>状态</th></tr></thead><tbody id="activity"></tbody></table></div></section>
+  <div id="global-status" class="status" role="alert"></div>
+</main>
+<script>
+const TOKEN='__TOKEN__'; let lastRoute=null;
+const $=id=>document.getElementById(id);
+async function api(path, body){const options=body?{method:'POST',headers:{'Content-Type':'application/json','X-Workstation-Token':TOKEN},body:JSON.stringify(body)}:{};const response=await fetch(path,options);const data=await response.json();if(!response.ok)throw new Error(data.error||`HTTP ${response.status}`);return data}
+function rows(id,items,columns){const body=$(id);body.replaceChildren();for(const item of items){const tr=document.createElement('tr');for(const col of columns){const td=document.createElement('td');td.textContent=typeof col==='function'?col(item):item[col]??'';tr.appendChild(td)}body.appendChild(tr)}}
+function projectsSelect(items){for(const id of ['task-project','scan-project','ai-project','latex-project','knowledge-project','backup-project']){const select=$(id);select.replaceChildren();for(const p of items){const option=document.createElement('option');option.value=p.name;option.textContent=p.name;select.appendChild(option)}}}
+async function refreshEducation(){try{const d=await api('/api/education/status');rows('education-rows',d.courses,["name","id","status",x=>String(x.source_count),x=>String(x.lesson_count)]);$('education-result').textContent='已发现 '+d.total+' 门课程；只读取课程元数据，未扫描教材正文。'}catch(err){$('education-result').textContent='课程发现失败：'+err.message}}
+async function refreshV4(){const d=await api('/api/v4/status');const latex=d.latex_documents||[];const latexInput=$('latex-document');if(!latexInput.value&&latex.length)latexInput.value=latex[0].document;rows('backup-rows',d.backups,['id','files','status']);const body=$('action-rows');body.replaceChildren();for(const item of d.actions){const tr=document.createElement('tr');for(const value of [item.id,item.project||'-',item.risk,item.status]){const td=document.createElement('td');td.textContent=value;tr.appendChild(td)}const td=document.createElement('td');if(item.status==='pending'){const approve=document.createElement('button');approve.className='small';approve.textContent='批准';approve.onclick=()=>action(item.id,'approve');const deny=document.createElement('button');deny.className='small danger';deny.textContent='拒绝';deny.onclick=()=>action(item.id,'deny');td.append(approve,deny)}else if(item.status==='approved'){const run=document.createElement('button');run.className='small';run.textContent='执行';run.onclick=()=>action(item.id,'run');td.appendChild(run)}tr.appendChild(td);body.appendChild(tr)}return d}
+async function refresh(){try{const d=await api('/api/status');$('project-count').textContent=d.projects.length;$('tool-count').textContent=d.tools.filter(x=>x.found).length;$('task-count').textContent=d.tasks.length;$('plan-count').textContent=d.plans.length;rows('projects',d.projects,['name','status']);rows('tools',d.tools,['name',x=>x.found?'可用':'未发现']);projectsSelect(d.projects);const activity=[...d.tasks.map(x=>({time:x.updated_at,project:x.project||'-',label:x.title,status:x.status})),...d.runs.map(x=>({time:x.created_at,project:x.project||'-',label:x.kind+(x.summary?' · '+x.summary:''),status:x.status}))].sort((a,b)=>b.time.localeCompare(a.time)).slice(0,30);rows('activity',activity,[x=>x.time.slice(0,19),'project','label','status']);refreshV4().catch(e=>$('v4-result').textContent='状态加载失败：'+e.message);const ai=d.ai.logged_in?'Codex已通过ChatGPT登录':'Codex CLI尚未登录';$('global-status').textContent=`${d.watcher.running?`下载监控运行中，PID ${d.watcher.pid}`:'下载监控未运行'}；${ai}`}catch(e){$('global-status').textContent=e.message}}
+$('refresh').onclick=refresh;
+$('route-form').onsubmit=async e=>{e.preventDefault();try{lastRoute=await api('/api/route',{text:$('route-text').value});const missing=lastRoute.unavailable_tools?.length?`；未安装：${lastRoute.unavailable_tools.join('、')}`:'';$('route-result').textContent=`类型：${lastRoute.task_type}；工具：${lastRoute.tools.join('、')}；资源模式：${lastRoute.resource_mode}${missing}`;$('route-feedback').hidden=false}catch(err){$('route-result').textContent=err.message}};
+async function feedback(decision){if(!lastRoute)return;const d=await api('/api/feedback',{route_id:lastRoute.route_id,decision});$('route-result').textContent+=d.learned?'；已根据重复选择更新默认习惯':'；反馈已记录';$('route-feedback').hidden=true}
+$('route-accept').onclick=()=>feedback('accepted');$('route-reject').onclick=()=>feedback('rejected');
+$('task-form').onsubmit=async e=>{e.preventDefault();try{const d=await api('/api/tasks',{project:$('task-project').value,title:$('task-title').value});$('task-result').textContent=`已添加任务 ${d.task_id}`;$('task-title').value='';refresh()}catch(err){$('task-result').textContent=err.message}};
+$('ai-form').onsubmit=async e=>{e.preventDefault();if(!confirm('这会使用ChatGPT套餐中的Codex用量生成只读方案。继续吗？'))return;const button=e.submitter;button.disabled=true;$('ai-result').textContent='Codex正在只读分析项目…';try{const d=await api('/api/ai-plan',{project:$('ai-project').value,text:$('ai-text').value});$('ai-result').textContent=`方案 ${d.id} 已保存；项目文件未修改。`;$('ai-output').textContent=d.response;$('ai-output').hidden=false;refresh()}catch(err){$('ai-result').textContent=err.message}finally{button.disabled=false}};
+$('reuse-form').onsubmit=async e=>{e.preventDefault();try{const d=await api('/api/reuse-search',{query:$('reuse-query').value});$('reuse-result').textContent=`评审 ${d.id}：找到 ${d.candidates.length} 个候选；尚未下载或运行。`;const body=$('reuse-rows');body.replaceChildren();for(const item of d.candidates){const tr=document.createElement('tr');const link=document.createElement('a');link.href=item.url;link.target='_blank';link.rel='noopener noreferrer';link.textContent=item.name;const first=document.createElement('td');first.appendChild(link);tr.appendChild(first);for(const value of [item.score,item.stars,item.language,item.license,item.risk_flags.join('、')||'—']){const td=document.createElement('td');td.textContent=String(value);tr.appendChild(td)}body.appendChild(tr)}refresh()}catch(err){$('reuse-result').textContent=err.message}};
+$('scan-form').onsubmit=async e=>{e.preventDefault();try{const d=await api('/api/scan',{source:$('scan-source').value,project:$('scan-project').value});$('plan-id').value=d.id;$('scan-result').textContent=`计划 ${d.id}：${d.entries.length} 个文件，只生成计划，尚未复制。`;rows('plan-rows',d.entries,[x=>x.source.split(/[\\/]/).pop(),'category','destination',x=>String(x.size)]) ;refresh()}catch(err){$('scan-result').textContent=err.message}};
+$('apply-plan').onclick=async()=>{const plan=$('plan-id').value.trim();if(!plan)return;if(!confirm(`批准执行复制计划 ${plan}？原件会保留，目标不会被覆盖。`))return;try{const d=await api('/api/apply',{plan});$('run-id').value=d.run_id;$('scan-result').textContent=`已执行：${d.summary}`;refresh()}catch(err){$('scan-result').textContent=err.message}};
+$('undo-run').onclick=async()=>{const run=$('run-id').value.trim();if(!run)return;if(!confirm(`撤销运行 ${run} 创建且尚未改变的副本？`))return;try{const d=await api('/api/undo',{run});$('scan-result').textContent=`已撤销 ${d.removed} 个副本；保护 ${d.protected} 个已变化文件。`;refresh()}catch(err){$('scan-result').textContent=err.message}};
+async function action(id,operation){if(operation==='run'&&!confirm(`执行动作 ${id}？执行前会自动创建备份。`))return;try{const d=await api(`/api/v4/execute-${operation}`,{id});$('v4-result').textContent=`动作 ${id}：${d.status||'已处理'}`;refresh()}catch(err){$('v4-result').textContent=err.message}}
+$('latex-form').onsubmit=async e=>{e.preventDefault();const button=e.submitter;button.disabled=true;$('latex-result').textContent='正在编译 LaTeX…';try{const d=await api('/api/v4/latex-build',{project:$('latex-project').value,document:$('latex-document').value.trim()});$('latex-result').textContent=`编译完成：${d.pdf}；SHA-256 ${d.sha256}`;$('latex-output').textContent=d.output||'';$('latex-output').hidden=!d.output;refresh()}catch(err){$('latex-result').textContent=err.message}finally{button.disabled=false}};
+$('latex-clean').onclick=async()=>{try{const d=await api('/api/v4/latex-clean',{project:$('latex-project').value,document:$('latex-document').value.trim()});$('latex-result').textContent=`已清理：${d.document}`;$('latex-output').hidden=true}catch(err){$('latex-result').textContent=err.message}};
+$('knowledge-form').onsubmit=async e=>{e.preventDefault();try{const query=$('knowledge-query').value.trim();if(!query){$('knowledge-result').textContent='请输入搜索词';return}const d=await api('/api/v4/knowledge-search',{project:$('knowledge-project').value,query});rows('knowledge-rows',d,['path','snippet']);$('knowledge-result').textContent=`找到 ${d.length} 条结果`}catch(err){$('knowledge-result').textContent=err.message}};
+$('knowledge-index').onclick=async()=>{try{$('knowledge-result').textContent='正在更新索引…';const d=await api('/api/v4/knowledge-index',{project:$('knowledge-project').value});$('knowledge-result').textContent=`索引完成：新增 ${d.indexed}，未变化 ${d.unchanged}，失败 ${d.failed}，总计 ${d.total}`;refresh()}catch(err){$('knowledge-result').textContent=err.message}};
+$('backup-create').onclick=async()=>{if(!confirm('创建项目备份？'))return;try{const d=await api('/api/v4/backup-create',{project:$('backup-project').value});$('v4-result').textContent=`备份完成：${d.id}，${d.files} 个文件` ;refresh()}catch(err){$('v4-result').textContent=err.message}};
+refreshEducation();refresh();
+</script>
+</body></html>
